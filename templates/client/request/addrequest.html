@@ -1,0 +1,44 @@
+<!-- templates/create_request.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Request</title>
+</head>
+<body>
+
+<h2>Create Artwork Request</h2>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+    <label>Title:</label><br>
+    <input type="text" name="title" required><br><br>
+
+    <label>Description:</label><br>
+    <textarea name="description" required></textarea><br><br>
+
+    <label>Budget Min:</label><br>
+    <input type="number" name="budget_min" required><br><br>
+
+    <label>Budget Max:</label><br>
+    <input type="number" name="budget_max" required><br><br>
+
+    <label>Tags:</label><br>
+    <select name="tags" multiple>
+        {% for tag in tags %}
+            <option value="{{ tag.id }}">{{ tag.name }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <label for="images">Referance image (max 4 and each under 1mb)</label>
+    <input type="file" name="images" multiple accept="image/*">
+
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

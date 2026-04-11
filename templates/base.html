@@ -1,0 +1,7 @@
+{% load static %}
+<h1>header</h1>
+<a href="{% url 'login' %}">login</a>
+<a href="{% url 'register' %}">signup</a>
+{% block content %}{% endblock %}
+<h1>Footer</h1>
+ {% include 'includes/message.html' %}

@@ -1,0 +1,135 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Admin Dashboard | Velora Digital Art{% endblock %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Users</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 20px;
+        }
+        .user-card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .portfolio-item {
+            margin-left: 20px;
+            padding: 10px;
+            border-left: 3px solid #ddd;
+            margin-top: 10px;
+        }
+        img {
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>All Users</h1>
+
+<form method="get" style="margin-bottom: 20px;">
+    <label><strong>Filter by Role:</strong></label>
+
+    <select name="role">
+        <option value="">All</option>
+        <option value="client" {% if selected_role == 'client' %}selected{% endif %}>
+            Client
+        </option>
+        <option value="artist" {% if selected_role == 'artist' %}selected{% endif %}>
+            Artist
+        </option>
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
+
+{% for user in users %}
+<div class="user-card">
+    <form method="post" action="{% url 'deleteuser' user.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit"
+                onclick="return confirm('Are you sure you want to delete this user?');">
+            Delete
+        </button>
+    </form>
+    <h2>{{ user.username }} ({{ user.role }})</h2>
+
+    <p><strong>ID:</strong> {{ user.id }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Bio:</strong> {{ user.bio }}</p>
+    <p><strong>Joined:</strong> {{ user.created_at }}</p>
+
+    {% if user.profile_image %}
+        <img src="{{ user.profile_image.url }}" width="120">
+    {% endif %}
+
+    <!-- ARTIST PROFILE -->
+    {% if user.artist_profile %}
+        <hr>
+        <h3>Artist Profile</h3>
+
+        <p><strong>Display Name:</strong> {{ user.artist_profile.display_name }}</p>
+        <p><strong>Bio:</strong> {{ user.artist_profile.bio }}</p>
+
+        <p>
+            <strong>Portfolio Link:</strong>
+            <a href="{{ user.artist_profile.portfolioURL }}" target="_blank">
+                {{ user.artist_profile.portfolioURL }}
+            </a>
+        </p>
+
+        <p><strong>Available:</strong> {{ user.artist_profile.is_available }}</p>
+
+        <!-- TAGS -->
+        <p><strong>Tags:</strong>
+            {% for tag in user.artist_profile.tags.all %}
+                {{ tag.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+                No tags
+            {% endfor %}
+        </p>
+
+        <!-- PORTFOLIO -->
+        <h4>Portfolio Items</h4>
+
+        {% for item in user.artist_profile.portfolio.all %}
+            <div class="portfolio-item">
+
+                <p><strong>Title:</strong> {{ item.title }}</p>
+
+                <img src="{{ item.image.url }}" width="250">
+
+                <p><strong>Tags:</strong>
+                    {% for tag in item.tags.all %}
+                        {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        No tags
+                    {% endfor %}
+                </p>
+
+                <p><small>Created: {{ item.created_at }}</small></p>
+
+            </div>
+        {% empty %}
+            <p>No portfolio items</p>
+        {% endfor %}
+
+    {% else %}
+        <p><em>No artist profile</em></p>
+    {% endif %}
+
+</div>
+{% empty %}
+    <p>No users found</p>
+{% endfor %}
+
+</body>
+</html>
+{% endblock %}

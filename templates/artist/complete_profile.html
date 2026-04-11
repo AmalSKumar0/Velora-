@@ -1,0 +1,23 @@
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Display Name:</label><br>
+    <input type="text" name="display_name" required><br><br>
+
+    <label>Bio:</label><br>
+    <textarea name="bio"></textarea><br><br>
+
+    <input type="text" name="portfolioURL" placeholder="Portfolio URL"><br><br>
+    <label>Tags:</label><br>
+    <select name="tags" multiple>
+        {% for tag in tags %}
+            <option value="{{ tag.id }}">{{ tag.name }}</option>
+        {% endfor %}
+    </select><br><br>
+    <label>
+        <input type="checkbox" name="is_available">
+        Available for work
+    </label><br><br>
+
+    <button type="submit">Create Profile</button>
+</form>

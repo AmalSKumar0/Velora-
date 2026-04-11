@@ -1,0 +1,30 @@
+<h1>welcome artist</h1>
+ {% include 'includes/message.html' %}
+ <h2>Matching Requests</h2>
+
+{% for req in requests %}
+    <div>
+        <h3>{{ req.title }}</h3>
+        <p>{{ req.description|truncatechars:100 }}</p>
+
+        <p>Budget: ₹{{ req.budget_min }} - ₹{{ req.budget_max }}</p>
+
+        <p>Tags:
+            {% for tag in req.tags.all %}
+                {{ tag.name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+
+        <p>Images:</p>
+        {% for img in req.images.all %}
+            <img src="{{ img.image.url }}" width="100">
+        {% empty %}
+            No images
+        {% endfor %}
+    </div>
+
+    <hr>
+
+{% empty %}
+    <p>No matching requests found</p>
+{% endfor %}

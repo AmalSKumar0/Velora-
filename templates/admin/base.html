@@ -1,0 +1,7 @@
+{% load static %}
+<a href="{% url 'logout' %}">logout</a>
+<a href="{% url 'tag_list' %}">All tags</a>
+<a href="{% url 'allusers' %}">All users</a>
+<a href="{% url 'adminDashboard' %}">welcome admin</a>
+{% block content %}{% endblock %}
+{% include 'includes/message.html' %}

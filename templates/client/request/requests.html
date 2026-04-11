@@ -1,0 +1,68 @@
+{% extends "client/base.html" %}
+{% load static %}
+
+{% block title %}My Requests | Velora Digital Art{% endblock %}
+
+{% block content %}
+
+<h1>My Requests</h1>
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Budget</th>
+            <th>Status</th>
+            <th>Tags</th>
+            <th>Images</th>
+            <th>Created</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for request in requests %}
+        <tr>
+            <td>{{ request.title }}</td>
+
+            <!-- truncate long text -->
+            <td>{{ request.description|truncatechars:80 }}</td>
+
+            <td>
+                ₹{{ request.budget_min }} - ₹{{ request.budget_max }}
+            </td>
+
+            <td>{{ request.status }}</td>
+
+            <!-- TAGS -->
+            <td>
+                {% for tag in request.tags.all %}
+                    <span>{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    No tags
+                {% endfor %}
+            </td>
+
+            <!-- IMAGES -->
+            <td>
+                {% for img in request.images.all %}
+                    <img src="{{ img.image.url }}" width="60">
+                {% empty %}
+                    No images
+                {% endfor %}
+            </td>
+
+            <td>{{ request.created_at|date:"M d, Y" }}</td>
+        </tr>
+
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align:center;">
+                No requests found
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
