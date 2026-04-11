@@ -1,0 +1,38 @@
+{% extends "client/base.html" %}
+{% load static %}
+
+{% block title %}My Requests | Velora Digital Art{% endblock %}
+
+{% block content %}
+
+<h1>all proposals</h1>
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <td>price</td>
+            <td>message</td>
+            <td>delivery days</td>
+            <td>Action</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% for proposal in proposals %}
+        <tr>
+            <td>{{ proposal.price }}</td>
+            <td>{{ proposal.message }}</td>
+            <td>{{ proposal.delivery_days }}</td>
+            <td><a href="{% url 'accept_proposal' proposal.id %}">acccept</a></td>
+        </tr>
+        
+        {% empty %}
+        <tr>
+            <td colspan="3" style="text-align:center;">
+                No requests found
+            </td>
+        </tr>
+    
+        {% endfor %}
+        
+    </tbody>
+</table>
+{% endblock %}

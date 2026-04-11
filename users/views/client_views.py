@@ -11,6 +11,5 @@ from users.decorators import role_required
 @login_required
 @role_required('client')
 def client_dash(request):
-
     return render(request,'client/dashboard.html')
     

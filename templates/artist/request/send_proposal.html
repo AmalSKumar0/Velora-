@@ -1,0 +1,25 @@
+
+
+<h2>Create Artwork proposal</h2>
+
+
+<form method="POST">
+    {% csrf_token %}
+
+    <input type="hidden" name="reqid" vlaue="{{ req.id }}">
+
+    <label>price:</label><br>
+    <input type="number" min="{{req.budget_min}}" max="{{req.budget_max}}" name="price" required><br><br>
+
+    <label>Message:</label><br>
+    <textarea name="message" required></textarea><br><br>
+
+    <label>delivery_days:</label><br>
+    <input type="number" name="delivery_days" min="1" required><br><br>
+
+    
+    <button type="submit">Submit</button>
+</form>
+
+</body>
+</html>

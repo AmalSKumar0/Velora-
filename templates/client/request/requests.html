@@ -17,6 +17,8 @@
             <th>Tags</th>
             <th>Images</th>
             <th>Created</th>
+            <th>No of Proposals</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
@@ -53,14 +55,16 @@
             </td>
 
             <td>{{ request.created_at|date:"M d, Y" }}</td>
+            <td>{{ request.proposal_count }}</td>
+            <td><a href="{% url 'all_proposals' request.id %}">view peoposals</a></td>
         </tr>
-
         {% empty %}
         <tr>
             <td colspan="7" style="text-align:center;">
                 No requests found
             </td>
         </tr>
+    
         {% endfor %}
     </tbody>
 </table>

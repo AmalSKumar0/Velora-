@@ -1,23 +1,32 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import *
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from core.models import Tag
 from django.db import transaction
+from django.db.models import Count
+from users.decorators import role_required
 
 
 @login_required
+@role_required('client')
 def request_view(request):
-    requests = Request.objects.filter(client=request.user).prefetch_related(
+    requests = Request.objects.filter(
+        client=request.user
+    ).prefetch_related(
         'tags',
         'images'
+    ).annotate(
+        proposal_count=Count('proposals')
     ).order_by('-created_at')
-    
-    return render(request,'client/request/requests.html',{
-        'requests':requests,
+
+    return render(request, 'client/request/requests.html', {
+        'requests': requests,
     })
 
 
 @login_required
+@role_required('client')
 def add_new_request(request):
 
     tags = Tag.objects.all()
@@ -72,3 +81,80 @@ def add_new_request(request):
     return render(request,'client/request/addrequest.html', {'tags': tags})
 
 
+
+@login_required
+@role_required('artist')
+def send_new_proposal(request, id):
+    req = get_object_or_404(Request, id=id)
+
+    artist_profile = request.user.artist_profile
+
+    if Proposal.objects.filter(request=req, artist=artist_profile).exists():
+        messages.error(request, "You already submitted a proposal")
+        return redirect('artistDashboard')
+
+    if request.method == "POST":
+        price = request.POST.get('price')
+        message = request.POST.get('message')
+        delivery_days = request.POST.get('delivery_days')
+
+        Proposal.objects.create(
+            request=req,
+            artist=artist_profile,
+            price=price,
+            message=message,
+            delivery_days=delivery_days
+        )
+
+        return redirect('artistDashboard')
+
+    return render(request, 'artist/request/send_proposal.html', {
+        'req': req
+    })
+
+@login_required
+@role_required('client')
+def view_all_proposal(request, id):
+    req = get_object_or_404(Request, id=id)
+
+    proposals = Proposal.objects.filter(
+        request = req,
+    )
+    return render(request,"client/request/all_proposals.html",{
+        'proposals':proposals
+    })
+
+@login_required
+@role_required('client')
+def accept_proposal(request, id):
+
+    proposal = get_object_or_404(Proposal, id=id)
+    req = proposal.request
+
+    if req.client != request.user:
+        return HttpResponseForbidden("Not allowed")
+
+    if req.status != "open":
+        messages.error(request, "Request already processed")
+        return redirect('all_request')
+
+    with transaction.atomic():
+
+        Order.objects.create(
+            request=req,  
+            proposal=proposal,
+            client=request.user,
+            artist=proposal.artist,
+            amount=proposal.price
+        )
+
+        req.status = "IN_PROGRESS"
+        req.save()
+
+        proposal.status = "accepted"
+        proposal.save()
+
+        Proposal.objects.filter(request=req).exclude(id=proposal.id).update(status="rejected")
+
+    messages.success(request, "Proposal accepted")
+    return redirect('all_request')

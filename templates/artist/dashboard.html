@@ -1,5 +1,9 @@
-<h1>welcome artist</h1>
- {% include 'includes/message.html' %}
+{% extends "artist/base.html" %}
+{% load static %}
+
+{% block title %}Home | Velora Digital Art{% endblock %}
+{% block content %}
+
  <h2>Matching Requests</h2>
 
 {% for req in requests %}
@@ -21,6 +25,9 @@
         {% empty %}
             No images
         {% endfor %}
+    <form method="get" action="{% url 'create_proposal' req.id %}">
+        <button type="submit">Send Proposal</button>
+    </form>
     </div>
 
     <hr>
@@ -28,3 +35,4 @@
 {% empty %}
     <p>No matching requests found</p>
 {% endfor %}
+{% endblock %}
