@@ -19,7 +19,13 @@ class Payment(models.Model):
 
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
 
-    provider = models.CharField(max_length=50)  # stripe / razorpay
+    provider = models.CharField(max_length=50)  
     provider_payment_id = models.CharField(max_length=255, blank=True)
+
+    released_at = models.DateTimeField(null=True, blank=True)
+    refunded_at = models.DateTimeField(null=True, blank=True)
+
+    # Optional but useful
+    provider_order_id = models.CharField(max_length=255, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

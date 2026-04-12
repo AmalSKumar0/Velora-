@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+<h2>Complete Payment</h2>
+
+<button id="pay-btn">Pay ₹{{ amount }}</button>
+
+<script>
+document.getElementById("pay-btn").onclick = function () {
+
+    var options = {
+        "key": "{{ key }}",  // public key from settings
+        "amount": "{{ amount }}00",
+        "currency": "INR",
+        "name": "Artwork Commission",
+        "description": "Payment for Order",
+        "order_id": "{{ order_id }}",
+
+        "handler": function (response) {
+
+            // send data to backend
+            fetch("/payments/verify/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Payment successful!");
+
+                    // redirect (optional)
+                    window.location.href = "/success/";
+                } else {
+                    alert("Payment verification failed!");
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert("Something went wrong");
+            });
+        },
+
+        "prefill": {
+            "name": "Test User",
+            "email": "test@example.com"
+        },
+
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.open();
+};
+</script>
+
+</body>
+</html>

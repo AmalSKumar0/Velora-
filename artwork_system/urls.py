@@ -16,6 +16,7 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('core/', include('core.urls')),
     path('commissions/',include('commissions.urls')),
+    path('payments/', include('payments.urls')),
 ]
 
 if settings.DEBUG:

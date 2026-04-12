@@ -56,7 +56,19 @@
 
             <td>{{ request.created_at|date:"M d, Y" }}</td>
             <td>{{ request.proposal_count }}</td>
-            <td><a href="{% url 'all_proposals' request.id %}">view peoposals</a></td>
+            <td>
+                {% if request.has_order %}
+                    {% with order=request.order_set.first %}
+                        {% if request.is_paid %}
+                            Paid
+                        {% else %}
+                            <a href="{% url 'create_payment' order.id %}">Pay</a>
+                        {% endif %}
+                    {% endwith %}
+                {% else %}
+                    <a href="{% url 'all_proposals' request.id %}">view peoposals</a>
+                {% endif %}
+            </td>
         </tr>
         {% empty %}
         <tr>

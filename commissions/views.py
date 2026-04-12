@@ -3,21 +3,33 @@ from .models import *
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from core.models import Tag
+from payments.models import Payment
 from django.db import transaction
 from django.db.models import Count
 from users.decorators import role_required
-
+from django.db.models import Count, Exists, OuterRef
 
 @login_required
 @role_required('client')
 def request_view(request):
+    order_exists = Order.objects.filter(request=OuterRef('pk'))
+
+    # Subquery: check if payment is HELD (paid)
+    paid_exists = Payment.objects.filter(
+        order__request=OuterRef('pk'),
+        status='held'   # your "paid" state
+    )
+
     requests = Request.objects.filter(
         client=request.user
     ).prefetch_related(
         'tags',
-        'images'
+        'images',
+        'order_set__payment'
     ).annotate(
-        proposal_count=Count('proposals')
+        proposal_count=Count('proposals'),
+        has_order=Exists(order_exists),
+        is_paid=Exists(paid_exists)
     ).order_by('-created_at')
 
     return render(request, 'client/request/requests.html', {
@@ -140,7 +152,7 @@ def accept_proposal(request, id):
 
     with transaction.atomic():
 
-        Order.objects.create(
+        order = Order.objects.create(
             request=req,  
             proposal=proposal,
             client=request.user,
@@ -155,6 +167,8 @@ def accept_proposal(request, id):
         proposal.save()
 
         Proposal.objects.filter(request=req).exclude(id=proposal.id).update(status="rejected")
+
+    return redirect('create_payment',order_id=order.id)
 
     messages.success(request, "Proposal accepted")
     return redirect('all_request')
