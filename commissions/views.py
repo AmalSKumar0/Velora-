@@ -144,11 +144,14 @@ def accept_proposal(request, id):
     req = proposal.request
 
     if req.client != request.user:
-        return HttpResponseForbidden("Not allowed")
+        messages.error(request, "You are not allowed to accept this proposal")
+        return redirect('all_request')
 
     if req.status != "open":
         messages.error(request, "Request already processed")
         return redirect('all_request')
+
+    Order.objects.filter(request=req).delete()
 
     with transaction.atomic():
 
@@ -159,15 +162,7 @@ def accept_proposal(request, id):
             artist=proposal.artist,
             amount=proposal.price
         )
-
-        req.status = "IN_PROGRESS"
-        req.save()
-
-        proposal.status = "accepted"
-        proposal.save()
-
-        Proposal.objects.filter(request=req).exclude(id=proposal.id).update(status="rejected")
-
+        
     return redirect('create_payment',order_id=order.id)
 
     messages.success(request, "Proposal accepted")

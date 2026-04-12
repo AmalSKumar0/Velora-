@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Payment</title>
+    <title>Pay Now</title>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
@@ -14,16 +14,17 @@
 document.getElementById("pay-btn").onclick = function () {
 
     var options = {
-        "key": "{{ key }}",  // public key from settings
-        "amount": "{{ amount }}00",
-        "currency": "INR",
-        "name": "Artwork Commission",
-        "description": "Payment for Order",
-        "order_id": "{{ order_id }}",
+        key: "{{ key }}",                    
+        amount: "{{ amount }}00",               
+        currency: "INR",
+        name: "Artwork Commission",
+        description: "Order Payment",
+        order_id: "{{ order_id }}",           // ✔ Razorpay order id
 
-        "handler": function (response) {
+        handler: function (response) {
 
-            // send data to backend
+            console.log("Payment success:", response);
+
             fetch("/payments/verify/", {
                 method: "POST",
                 headers: {
@@ -38,30 +39,33 @@ document.getElementById("pay-btn").onclick = function () {
             })
             .then(res => res.json())
             .then(data => {
+                console.log("Verify response:", data);
+
                 if (data.status === "success") {
                     alert("Payment successful!");
-
-                    // redirect (optional)
-                    window.location.href = "/success/";
+                    window.location.href = "/commissions/all-request/";
                 } else {
-                    alert("Payment verification failed!");
+                    alert("Payment verification failed");
                 }
             })
             .catch(err => {
-                console.error(err);
-                alert("Something went wrong");
+                console.error("Verify error:", err);
+                alert("Something went wrong during verification");
             });
         },
 
-        "prefill": {
-            "name": "Test User",
-            "email": "test@example.com"
+        modal: {
+            ondismiss: function () {
+                console.log("Payment popup closed");
+            }
         },
 
-        "theme": {
-            "color": "#3399cc"
+        theme: {
+            color: "#3399cc"
         }
     };
+
+    console.log("OPTIONS:", options);  // 🔥 debug
 
     var rzp = new Razorpay(options);
     rzp.open();

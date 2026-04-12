@@ -5,11 +5,13 @@ from django.conf import settings
 from django.shortcuts import render
 from payments.services.payment_service import PaymentService
 from commissions.models import Order
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
 
+@login_required
 def create_payment(request, order_id):
-    order = Order.objects.get(id=order_id)
+    order = get_object_or_404(Order, id=order_id, client=request.user)
 
     service = PaymentService()
     payment, razorpay_order = service.create_order(order, order.amount)
@@ -20,29 +22,28 @@ def create_payment(request, order_id):
         "amount": order.amount
     })
 
-@csrf_exempt  
+
+@login_required
 @require_POST
 def verify_payment(request):
     try:
         data = json.loads(request.body)
 
         service = PaymentService()
-
         payment = service.verify_and_capture(data)
 
         if payment is None:
             return JsonResponse({
-                "status": "error",
-                "message": "Payment not found"
-            }, status=404)
+                "status": "failed",
+                "message": "Verification failed"
+            }, status=400)
 
         return JsonResponse({
-            "status": "success",
-            "payment_status": payment.status
+            "status": "success"
         })
 
     except Exception as e:
         return JsonResponse({
-            "status": "failed",
+            "status": "error",
             "message": str(e)
-        }, status=400)
+        }, status=500)

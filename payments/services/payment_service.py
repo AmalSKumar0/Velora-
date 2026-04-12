@@ -1,6 +1,4 @@
 import razorpay
-import hmac
-import hashlib
 import logging
 
 from django.conf import settings
@@ -8,6 +6,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from payments.models import Payment
+from commissions.models import Order, Proposal, Request
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +36,10 @@ class PaymentService:
             }
         )
 
+        # Create Razorpay order only once
         if not payment.provider_order_id:
             razorpay_order = self.client.order.create({
-                "amount": amount * 100,
+                "amount": amount * 100,  # paise
                 "currency": "INR"
             })
 
@@ -53,36 +53,35 @@ class PaymentService:
         return payment, razorpay_order
 
     # ----------------------------
-    # VERIFY PAYMENT (API FLOW)
+    # VERIFY PAYMENT
     # ----------------------------
     def verify_and_capture(self, data):
-        """
-        Called after frontend handler sends payment response
-        """
+
+        logger.info(f"Verifying payment: {data}")
 
         order_id = data.get("razorpay_order_id")
         payment_id = data.get("razorpay_payment_id")
-        signature = data.get("razorpay_signature")
 
-        # STEP 1: signature verification
-        generated_signature = hmac.new(
-            settings.RAZORPAY_KEY_SECRET.encode(),
-            f"{order_id}|{payment_id}".encode(),
-            hashlib.sha256
-        ).hexdigest()
+        # 1. Signature verification (secure)
+        try:
+            self.client.utility.verify_payment_signature(data)
+        except Exception as e:
+            logger.error(f"Signature verification failed: {str(e)}")
+            return None
 
-        if generated_signature != signature:
-            logger.warning("Invalid payment signature")
-            raise Exception("Invalid signature")
-
-        # STEP 2: fetch from Razorpay
+        # 2. Fetch payment from Razorpay
         payment_data = self.client.payment.fetch(payment_id)
 
-        if payment_data["status"] != "captured":
-            logger.warning(f"Payment not captured: {payment_id}")
+        # 3. SECURITY CHECK → ensure payment belongs to order
+        if payment_data.get("order_id") != order_id:
+            logger.error("Payment does not belong to this order")
+            return None
+
+        # 4. Validate payment status
+        if payment_data["status"] not in ["captured", "authorized"]:
+            logger.warning(f"Payment not successful: {payment_id}")
             return self.mark_failed(order_id, payment_data)
 
-        # STEP 3: mark as HELD (escrow)
         return self.mark_held(order_id, payment_id, payment_data)
 
     # ----------------------------
@@ -90,9 +89,6 @@ class PaymentService:
     # ----------------------------
     @transaction.atomic
     def mark_held(self, provider_order_id, payment_id, payload):
-        """
-        Move payment to HELD (money received, escrow state)
-        """
 
         try:
             payment = Payment.objects.select_for_update().get(
@@ -102,12 +98,35 @@ class PaymentService:
             logger.error(f"Payment not found: {provider_order_id}")
             return None
 
+        # Idempotency
         if payment.status != Payment.Status.PENDING:
-            return payment  # idempotent
+            return payment
 
+        # Update payment
         payment.provider_payment_id = payment_id
         payment.status = Payment.Status.HELD
         payment.save()
+
+        # Get related objects
+        order = payment.order
+        req = order.request
+        proposal = order.proposal
+
+        order.status = Order.Status.IN_PROGRESS
+        order.save()
+
+        # Accept proposal
+        proposal.status = Proposal.Status.ACCEPTED
+        proposal.save()
+
+        # Reject others
+        Proposal.objects.filter(
+            request=req
+        ).exclude(id=proposal.id).update(status=Proposal.Status.REJECTED)
+
+        # Update request
+        req.status = Request.Status.IN_PROGRESS
+        req.save()
 
         logger.info(f"Payment HELD: {provider_order_id}")
         return payment
@@ -117,6 +136,7 @@ class PaymentService:
     # ----------------------------
     @transaction.atomic
     def mark_failed(self, provider_order_id, payload):
+
         try:
             payment = Payment.objects.select_for_update().get(
                 provider_order_id=provider_order_id
@@ -125,11 +145,17 @@ class PaymentService:
             logger.error(f"Payment not found: {provider_order_id}")
             return None
 
+        # If already completed, don't downgrade
         if payment.status == Payment.Status.HELD:
-            return payment  # don't downgrade
+            return payment
 
         payment.status = Payment.Status.FAILED
         payment.save()
+
+        # Optional: mark order cancelled
+        order = payment.order
+        order.status = Order.Status.CANCELLED
+        order.save()
 
         logger.info(f"Payment FAILED: {provider_order_id}")
         return payment
@@ -139,14 +165,13 @@ class PaymentService:
     # ----------------------------
     @transaction.atomic
     def release_payment(self, order):
+
         payment = Payment.objects.select_for_update().get(order=order)
 
         if payment.status != Payment.Status.HELD:
             raise InvalidPaymentState("Payment is not in escrow")
 
-        # NOTE:
-        # Razorpay does NOT auto-transfer to artist.
-        # You must implement payout separately (optional).
+        # NOTE: manual transfer required (Razorpay Route for automation)
 
         payment.status = Payment.Status.RELEASED
         payment.released_at = timezone.now()
@@ -160,6 +185,7 @@ class PaymentService:
     # ----------------------------
     @transaction.atomic
     def refund_payment(self, order):
+
         payment = Payment.objects.select_for_update().get(order=order)
 
         if payment.status != Payment.Status.HELD:
@@ -174,6 +200,10 @@ class PaymentService:
         payment.status = Payment.Status.REFUNDED
         payment.refunded_at = timezone.now()
         payment.save()
+
+        # Update order
+        order.status = Order.Status.CANCELLED
+        order.save()
 
         logger.info(f"Payment REFUNDED for order={order.id}")
         return payment
