@@ -1,0 +1,118 @@
+{% extends "artist/base.html" %}
+{% load static %}
+
+{% block title %}Home | Velora Digital Art{% endblock %}
+{% block content %}
+<h3>Submissions</h3>
+
+{% for submission in submissions %}
+    <div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+
+        <h4>Version {{ submission.version }}</h4>
+
+        <!-- Preview -->
+        <img src="{{ submission.preview_file.url }}" width="300"><br><br>
+
+        <!-- Reviews -->
+        <h5>Reviews:</h5>
+
+        {% if submission.reviews.all %}
+            {% for review in submission.reviews.all %}
+                <div style="border:1px dashed #aaa; padding:10px; margin-bottom:10px;">
+                    
+                    <strong>{{ review.get_action_display }}</strong><br>
+                    
+                    {% if review.comment %}
+                        <p>{{ review.comment }}</p>
+                    {% endif %}
+                    
+                    <small>
+                        By {{ review.reviewed_by.username }} 
+                        on {{ review.created_at|date:"M d, Y H:i" }}
+                    </small>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews yet</p>
+        {% endif %}
+
+    </div>
+{% empty %}
+    <p>No submissions yet</p>
+{% endfor %}
+<h2>My Order {{ order.id }}</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Request</th>
+            <th>Artist</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Revisions</th>
+            <th>Created</th>
+            <th>Last Updated</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>{{ order.id }}</td>
+
+            <td>
+                {{ order.request.title|truncatechars:30 }}
+            </td>
+
+            <td>
+                {{ order.artist.user.username }}
+            </td>
+
+            <td>
+                ₹{{ order.amount }}
+            </td>
+
+            <td>
+                {{ order.get_status_display }}
+            </td>
+
+            <td>
+                {{ order.revision_count }}
+            </td>
+
+            <td>
+                {{ order.created_at|date:"M d, Y" }}
+            </td>
+
+            <td>
+                {{ order.updated_at|date:"M d, Y" }}
+            </td>
+        </tr>
+    </tbody>
+<form method="POST" action="{% url 'individual_work' order.id %}" enctype="multipart/form-data">
+    
+    <!-- CSRF (required in Django) -->
+    {% csrf_token %}
+
+    <div>
+        <label for="image">Attach Image (optional)</label><br>
+        <input 
+            type="file" 
+            id="image" 
+            name="image" 
+            accept="image/*"
+        >
+    </div>
+
+    <br>
+
+    <!-- Submit -->
+    <button type="submit">Send</button>
+
+</form>
+
+
+</table>
+
+{% endblock %}

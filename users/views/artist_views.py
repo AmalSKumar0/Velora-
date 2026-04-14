@@ -3,10 +3,12 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from users.models import *
+from django.db import transaction
 from commissions.models import *
+from django.db.models import Max
 from core.models import Tag
 from users.decorators import role_required
-
+from core.services.watermark import generate_preview
 
 
 
@@ -19,8 +21,10 @@ def artist_dash(request):
 
     artist_profile = request.user.artist_profile
     tags = artist_profile.tags.all()
+
     requests = Request.objects.filter(
-        tags__in=tags
+        tags__in=tags,
+        status='open'
     ).distinct().prefetch_related('tags', 'images')
 
     return render(request, 'artist/dashboard.html', {
@@ -28,6 +32,63 @@ def artist_dash(request):
         'artist_tags': tags
     })
 
+
+@login_required
+@role_required('artist')
+def view_my_work(request):
+
+    artist_profile = request.user.artist_profile
+
+    orders = Order.objects.filter(
+        artist=artist_profile
+    ).select_related(
+        "request",
+        "client",
+        "proposal"
+    ).order_by("-created_at")
+
+    return render(request, 'artist/request/my_work.html', {
+        'orders': orders
+    })
+
+@login_required
+@role_required('artist')
+def individual_work(request,order_id):
+
+    artist_profile = request.user.artist_profile
+
+    order = Order.objects.get(
+        id=order_id,
+        artist = artist_profile
+    )
+
+    if request.method == "POST":
+        
+        original_file = request.FILES.get('image')
+        preview_file = generate_preview(original_file,"Art by Velora")
+
+
+        last_version = Submission.objects.filter(order=order).aggregate(
+                    Max('version')
+                )['version__max'] or 0   
+        with transaction.atomic():
+
+            sub = Submission.objects.create(
+                order=order,
+                version=last_version + 1,
+                preview_file=preview_file,
+                original_file=original_file
+            ) 
+
+            order.status = "submitted"
+            order.save()
+
+
+    submissions = order.submissions.prefetch_related("reviews").all()
+    return render(request, 'artist/request/individual_work.html', {
+        'order': order,
+        'submissions': submissions
+    })
 
 
 @login_required

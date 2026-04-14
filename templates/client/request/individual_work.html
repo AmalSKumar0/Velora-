@@ -1,0 +1,114 @@
+{% extends "artist/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h2>My Order {{ order.id }}</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" width="100%">
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Request</th>
+            <th>Artist</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Revisions</th>
+            <th>Created</th>
+            <th>Last Updated</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.request.title|truncatechars:30 }}</td>
+            <td>{{ order.artist.user.username }}</td>
+            <td>₹{{ order.amount }}</td>
+            <td>{{ order.get_status_display }}</td>
+            <td>{{ order.revision_count }}</td>
+            <td>{{ order.created_at|date:"M d, Y" }}</td>
+            <td>{{ order.updated_at|date:"M d, Y" }}</td>
+        </tr>
+
+        <!-- ✅ Preview Section -->
+        <tr>
+            <td colspan="8" style="text-align:center; padding:20px;">
+                
+                {% if submission %}
+                    {% if order.status != 'completed' %}
+                    <img src="{{ submission.preview_file.url }}" width="300"><br><br>
+                    {% endif %}
+
+                    {% if subrev %}
+                        
+                        <!-- ✅ Approved -->
+                        {% if subrev.action == 'approved' %}
+
+                            {% if order.status == 'completed' %}
+                                <img src="{{ submission.original_file.url }}" width="300"><br><br>
+                                <!-- 🔒 SECURE DOWNLOAD -->
+                                <a href="{% url 'download_final' submission.id %}">
+                                    <button>Download Final Image</button>
+                                </a>
+
+                            {% else %}
+
+                                <form method="get" action="{% url 'complete_order' order.id %}">
+                                    <button type="submit"
+                                        onclick="return confirm('Are you sure you want to finish this work?')">
+                                        Complete Work
+                                    </button>
+                                </form>
+
+                            {% endif %}
+
+                        {% else %}
+                            <p style="color:orange;">Changes requested by client</p>
+                        {% endif %}
+
+                    {% else %}
+
+                        <!-- ✅ Review Form -->
+                        <form method="POST" action="{% url 'clinet_view_individual_work' order.id %}">
+                            {% csrf_token %}
+
+                            <input type="hidden" name="subid" value="{{ submission.id }}">
+
+                            <h3>Review Submission</h3>
+
+                            <label>
+                                <input type="radio" name="action" value="approved" required>
+                                ✅ Approve
+                            </label>
+
+                            <br>
+
+                            <label>
+                                <input type="radio" name="action" value="changes_requested">
+                                🔁 Request Changes
+                            </label>
+
+                            <br><br>
+
+                            <textarea name="comment" rows="4"
+                                placeholder="Give feedback..."></textarea>
+
+                            <br><br>
+
+                            <button type="submit">Submit Review</button>
+                        </form>
+
+                    {% endif %}
+
+                {% else %}
+                    <h4>No preview available</h4>
+                {% endif %}
+
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+{% endblock %}

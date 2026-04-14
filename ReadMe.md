@@ -15,3 +15,60 @@
     3. pay to the artist when the payemnt is done 
 
         1. may add the messaging feature b/w the user and artist
+
+
+
+# Flow of the order life cycle
+
+                                    [REQUEST OPEN]
+                                        ↓ (artist submits proposal)
+                                    [PROPOSAL PENDING]
+                                        ↓ (client accepts)
+                                    [ORDER CREATED → PAYMENT_PENDING]
+                                        ↓ (client pays)
+                                    [IN_PROGRESS]
+                                        ↓ (artist uploads preview)
+                                    [SUBMITTED]
+                                        ↓
+                        ┌───────────────┬──────────────────┐
+                        ↓               ↓                  ↓
+                    [REVISION]      [APPROVED]         [DISPUTED]
+                        ↓               ↓                  ↓
+                    [IN_PROGRESS]   [COMPLETED]       [RESOLUTION]
+
+
+
+
+                    CLIENT                SYSTEM                ARTIST
+                    │                     │                     │
+                    │ Create Request      │                     │
+                    ├────────────────────>│                     │
+                    │                     │                     │
+                    │                     │  View Request       │
+                    │                     │<────────────────────┤
+                    │                     │                     │
+                    │                     │  Submit Proposal    │
+                    │                     │<────────────────────┤
+                    │                     │                     │
+                    │ Accept Proposal     │                     │
+                    ├────────────────────>│ Create Order        │
+                    │                     │-------------------->│
+                    │                     │                     │
+                    │ Pay                 │                     │
+                    ├────────────────────>│                     │
+                    │                     │  Start Work         │
+                    │                     │<────────────────────┤
+                    │                     │                     │
+                    │                     │  Upload Preview     │
+                    │                     │<────────────────────┤
+                    │                     │                     │
+                    │                     │  Submit Final       │
+                    │                     │<────────────────────┤
+                    │                     │                     │
+                    │ Review              │                     │
+                    ├───────────────┬─────┴──────────────┐      │
+                    │               │                    │      │
+                    Approve      Request Revision     Dispute   │
+                    │               │                    │      │
+                    ↓               ↓                    ↓      │
+                    COMPLETED    IN_PROGRESS          DISPUTED  │

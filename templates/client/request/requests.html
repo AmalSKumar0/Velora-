@@ -60,7 +60,7 @@
                 {% if request.has_order %}
                     {% with order=request.order_set.first %}
                         {% if request.is_paid %}
-                            Paid
+                            <a href="{% url 'clinet_view_individual_work' order.id %}">View Work</a>
                         {% else %}
                             <a href="{% url 'create_payment' order.id %}">Pay</a>
                         {% endif %}

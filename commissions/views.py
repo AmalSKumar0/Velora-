@@ -17,7 +17,7 @@ def request_view(request):
     # Subquery: check if payment is HELD (paid)
     paid_exists = Payment.objects.filter(
         order__request=OuterRef('pk'),
-        status='held'   # your "paid" state
+        status='held'  
     )
 
     requests = Request.objects.filter(
