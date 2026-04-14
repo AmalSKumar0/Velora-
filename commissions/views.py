@@ -127,13 +127,13 @@ def send_new_proposal(request, id):
 @login_required
 @role_required('client')
 def view_all_proposal(request, id):
-    req = get_object_or_404(Request, id=id)
+    req = get_object_or_404(Request, id=id, client=request.user)
 
     proposals = Proposal.objects.filter(
-        request = req,
+        request=req,
     )
-    return render(request,"client/request/all_proposals.html",{
-        'proposals':proposals
+    return render(request, "client/request/all_proposals.html", {
+        'proposals': proposals
     })
 
 @login_required
