@@ -1,24 +1,234 @@
-<form method="POST">
-    {% csrf_token %}
+<!DOCTYPE html>
+<html lang="en">
 
-    <label>Username:</label><br>
-    <input type="text" name="username" required><br><br>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Velora - Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        display: ['"Caveat Brush"', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
 
-    <label>Email:</label><br>
-    <input type="email" name="email" required><br><br>
+    <style>
+        \n html {
+            font-size: 13px;
+        }
 
-    <label>Password:</label><br>
-    <input type="password" name="password" required><br><br>
+        \n
 
-    <label>Role:</label><br>
-    <select name="role" required>
-        <option value="">Select role</option>
-        <option value="artist">Artist</option>
-        <option value="client">Client</option>
-    </select><br><br>
+        /* Motion simulation */
+        .motion-hidden-bottom {
+            opacity: 0;
+            transform: translateY(20px);
+        }
 
-    <button type="submit">Register</button>
-</form>
-    <a href="{% url 'login' %}">signin</a>
+        .motion-visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.4s ease-out;
+        }
+    </style>
 
-{% include 'includes/message.html' %}
+</head>
+
+<body
+    class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black flex flex-col">
+    <!-- Header -->
+     {% include 'includes/message.html' %}
+<div id="passwordError" class="fixed top-6 right-6 z-50 flex flex-col gap-4 hidden">
+        <div class="message-box error">
+            <span>Password does not match</span>
+            <button onclick="document.getElementById('passwordError').classList.add('hidden')">×</button>        </div>
+</div>
+    <header
+        class="bg-[#ffc86b] flex items-center justify-between py-6 px-8 lg:px-16 w-full border-b-[3px] border-black">
+        <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-3xl tracking-wide">
+            <div class="w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center bg-white">
+                <i data-lucide="brush" class="w-4 h-4"></i>
+            </div>
+            VELORA
+        </a>
+        <a href="{% url 'login' %}" class="font-bold hover:underline">Already have an account?</a>
+    </header>
+
+    <!-- Signup Form -->
+    <div class="flex-1 flex items-center justify-center p-8 py-12">
+        <div
+            class="motion-trigger motion-hidden-bottom w-full max-w-5xl bg-white border-[4px] border-black rounded-[2.5rem] p-6 md:p-10 shadow-[12px_12px_0px_0px_#ffc86b] flex flex-col md:flex-row gap-8 lg:gap-12">
+            <!-- Left Column -->
+            <div class="flex-1 flex flex-col">
+                <h1 class="font-display text-6xl md:text-7xl mb-4 uppercase tracking-wide leading-none">
+                    Create<br />Account</h1>
+                <p class="text-gray-600 font-medium mb-10 text-lg max-w-sm">Join the community of artists and clients to
+                    start commissioning or creating.</p>
+
+                
+
+                <label class="block font-bold mb-4 text-xl">I want to...</label>
+                <div class="grid grid-cols-2 gap-4 mb-auto">
+                    <button type="button" data-role="client"
+                        class="role-btn flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-[3px] transition-all border-black bg-[#ffc86b] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                        <i data-lucide="user" class="w-10 h-10 text-black icon-role"></i>
+                        <span class="font-bold text-lg text-black text-role">Hire Artists</span>
+                    </button>
+
+                    <button type="button" data-role="artist"
+                        class="role-btn flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-[3px] transition-all border-gray-200 bg-white hover:border-black">
+                        <i data-lucide="palette" class="w-10 h-10 text-gray-400 icon-role"></i>
+                        <span class="font-bold text-lg text-gray-500 text-role">Find Work</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="flex-1 bg-gray-50 p-8 rounded-[2rem] border-[3px] border-black">
+                <form class="space-y-5" method="POST">
+                    {% csrf_token %}
+                    
+                        <div>
+                            <label class="block font-bold mb-2 text-sm">First Name</label>
+                            <input type="text" name="username" placeholder="johndoe69" required
+                                class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white" />
+                        </div>
+               
+
+                    <div>
+                        <label class="block font-bold mb-2 text-sm">Email Address</label>
+                        <input type="email" name="email" placeholder="you@velora.com" required
+                            class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white" />
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        
+                        <div>
+                            <label class="block font-bold mb-2 text-sm">Password</label>
+                            <input id="password" name="password" type="password" placeholder="••••••••"
+                               required class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white" />
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-2 text-sm">Confirm</label>
+                            <input  id="confirm_password" type="password" placeholder="••••••••"
+                               required class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white" />
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="hidden" name="role" value="client">
+
+                    <button type="submit"
+                        class="w-full bg-[#1a1a1a] text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 hover:bg-black transition-colors border-[3px] border-black shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] mt-4">
+                        Create Account <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+
+                    <div class="mt-6 text-center">
+                        <p class="text-xs font-medium text-gray-500">
+                            By signing up, you agree to our <a href="#"
+                                class="font-bold text-black hover:underline">Terms</a> and <a href="#"
+                                class="font-bold text-black hover:underline">Privacy Policy</a>.
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        let input = document.querySelector(".input");
+
+
+
+        // Make motion triggers run on load
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                document.querySelectorAll('.motion-trigger').forEach(el => {
+                    el.classList.add('motion-visible');
+                    el.classList.remove('motion-hidden-bottom');
+                });
+            }, 50);
+
+            // Handle Role Selection State
+            const roleBtns = document.querySelectorAll('.role-btn');
+
+            roleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const selectedRole = btn.getAttribute('data-role');
+
+                    document.getElementById("hidden").value = selectedRole;
+
+                    roleBtns.forEach(rbtn => {
+                        const isSelected = rbtn.getAttribute('data-role') === selectedRole;
+                        console.log(selectedRole);
+                        const icon = rbtn.querySelector('.icon-role');
+                        const text = rbtn.querySelector('.text-role');
+
+                        if (isSelected) {
+                            rbtn.className = 'role-btn flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-[3px] transition-all border-black bg-[#ffc86b] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]';
+                            icon.classList.remove('text-gray-400');
+                            icon.classList.add('text-black');
+                            text.classList.remove('text-gray-500');
+                            text.classList.add('text-black');
+                        } else {
+                            rbtn.className = 'role-btn flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-[3px] transition-all border-gray-200 bg-white hover:border-black';
+                            icon.classList.remove('text-black');
+                            icon.classList.add('text-gray-400');
+                            text.classList.remove('text-black');
+                            text.classList.add('text-gray-500');
+                        }
+                    });
+                });
+            });
+        
+
+        const form = document.querySelector("form");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm_password");
+        const errorText = document.getElementById("passwordError");
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault(); 
+            if (password.value !== confirmPassword.value) {
+                errorText.classList.remove("hidden");
+                confirmPassword.classList.add("border-red-500");
+                return;
+            } else {
+                errorText.classList.add("hidden");
+                confirmPassword.classList.remove("border-red-500");
+            }
+            form.submit();
+        });
+
+        confirmPassword.addEventListener("input", () => {
+            if (password.value === confirmPassword.value) {
+                errorText.classList.add("hidden");
+                confirmPassword.classList.remove("border-red-500");
+            } else {
+                errorText.classList.remove("hidden");
+                confirmPassword.classList.add("border-red-500");
+            }
+        });
+
+        });
+
+
+    </script>
+</body>
+
+</html>

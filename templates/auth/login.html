@@ -1,16 +1,114 @@
- <form method="POST">
-    {% csrf_token %}
-
-    <div class="form-group">
-      <input type="email" name="email" required placeholder="Email">
-    </div>
-
-    <div class="form-group">
-      <input type="password" name="password" required placeholder="Password">
-    </div>
-
-    <button type="submit" class="login-btn">Login</button>
-    <br>
-    <a href="{% url 'register' %}">signup</a>
-  </form>
   {% include 'includes/message.html' %}
+
+{% load static %}
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velora - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Caveat Brush"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>\n    html { font-size: 13px; }\n
+    /* Motion simulation */
+    .motion-hidden-bottom {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .motion-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.4s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black flex flex-col">
+  <!-- Header -->
+  <header class="bg-[#ffc86b] flex items-center justify-between py-6 px-8 lg:px-16 w-full border-b-[3px] border-black">
+    <a href="Home.html" class="flex items-center gap-2 font-display text-3xl tracking-wide">
+      <div class="w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center bg-white">
+         <i data-lucide="brush" class="w-4 h-4"></i>
+      </div>
+      VELORA
+    </a>
+    <a href="{% url 'register' %}" class="font-bold hover:underline">Don't have an account?</a>
+  </header>
+
+  <!-- Login Form -->
+  <div class="flex-1 flex items-center justify-center p-8">
+    <div 
+      class="motion-trigger motion-hidden-bottom w-full max-w-md bg-white border-[4px] border-black rounded-[2.5rem] p-6 md:p-10 shadow-[12px_12px_0px_0px_#ffc86b]"
+    >
+      <h1 class="font-display text-5xl mb-2">Welcome Back</h1>
+      <p class="text-gray-600 font-medium mb-8">Log in to manage your commissions.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div>
+          <label class="block font-bold mb-2 text-sm">Email Address</label>
+          <input 
+            required
+            type="email"
+            name="email" 
+            placeholder="you@example.com" 
+            class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all"
+          >
+        </div>
+        
+        <div>
+          <div class="flex justify-between mb-2">
+            <label class="block font-bold text-sm">Password</label>
+            <a href="#" class="text-sm font-bold text-gray-500 hover:text-black hover:underline">Forgot?</a>
+          </div>
+          <input 
+            required
+            type="password" 
+            name="password"
+            placeholder="••••••••" 
+            class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all"
+          >
+        </div>
+        <br>
+        <button type="submit" class="w-full bg-[#1a1a1a] text-white rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 hover:bg-black transition-colors border-[3px] border-black shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+          Log In <i data-lucide="arrow-right" class="w-5 h-5"></i>
+        </button>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-sm font-medium text-gray-600">
+          By logging in, you agree to our <a href="{% url 'register' %}" class="font-bold text-black hover:underline">Terms of Service</a> and <a href="#" class="font-bold text-black hover:underline">Privacy Policy</a>.
+        </p>
+      </div>
+   
+  </div> </div>
+
+  <script>
+    lucide.createIcons();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        document.querySelectorAll('.motion-trigger').forEach(el => {
+          el.classList.add('motion-visible');
+          el.classList.remove('motion-hidden-bottom');
+        });
+      }, 50);
+    });
+  </script>
+</body>
+</html>

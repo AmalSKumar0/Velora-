@@ -1,7 +1,166 @@
 {% load static %}
-<h1>header</h1>
-<a href="{% url 'login' %}">login</a>
-<a href="{% url 'register' %}">signup</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velora - Art That Matters</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Caveat Brush"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>\n    html { font-size: 13px; }\n
+    /* Basic setup for motion simulation */
+    .motion-hidden-left {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    .motion-hidden-right {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    .motion-hidden-bottom {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .motion-hidden-bottom-small {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    .motion-hidden-scale {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    .motion-visible {
+      opacity: 1;
+      transform: none;
+      transition: all 0.6s ease-out;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black">
+  <!-- Header -->
+  <header class="bg-[#f9f6f0] flex items-center justify-between py-6 px-8 lg:px-16 w-full">
+    <div class="flex items-center gap-3">
+      <a href="{% url 'home' %}" class="bg-[#f0ece1] hover:bg-[#e5e0d3] text-[#1a1a1a] transition-colors px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
+        <i data-lucide="palette" class="w-4 h-4"></i> Explore Art
+      </a>
+      <a href="{% url 'home' %}" class="bg-[#f0ece1] hover:bg-[#e5e0d3] text-[#1a1a1a] transition-colors px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2">
+        <i data-lucide="brush" class="w-4 h-4"></i> For Artists
+      </a>
+    </div>
+    
+    <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-4xl tracking-wide text-[#1a1a1a] absolute left-1/2 -translate-x-1/2">
+      VELORA
+    </a>
+    
+    <div class="flex items-center gap-6">
+      <span class="text-sm font-bold text-[#1a1a1a] hidden md:block">Online | 24/7</span>
+      <a href="{% url 'login' %}" class="bg-[#1a1a1a] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-black transition-colors flex items-center gap-2">
+        <i data-lucide="users" class="w-4 h-4"></i> Log In
+      </a>
+    </div>
+  </header>
+
 {% block content %}{% endblock %}
-<h1>Footer</h1>
+
+  <!-- Footer -->
+  <footer class="bg-[#1a1a1a] text-white pt-24 pb-8 px-8 lg:px-16">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10">
+      <div class="lg:col-span-2">
+        <div class="flex items-center gap-2 font-bold text-2xl tracking-tight mb-8">
+          <div class="w-8 h-8 rounded-full border-[3px] border-white flex items-center justify-center bg-black">
+             <i data-lucide="brush" class="w-4 h-4 text-white"></i>
+          </div>
+          VELORA
+        </div>
+        <p class="text-gray-400 text-base leading-relaxed max-w-sm font-medium">
+          A structured Digital Artwork Commission System connecting clients with talented artists through secure workflows and payments.
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="font-bold text-lg mb-8 text-[#ffc86b]">Platform</h4>
+        <ul class="space-y-5 text-base text-gray-400 font-medium">
+          <li><a href="Home.html" class="hover:text-white transition-colors">Browse Artists</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Submit Request</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Artist Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-lg mb-8 text-[#ffc86b]">Resources</h4>
+        <ul class="space-y-5 text-base text-gray-400 font-medium">
+          <li><a href="Home.html" class="hover:text-white transition-colors">Commission Guide</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Pricing Standards</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Help Center</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-lg mb-8 text-[#ffc86b]">Legal</h4>
+        <ul class="space-y-5 text-base text-gray-400 font-medium">
+          <li><a href="Home.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+          <li><a href="Home.html" class="hover:text-white transition-colors">Payment Terms</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between pt-8 border-t border-gray-800 text-sm text-gray-500 font-medium">
+      <p>© 2026 Velora Commision System </p>
+      <div class="mt-4 md:mt-0 flex gap-6">
+        <p >designed and devloped by -
+        <a href="https://www.amalskumar.dev" class="hover:text-white"> Amal s kumar</a>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Intersection Observer for Animations
+    document.addEventListener("DOMContentLoaded", () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: "-50px",
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            const delay = el.getAttribute('data-delay') || 0;
+            setTimeout(() => {
+              el.classList.add('motion-visible');
+              el.classList.remove('motion-hidden-left', 'motion-hidden-right', 'motion-hidden-bottom', 'motion-hidden-bottom-small', 'motion-hidden-scale');
+            }, delay);
+            observer.unobserve(el);
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.motion-trigger').forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
+
  {% include 'includes/message.html' %}

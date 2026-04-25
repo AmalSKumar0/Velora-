@@ -27,5 +27,6 @@ urlpatterns = [
     path('client/individual-work/<uuid:order_id>',clinet_view_individual_work,name="clinet_view_individual_work"),
     path('client/complete-work/<uuid:order_id>',complete_order,name="complete_order"),
     path("download/<uuid:submission_id>/", download_final, name="download_final"),
+    path("review/add-review/",add_review,name="submit_review")
 
 ]

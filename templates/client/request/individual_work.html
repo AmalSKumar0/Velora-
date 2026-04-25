@@ -34,75 +34,106 @@
         <!-- ✅ Preview Section -->
         <tr>
             <td colspan="8" style="text-align:center; padding:20px;">
-                
+
                 {% if submission %}
-                    {% if order.status != 'completed' %}
-                    <img src="{{ submission.preview_file.url }}" width="300"><br><br>
-                    {% endif %}
+                {% if order.status != 'completed' %}
+                <img src="{{ submission.preview_file.url }}" width="300"><br><br>
+                {% endif %}
 
-                    {% if subrev %}
-                        
-                        <!-- ✅ Approved -->
-                        {% if subrev.action == 'approved' %}
+                {% if subrev %}
 
-                            {% if order.status == 'completed' %}
-                                <img src="{{ submission.original_file.url }}" width="300"><br><br>
-                                <!-- 🔒 SECURE DOWNLOAD -->
-                                <a href="{% url 'download_final' submission.id %}">
-                                    <button>Download Final Image</button>
-                                </a>
+                <!-- ✅ Approved -->
+                {% if subrev.action == 'approved' %}
 
-                            {% else %}
+                {% if order.status == 'completed' %}
+                <img src="{{ submission.original_file.url }}" width="300"><br><br>
+                <!-- 🔒 SECURE DOWNLOAD -->
+                <a href="{% url 'download_final' submission.id %}">
+                    <button>Download Final Image</button>
+                </a>
+                {% if review %}
 
-                                <form method="get" action="{% url 'complete_order' order.id %}">
-                                    <button type="submit"
-                                        onclick="return confirm('Are you sure you want to finish this work?')">
-                                        Complete Work
-                                    </button>
-                                </form>
-
-                            {% endif %}
-
-                        {% else %}
-                            <p style="color:orange;">Changes requested by client</p>
-                        {% endif %}
-
-                    {% else %}
-
-                        <!-- ✅ Review Form -->
-                        <form method="POST" action="{% url 'clinet_view_individual_work' order.id %}">
-                            {% csrf_token %}
-
-                            <input type="hidden" name="subid" value="{{ submission.id }}">
-
-                            <h3>Review Submission</h3>
-
-                            <label>
-                                <input type="radio" name="action" value="approved" required>
-                                ✅ Approve
-                            </label>
-
-                            <br>
-
-                            <label>
-                                <input type="radio" name="action" value="changes_requested">
-                                🔁 Request Changes
-                            </label>
-
-                            <br><br>
-
-                            <textarea name="comment" rows="4"
-                                placeholder="Give feedback..."></textarea>
-
-                            <br><br>
-
-                            <button type="submit">Submit Review</button>
-                        </form>
-
-                    {% endif %}
+                    <h4>Review: {{ review.rating }}-{{ review.comment }}</h4>
 
                 {% else %}
-                    <h4>No preview available</h4>
+
+                <form method="POST" action="{% url 'submit_review' %}">
+                    {% csrf_token %}
+
+                    <!-- Hidden Order ID -->
+                    <input type="hidden" name="orderid" value="{{ order.id }}">
+
+                    <!-- Rating -->
+                    <label for="rating">Rating (1–5):</label>
+                    <select name="rating" id="rating" required>
+                        <option value="">Select rating</option>
+                        <option value="1">1 - Poor</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="5">5 - Excellent</option>
+                    </select>
+
+                    <!-- Comment -->
+                    <label for="comment">Comment:</label>
+                    <textarea name="comment" id="comment" rows="4" placeholder="Write your feedback..."
+                        required></textarea>
+
+                    <!-- Submit -->
+                    <button type="submit">Submit Review</button>
+                </form>
+                {% endif %}
+
+
+                {% else %}
+
+                <form method="get" action="{% url 'complete_order' order.id %}">
+                    <button type="submit" onclick="return confirm('Are you sure you want to finish this work?')">
+                        Complete Work
+                    </button>
+                </form>
+
+                {% endif %}
+
+                {% else %}
+                <p style="color:orange;">Changes requested by client</p>
+                {% endif %}
+
+                {% else %}
+
+                <!-- ✅ Review Form -->
+                <form method="POST" action="{% url 'clinet_view_individual_work' order.id %}">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="subid" value="{{ submission.id }}">
+
+                    <h3>Review Submission</h3>
+
+                    <label>
+                        <input type="radio" name="action" value="approved" required>
+                        ✅ Approve
+                    </label>
+
+                    <br>
+
+                    <label>
+                        <input type="radio" name="action" value="changes_requested">
+                        🔁 Request Changes
+                    </label>
+
+                    <br><br>
+
+                    <textarea name="comment" rows="4" placeholder="Give feedback..."></textarea>
+
+                    <br><br>
+
+                    <button type="submit">Submit Review</button>
+                </form>
+
+                {% endif %}
+
+                {% else %}
+                <h4>No preview available</h4>
                 {% endif %}
 
             </td>

@@ -3,7 +3,292 @@
 
 {% block title %}Home | Velora Digital Art{% endblock %}
 {% block content %}
+  <!-- Hero Section -->
+<style>
+.pendulum {
+  transform-origin: center;
+  animation: swing 3.8s linear infinite;
+}
 
-<h1>Home</h1>
+/* Smooth sinusoidal motion */
+@keyframes swing {
+  0%   { transform: translateY(-1rem) rotate(-10deg); }
+  25%  { transform: translateY(-1rem) rotate(0deg); }
+  50%  { transform: translateY(-1rem) rotate(10deg); }
+  75%  { transform: translateY(-1rem) rotate(0deg); }
+  100% { transform: translateY(-1rem) rotate(-10deg); }
+}
+</style>
+ <section class="bg-[#f9f6f0] pt-12 pb-16 px-8 lg:px-16 relative overflow-hidden border-b-[3px] border-black">
+    <div class="max-w-[90rem] mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-8">
+      <!-- Left: Illustration -->
+      <div 
+        class="motion-trigger flex-1 w-full flex justify-center lg:justify-start relative motion-hidden-left"
+        data-delay="0"
+      >
+         <img src="{% static 'images/hero.png' %}" alt="Digital Art Creation" class="w-full max-w-2xl object-cover rounded-[3rem] border-[4px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] h-[500px] md:h-[600px]">
+      </div>
+      
+      <!-- Right: Text -->
+      <div 
+        class="motion-trigger flex-1 w-full lg:pl-12 motion-hidden-right"
+        data-delay="200"
+      >
+         <h1 class="font-display text-[5rem] md:text-[6rem] lg:text-[7rem] leading-[0.85] tracking-wide text-[#1a1a1a] mb-8 uppercase">
+           Art <br/> That <br/> Matters
+          <svg class="pendulum inline-block w-16 h-16 md:w-24 md:h-24 text-[#f4b942] ml-4 -translate-y-4 md:-translate-y-8" viewBox="0 0 100 100" fill="currentColor">
+  <polygon points="0,100 50,0 100,100" />
+</svg>
+         </h1>
+         <div class="pl-2">
+           <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Commission • Digital Art</p>
+           <p class="text-xl md:text-2xl font-medium text-gray-800 mb-10 max-w-md leading-snug">
+             Connecting visionary clients with extraordinary digital artists.
+           </p>
+           <div class="flex flex-wrap gap-4">
+             <button class="bg-[#f4b942] text-[#1a1a1a] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#e0a738] transition-colors">
+               Start Commission
+             </button>
+             <button class="bg-transparent border-[3px] border-[#1a1a1a] text-[#1a1a1a] px-8 py-4 rounded-full font-bold text-lg hover:bg-[#1a1a1a] hover:text-white transition-colors">
+               Join as Artist
+             </button>
+           </div>
+         </div>
+      </div>
+    </div>
+  </section>
 
+  <!-- Stats Section -->
+  <section class="py-16 px-8 lg:px-16 bg-white border-b-[3px] border-black">
+    <div 
+      class="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-center md:divide-x-[3px] divide-black"
+    >
+      <div class="motion-trigger motion-hidden-bottom-small flex-1 px-4 min-w-[150px]" data-delay="0">
+        <h3 class="text-5xl font-bold mb-3">10K+</h3>
+        <p class="text-gray-600 font-bold uppercase tracking-wider text-sm">Commissions</p>
+      </div>
+      <div class="motion-trigger motion-hidden-bottom-small flex-1 px-4 min-w-[150px]" data-delay="100">
+        <h3 class="text-5xl font-bold mb-3">5K+</h3>
+        <p class="text-gray-600 font-bold uppercase tracking-wider text-sm">Active Artists</p>
+      </div>
+      <div class="motion-trigger motion-hidden-bottom-small flex-1 px-4 min-w-[150px]" data-delay="200">
+        <h3 class="text-5xl font-bold mb-3">4.9</h3>
+        <p class="text-gray-600 font-bold uppercase tracking-wider text-sm">Average Rating</p>
+      </div>
+      <div class="motion-trigger motion-hidden-bottom-small flex-1 px-4 min-w-[150px]" data-delay="300">
+        <h3 class="text-5xl font-bold mb-3">100%</h3>
+        <p class="text-gray-600 font-bold uppercase tracking-wider text-sm">Secure Payments</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="py-16 px-8 lg:px-16 bg-[#fffdf8] border-b-[3px] border-black">
+    <div class="motion-trigger motion-hidden-bottom max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10">
+      <div class="flex-1 w-full">
+         <div class="relative max-w-lg mx-auto lg:mx-0">
+           <div class="absolute inset-0 bg-[#ffc86b] rounded-[2.5rem] translate-x-4 translate-y-4 border-[3px] border-black"></div>
+           <img src="{% static 'images/hero1.png' %}" alt="Artist Workspace" class="relative rounded-[2.5rem] border-[3px] border-black w-full object-cover h-[250px] md:h-[350px]" />
+         </div>
+      </div>
+      <div class="flex-1">
+        <h2 class="font-display text-6xl md:text-7xl leading-[1.15] mb-8">
+          A Seamless <br/>
+          <span class="inline-block border-[3px] border-black rounded-full px-6 py-1 bg-[#ffc86b] mt-2 mb-2 font-sans font-bold text-5xl md:text-6xl">Workflow</span> for <br/>
+          Artists & Clients
+        </h2>
+        <p class="text-gray-600 leading-relaxed max-w-lg text-lg font-medium">
+          Our platform bridges the gap between vision and creation. Clients submit detailed requests with reference files, artists review and accept, and payments are securely handled before final delivery.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-16 px-8 lg:px-16 bg-white border-b-[3px] border-black">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="motion-trigger motion-hidden-bottom-small bg-[#1a1a1a] text-white rounded-[2.5rem] p-12 flex flex-col justify-center items-start lg:col-span-2 relative overflow-hidden border-[3px] border-black shadow-[8px_8px_0px_0px_#ffc86b]" data-delay="0">
+        <!-- Decorative lines -->
+        <svg class="absolute top-0 right-0 w-64 h-64 text-gray-800 opacity-50" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1">
+           <circle cx="100" cy="0" r="50" />
+           <circle cx="100" cy="0" r="70" />
+           <circle cx="100" cy="0" r="90" />
+        </svg>
+        
+        <h3 class="text-4xl md:text-5xl font-bold mb-2 relative z-10">Platform Features</h3>
+        <h3 class="text-4xl md:text-5xl font-bold mb-10 text-[#ffc86b] relative z-10">Built for Creators</h3>
+        <button class="bg-[#ffc86b] text-black px-8 py-4 rounded-full font-bold flex items-center gap-3 hover:bg-yellow-400 transition-colors relative z-10 group border-[3px] border-black">
+          Explore All Features <i data-lucide="arrow-up-right" class="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+        </button>
+      </div>
+      
+      <div class="motion-trigger motion-hidden-bottom-small bg-[#fffdf8] border-[3px] border-black rounded-[2.5rem] p-10 hover:bg-[#ffc86b] transition-colors group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" data-delay="100">
+        <div class="w-16 h-16 bg-white border-[3px] border-black rounded-2xl flex items-center justify-center mb-8">
+          <i data-lucide="palette" class="w-8 h-8 text-black"></i>
+        </div>
+        <h4 class="text-2xl font-bold mb-4">Structured Requests</h4>
+        <p class="text-gray-700 font-medium leading-relaxed">Clients submit detailed requirements and reference files to ensure artists understand the exact vision.</p>
+      </div>
+      
+      <div class="motion-trigger motion-hidden-bottom-small bg-[#fffdf8] border-[3px] border-black rounded-[2.5rem] p-10 hover:bg-[#ffc86b] transition-colors group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" data-delay="200">
+        <div class="w-16 h-16 bg-white border-[3px] border-black rounded-2xl flex items-center justify-center mb-8">
+          <i data-lucide="shield-check" class="w-8 h-8 text-black"></i>
+        </div>
+        <h4 class="text-2xl font-bold mb-4">Secure Payments</h4>
+        <p class="text-gray-700 font-medium leading-relaxed">Integrated gateway (Razorpay) ensures artists get paid for their work and clients receive their final art.</p>
+      </div>
+      
+      <div class="motion-trigger motion-hidden-bottom-small bg-[#fffdf8] border-[3px] border-black rounded-[2.5rem] p-10 hover:bg-[#ffc86b] transition-colors group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" data-delay="300">
+        <div class="w-16 h-16 bg-white border-[3px] border-black rounded-2xl flex items-center justify-center mb-8">
+          <i data-lucide="users" class="w-8 h-8 text-black"></i>
+        </div>
+        <h4 class="text-2xl font-bold mb-4">Role-Based Access</h4>
+        <p class="text-gray-700 font-medium leading-relaxed">Dedicated dashboards and permissions for Clients, Artists, and Admins to manage their specific tasks.</p>
+      </div>
+      
+      <div class="motion-trigger motion-hidden-bottom-small bg-[#fffdf8] border-[3px] border-black rounded-[2.5rem] p-10 hover:bg-[#ffc86b] transition-colors group shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]" data-delay="400">
+        <div class="w-16 h-16 bg-white border-[3px] border-black rounded-2xl flex items-center justify-center mb-8">
+          <i data-lucide="file-bar-chart" class="w-8 h-8 text-black"></i>
+        </div>
+        <h4 class="text-2xl font-bold mb-4">Admin Reporting</h4>
+        <p class="text-gray-700 font-medium leading-relaxed">Download structured CSV/PDF reports on commissions, payments, and user activity for tracking.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Artists Section -->
+  <section class="py-16 px-8 lg:px-16 bg-[#1a1a1a] text-white border-b-[3px] border-black">
+    <div class="motion-trigger motion-hidden-bottom max-w-7xl mx-auto" data-delay="0">
+      <h2 class="font-display text-6xl md:text-7xl text-center mb-10">
+        Featured <span class="font-sans font-bold text-5xl md:text-6xl border-[3px] border-[#ffc86b] text-[#ffc86b] rounded-full px-8 py-2 inline-block ml-2 mt-4 md:mt-0 bg-[#ffc86b]/10">Artists</span>
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Artist 1 -->
+        <div class="bg-white text-black rounded-[2.5rem] p-6 border-[4px] border-black shadow-[8px_8px_0px_0px_#ffc86b] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#ffc86b] transition-all duration-300">
+          <div class="bg-[#fffdf8] rounded-3xl h-48 mb-8 flex items-center justify-center overflow-hidden border-[3px] border-black relative">
+             <img src="{% static 'images/hero5.png' %}" alt="Character Design" class="w-full h-full object-cover" />
+             <div class="absolute top-4 right-4 bg-white border-2 border-black px-3 py-1 rounded-full shadow-md font-bold text-sm">
+               Starts at $120
+             </div>
+          </div>
+          <div class="flex items-center justify-between text-sm text-gray-600 font-bold mb-3 px-2">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="star" class="w-5 h-5 text-[#ffc86b] fill-current stroke-black stroke-2"></i>
+              <span class="text-black text-lg">5.0</span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-full border border-gray-300">
+              <i data-lucide="image" class="w-4 h-4"></i>
+              <span>Character Design</span>
+            </div>
+          </div>
+          <h4 class="text-2xl font-bold mb-6 leading-snug px-2">Elena Rostova</h4>
+          <button class="w-full border-[3px] border-black bg-[#ffc86b] rounded-full py-4 font-bold text-lg hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+            Request Commission
+          </button>
+        </div>
+        
+        <!-- Artist 2 -->
+        <div class="bg-white text-black rounded-[2.5rem] p-6 border-[4px] border-black shadow-[8px_8px_0px_0px_#ffc86b] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#ffc86b] transition-all duration-300">
+          <div class="bg-[#fffdf8] rounded-3xl h-48 mb-8 flex items-center justify-center overflow-hidden border-[3px] border-black relative">
+             <img src="{% static 'images/hero3.png' %}" alt="Environment Concept" class="w-full h-full object-cover" />
+             <div class="absolute top-4 right-4 bg-white border-2 border-black px-3 py-1 rounded-full shadow-md font-bold text-sm">
+               Starts at $250
+             </div>
+          </div>
+          <div class="flex items-center justify-between text-sm text-gray-600 font-bold mb-3 px-2">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="star" class="w-5 h-5 text-[#ffc86b] fill-current stroke-black stroke-2"></i>
+              <span class="text-black text-lg">5.0</span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-full border border-gray-300">
+              <i data-lucide="image" class="w-4 h-4"></i>
+              <span>Environment Concept</span>
+            </div>
+          </div>
+          <h4 class="text-2xl font-bold mb-6 leading-snug px-2">Marcus Chen</h4>
+          <button class="w-full border-[3px] border-black bg-[#ffc86b] rounded-full py-4 font-bold text-lg hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+            Request Commission
+          </button>
+        </div>
+        
+        <!-- Artist 3 -->
+        <div class="bg-white text-black rounded-[2.5rem] p-6 border-[4px] border-black shadow-[8px_8px_0px_0px_#ffc86b] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#ffc86b] transition-all duration-300">
+          <div class="bg-[#fffdf8] rounded-3xl h-48 mb-8 flex items-center justify-center overflow-hidden border-[3px] border-black relative">
+             <img src="{% static 'images/hero9.png' %}" alt="Vector Illustration" class="w-full h-full object-cover" />
+             <div class="absolute top-4 right-4 bg-white border-2 border-black px-3 py-1 rounded-full shadow-md font-bold text-sm">
+               Starts at $85
+             </div>
+          </div>
+          <div class="flex items-center justify-between text-sm text-gray-600 font-bold mb-3 px-2">
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="star" class="w-5 h-5 text-[#ffc86b] fill-current stroke-black stroke-2"></i>
+              <span class="text-black text-lg">5.0</span>
+            </div>
+            <div class="flex items-center gap-1.5 bg-gray-100 px-3 py-1 rounded-full border border-gray-300">
+              <i data-lucide="image" class="w-4 h-4"></i>
+              <span>Vector Illustration</span>
+            </div>
+          </div>
+          <h4 class="text-2xl font-bold mb-6 leading-snug px-2">Sarah Jenkins</h4>
+          <button class="w-full border-[3px] border-black bg-[#ffc86b] rounded-full py-4 font-bold text-lg hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+            Request Commission
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it Works Section -->
+  <section class="py-16 px-8 lg:px-16 bg-[#fffdf8] border-b-[3px] border-black">
+    <div class="motion-trigger motion-hidden-bottom max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-10">
+      <div class="flex-1">
+        <h2 class="font-display text-6xl md:text-7xl leading-[1.15] mb-8">
+          How the Commission <br/>
+          <span class="font-sans font-bold text-5xl md:text-6xl inline-block border-[3px] border-[#ffc86b] text-[#ffc86b] rounded-full px-8 py-2 mt-3 bg-white">Process Works</span>
+        </h2>
+        <p class="text-gray-600 leading-relaxed max-w-lg mb-10 text-lg font-medium">
+          Our structured workflow ensures clear communication, secure transactions, and high-quality deliverables for every project.
+        </p>
+        <ul class="space-y-8">
+          <li class="flex items-start gap-5">
+            <div class="w-12 h-12 rounded-full bg-[#ffc86b] border-[3px] border-black flex items-center justify-center text-black font-black text-xl shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              1
+            </div>
+            <div>
+              <h4 class="font-bold text-2xl mb-2">Submit Request</h4>
+              <p class="text-gray-600 font-medium">Client provides detailed requirements and uploads reference files.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-5">
+            <div class="w-12 h-12 rounded-full bg-white border-[3px] border-black flex items-center justify-center text-black font-black text-xl shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              2
+            </div>
+            <div>
+              <h4 class="font-bold text-2xl mb-2">Artist Creates</h4>
+              <p class="text-gray-600 font-medium">Artist reviews, accepts the commission, and completes the artwork.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-5">
+            <div class="w-12 h-12 rounded-full bg-black border-[3px] border-black flex items-center justify-center text-white font-black text-xl shrink-0 shadow-[4px_4px_0px_0px_#ffc86b]">
+              3
+            </div>
+            <div>
+              <h4 class="font-bold text-2xl mb-2">Pay & Download</h4>
+              <p class="text-gray-600 font-medium">Client makes payment via Razorpay and accesses the final deliverables.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="flex-1 w-full">
+         <div class="relative max-w-lg mx-auto lg:mx-0">
+           <div class="absolute inset-0 bg-[#ffc86b] rounded-[2.5rem] -translate-x-4 translate-y-4 border-[3px] border-black"></div>
+           <img src="{% static 'images/hero10.png' %}" alt="Workflow" class="relative rounded-[2.5rem] border-[3px] border-black w-full object-cover h-[250px] md:h-[400px]" />
+         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  
 {% endblock %}

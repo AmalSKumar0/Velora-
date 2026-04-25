@@ -6,12 +6,15 @@ from users.models import *
 from commissions.models import *
 from core.models import Tag
 from users.decorators import role_required
-
+from payments.models import Payment
+from django.db.models import Sum, Count, Avg
+import json
 
 # admin
 @login_required
 @role_required('admin')
 def admin_dash(request):
+
     return render(request,'admin/dashboard.html')
 
 

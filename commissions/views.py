@@ -12,12 +12,14 @@ from django.db.models import Count, Exists, OuterRef
 @login_required
 @role_required('client')
 def request_view(request):
-    order_exists = Order.objects.filter(request=OuterRef('pk'))
-
-    # Subquery: check if payment is HELD (paid)
+    
     paid_exists = Payment.objects.filter(
         order__request=OuterRef('pk'),
-        status='held'  
+        status__in=['held', 'released'] 
+    )
+
+    order_exists = Order.objects.filter(
+        request=OuterRef('pk')
     )
 
     requests = Request.objects.filter(
@@ -34,6 +36,7 @@ def request_view(request):
 
     return render(request, 'client/request/requests.html', {
         'requests': requests,
+        'tags':Tag.objects.all()
     })
 
 
@@ -88,10 +91,7 @@ def add_new_request(request):
 
             RequestImage.objects.bulk_create(image_objs)
             
-        return redirect('all_request')
-
-    return render(request,'client/request/addrequest.html', {'tags': tags})
-
+    return redirect('all_request')
 
 
 @login_required
@@ -121,7 +121,8 @@ def send_new_proposal(request, id):
         return redirect('artistDashboard')
 
     return render(request, 'artist/request/send_proposal.html', {
-        'req': req
+        'req': req,
+        'tags':Tag.objects.all()
     })
 
 @login_required
@@ -133,7 +134,8 @@ def view_all_proposal(request, id):
         request=req,
     )
     return render(request, "client/request/all_proposals.html", {
-        'proposals': proposals
+        'proposals': proposals,
+        'tags':Tag.objects.all()
     })
 
 @login_required

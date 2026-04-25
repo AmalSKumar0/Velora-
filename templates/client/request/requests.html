@@ -4,81 +4,121 @@
 {% block title %}My Requests | Velora Digital Art{% endblock %}
 
 {% block content %}
+<div id="requests" class="tab-content active">
+    <div class="flex flex-col xl:flex-row xl:items-end justify-between mb-6 gap-4">
+        <div>
+            <h1 class="font-display text-5xl md:text-6xl mb-2">My Requests</h1>
+            <p class="text-gray-600 font-medium text-lg">Manage your active commissions and review artist proposals.</p>
+        </div>
+        <div class="flex flex-wrap gap-2" id="filterContainer">
+            <button data-filter="All" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">All</button>
+            <button data-filter="Open" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Open</button>
+            <button data-filter="In Progress" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">In Progress</button>
+            <button data-filter="Payment Required" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Payment Required</button>
+            <button data-filter="Completed" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Completed</button>
+        </div>
+    </div>
 
-<h1>My Requests</h1>
-
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Budget</th>
-            <th>Status</th>
-            <th>Tags</th>
-            <th>Images</th>
-            <th>Created</th>
-            <th>No of Proposals</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-row-dense items-start">
+        
         {% for request in requests %}
-        <tr>
-            <td>{{ request.title }}</td>
+        <div data-status="{{ request.status }}" class="request-card bg-white border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col {% if request.status == 'Open' %}md:col-span-2 lg:col-span-2{% endif %}">
+            
+            <div class="flex flex-col sm:flex-row justify-between gap-6 mb-6 border-b-[3px] border-gray-100 pb-6">
+                <div>
+                    <div class="flex flex-wrap items-center gap-3 mb-3">
+                        <span class="border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] 
+                            {% if request.status == 'Open' %}bg-[#ffc86b]
+                            {% elif request.status == 'In Progress' %}bg-blue-300
+                            {% elif request.status == 'Payment Required' %}bg-red-300
+                            {% else %}bg-green-300{% endif %}">
+                            {{ request.status }}
+                        </span>
+                        <span class="text-gray-500 font-medium text-sm flex items-center gap-1">
+                            <i data-lucide="clock" class="w-4 h-4"></i> {{ request.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
 
-            <!-- truncate long text -->
-            <td>{{ request.description|truncatechars:80 }}</td>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-2">{{ request.title }}</h2>
+                    <p class="text-gray-600 font-medium max-w-2xl mb-4">{{ request.description|truncatechars:150 }}</p>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in request.tags.all %}
+                        <span class="text-xs font-bold bg-gray-100 border-[2px] border-black px-2 py-0.5 rounded-md">#{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
 
-            <td>
-                ₹{{ request.budget_min }} - ₹{{ request.budget_max }}
-            </td>
+                <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
+                    <div class="text-2xl font-black">₹{{ request.budget_min }} - ₹{{ request.budget_max }}</div>
+                    <div class="text-sm font-bold text-gray-400">Proposals: {{ request.proposal_count }}</div>
+                </div>
+            </div>
 
-            <td>{{ request.status }}</td>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto">
+                <div class="flex -space-x-3 overflow-hidden">
+                    {% for img in request.images.all|slice:":3" %}
+                    <img class="inline-block h-10 w-10 rounded-full border-2 border-black object-cover" src="{{ img.image.url }}" alt="Ref image">
+                    {% endfor %}
+                </div>
 
-            <!-- TAGS -->
-            <td>
-                {% for tag in request.tags.all %}
-                    <span>{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
-                {% empty %}
-                    No tags
-                {% endfor %}
-            </td>
-
-            <!-- IMAGES -->
-            <td>
-                {% for img in request.images.all %}
-                    <img src="{{ img.image.url }}" width="60">
-                {% empty %}
-                    No images
-                {% endfor %}
-            </td>
-
-            <td>{{ request.created_at|date:"M d, Y" }}</td>
-            <td>{{ request.proposal_count }}</td>
-            <td>
-                {% if request.has_order %}
-                    {% with order=request.order_set.first %}
-                        {% if request.is_paid %}
-                            <a href="{% url 'clinet_view_individual_work' order.id %}">View Work</a>
-                        {% else %}
-                            <a href="{% url 'create_payment' order.id %}">Pay</a>
-                        {% endif %}
-                    {% endwith %}
-                {% else %}
-                    <a href="{% url 'all_proposals' request.id %}">view peoposals</a>
-                {% endif %}
-            </td>
-        </tr>
+                <div class="flex gap-3 w-full sm:w-auto">
+                    {% if request.has_order %}
+                        {% with order=request.order_set.first %}
+                            {% if request.is_paid %}
+                                <a href="{% url 'clinet_view_individual_work' order.id %}" class="bg-black text-white px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all">
+                                    View Work
+                                </a>
+                            {% else %}
+                                <a href="{% url 'create_payment' order.id %}" class="bg-[#ffc86b] text-black px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all">
+                                    Pay Now
+                                </a>
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        <a href="{% url 'all_proposals' request.id %}" class="bg-white text-black px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all flex items-center gap-2">
+                            View Proposals <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% empty %}
-        <tr>
-            <td colspan="7" style="text-align:center;">
-                No requests found
-            </td>
-        </tr>
-    
+        <div class="col-span-full flex flex-col items-center justify-center py-20 bg-white border-[4px] border-dashed border-black rounded-[2.5rem]">
+            <i data-lucide="folder-open" class="w-16 h-16 mb-4 text-gray-300"></i>
+            <h3 class="text-2xl font-bold">No requests found</h3>
+            <p class="text-gray-500 font-medium">Start by posting your first project request.</p>
+        </div>
         {% endfor %}
-    </tbody>
-</table>
 
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const requestCards = document.querySelectorAll('.request-card');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterVal = btn.getAttribute('data-filter');
+                
+                // Toggle Button Styles
+                filterBtns.forEach(b => {
+                    b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700';
+                });
+                btn.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black';
+
+                // Filter Cards
+                requestCards.forEach(card => {
+                    if (filterVal === 'All' || card.getAttribute('data-status') === filterVal) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}

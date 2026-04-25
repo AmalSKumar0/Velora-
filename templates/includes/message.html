@@ -1,7 +1,90 @@
+<style>
+.message-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    min-width: 260px;
+    max-width: 320px;
+
+    padding: 14px 18px;
+    font-weight: 600;
+    font-size: 14px;
+
+    background: white;
+    border: 3px solid black;
+    border-radius: 1.2rem;
+
+    box-shadow: 6px 6px 0px 0px #ffc86b;
+
+    animation: popIn 0.2s ease;
+}
+
+/* Variants */
+.message-box.success {
+    background: #eafff1;
+    box-shadow: 6px 6px 0px 0px #22c55e;
+}
+
+.message-box.error {
+    background: #ffecec;
+    box-shadow: 6px 6px 0px 0px #ef4444;
+}
+
+.message-box.warning {
+    background: #fff7e6;
+    box-shadow: 6px 6px 0px 0px #f59e0b;
+}
+
+.message-box.info {
+    background: #eef5ff;
+    box-shadow: 6px 6px 0px 0px #3b82f6;
+}
+
+/* Close button */
+.message-box button {
+    border: 2px solid black;
+    background: white;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+.message-box button:hover {
+    background: #ffc86b;
+}
+
+/* Animation */
+@keyframes popIn {
+    from {
+        transform: translateY(-10px) scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+</style>
+
 {% if messages %}
+<div class="fixed top-6 right-6 z-50 flex flex-col gap-4">
     {% for message in messages %}
-        <div class="alert {{ message.tags }}">
-            {{ message }}
+        <div class="message-box {{ message.tags }}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.remove()">×</button>
         </div>
     {% endfor %}
+</div>
 {% endif %}
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.message-box').forEach(el => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+    });
+}, 4000);
+</script>

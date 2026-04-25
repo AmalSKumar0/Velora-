@@ -1,7 +1,214 @@
 {% load static %}
-<a href="{% url 'logout' %}">logout</a>
-<a href="{% url 'all_request' %}">requests</a>
-<a href="{% url 'create_request' %}">add request</a>
-welcome 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Velora - Client Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['"Caveat Brush"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>\n    html { font-size: 13px; }\n
+   .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; }
+    .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+    
+    .modal-overlay { display: none; opacity: 0; transition: opacity 0.2s ease-out; }
+    .modal-overlay.active { display: flex; opacity: 1; }
+    .modal-content { transform: scale(0.95) translateY(20px); opacity: 0; transition: all 0.2s ease-out; }
+    .modal-overlay.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+    .motion-trigger { opacity: 0; transform: translateY(20px); transition: all 0.4s ease-out; }
+    .motion-visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black flex flex-col lg:flex-row">
+  
+  <header class="bg-[#ffc86b] flex lg:flex-col items-center lg:items-start justify-between py-4 lg:py-10 px-8 lg:px-6 w-full lg:w-72 lg:h-screen border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black sticky top-0 z-40 shrink-0">
+    <div class="flex lg:flex-col items-center lg:items-start gap-12 lg:gap-10 lg:w-full">
+      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-3xl tracking-wide lg:px-2">
+        <div class="w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center bg-white shrink-0">
+           <i data-lucide="brush" class="w-4 h-4"></i>
+        </div>
+        VELORA
+      </a>
+      
+      <nav class="hidden md:flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full">
+        <button onclick="window.location.href=`{% url 'clientDashboard' %}`" data-tab="discover" class="tab-btn px-5 py-2 lg:py-4 rounded-full lg:rounded-2xl font-bold text-sm lg:text-base border-[3px] transition-all text-left border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          Discover Artists
+        </button>
+        <button data-tab="requests" onclick="window.location.href=`{% url 'all_request' %}`" class="tab-btn px-5 py-2 lg:py-4 rounded-full lg:rounded-2xl font-bold text-sm lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20">
+          My Requests
+        </button>
+      </nav>
+    </div>
+
+    <div class="flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full lg:mt-auto">
+      <button onclick="openModal()" class="hidden md:flex bg-[#1a1a1a] text-white px-5 py-2.5 lg:py-4 rounded-full lg:rounded-2xl text-sm lg:text-base font-bold hover:bg-black transition-colors items-center justify-center gap-2 border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        <i data-lucide="plus" class="w-4 h-4"></i> Post Request
+      </button>
+      <div class="flex items-center gap-3 lg:mt-4 lg:bg-white lg:border-[3px] lg:border-black lg:rounded-2xl lg:p-3 lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div class="w-10 h-10 rounded-full border-[3px] border-black bg-white overflow-hidden shrink-0">
+          <img src="https://api.dicebear.com/7.x/notionists/svg?seed=John" alt="Profile" class="w-full h-full object-cover" />
+        </div>
+        <div class="hidden lg:block">
+          <div class="font-bold text-sm">John Doe</div>
+          <div class="text-xs font-medium text-gray-500">Client</div>
+        </div>
+      </div>
+    </div>
+  </header>
+ <main class="flex-1 p-6 lg:p-10 max-w-[90rem] mx-auto w-full">
+    
+
+
 {% block content %}{% endblock %}
+
+
+
+
+ </main>
+
+  <!-- Modal -->
+  <div id="postModal" class="modal-overlay fixed inset-0 z-50 items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+    <div class="modal-content w-full max-w-5xl bg-white border-[4px] border-black rounded-[2.5rem] p-6 md:p-10 shadow-[12px_12px_0px_0px_#ffc86b] relative my-4">
+      <button onclick="closeModal()" class="absolute top-6 right-6 w-10 h-10 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center hover:bg-[#ffc86b] transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      
+      <h2 class="font-display text-4xl md:text-5xl mb-2 uppercase tracking-wide">Post a Request</h2>
+      <p class="text-gray-600 font-medium mb-6 text-lg">Describe what you need and let artists come to you.</p>
+      
+     <form method="POST" enctype="multipart/form-data" action="{% url 'create_request' %}" class="space-y-5">
+    {% csrf_token %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- LEFT COLUMN -->
+        <div class="space-y-4">
+
+            <!-- Title -->
+            <div>
+                <label class="block font-bold mb-2 text-sm">Project Title</label>
+                <input type="text" name="title" required
+                    placeholder="e.g. Fantasy Character Concept Art"
+                    class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white" />
+            </div>
+
+            <!-- Budget -->
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block font-bold mb-2 text-sm">Budget Min ($)</label>
+                    <input type="number" name="budget_min" required
+                        placeholder="e.g. 100"
+                        class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none bg-white" />
+                </div>
+                <div>
+                    <label class="block font-bold mb-2 text-sm">Budget Max ($)</label>
+                    <input type="number" name="budget_max" required
+                        placeholder="e.g. 300"
+                        class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none bg-white" />
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div>
+                <label class="block font-bold mb-2 text-sm">Tags</label>
+                <select name="tags" multiple
+                    class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-medium bg-white">
+                    {% for tag in tags %}
+                        <option value="{{ tag.id }}">{{ tag.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Images -->
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="flex flex-col">
+            <label class="block font-bold mb-2 text-sm">Description</label>
+            <textarea name="description" required
+                placeholder="Describe the style, mood, and specific details..."
+                class="w-full flex-1 border-[3px] border-black rounded-xl px-4 py-3 font-medium focus:outline-none focus:ring-4 focus:ring-[#ffc86b]/50 transition-all bg-white resize-none min-h-[150px]"></textarea>
+
+             <div>
+                <label class="block font-bold mb-2 text-sm">
+                    Reference Images (max 4, each under 1MB)
+                </label>
+                <input type="file" name="images" multiple accept="image/*"
+                    class="w-full border-[3px] border-black rounded-xl px-4 py-3 bg-white">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Submit -->
+    <button type="submit"
+        class="w-full bg-[#ffc86b] text-black rounded-xl py-4 font-bold text-lg flex items-center justify-center gap-2 hover:bg-yellow-400 transition-colors border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mt-2">
+        Submit Request
+    </button>
+</form>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Filter Logic
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const requestCards = document.querySelectorAll('.request-card');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filterVal = btn.getAttribute('data-filter');
+        
+        filterBtns.forEach(b => {
+          if (b.getAttribute('data-filter') === filterVal) {
+            b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black';
+          } else {
+            b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700';
+          }
+        });
+
+        requestCards.forEach(card => {
+          if (filterVal === 'All' || card.getAttribute('data-status') === filterVal) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Modal Logic
+    function openModal() {
+      const modal = document.getElementById('postModal');
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('postModal');
+      modal.classList.remove('active');
+    }
+  </script>
+
+
+</body>
+</html>
   {% include 'includes/message.html' %}

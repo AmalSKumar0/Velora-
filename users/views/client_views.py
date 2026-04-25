@@ -14,7 +14,10 @@ from django.http import FileResponse
 @login_required
 @role_required('client')
 def client_dash(request):
-    return render(request,'client/dashboard.html')
+    return render(request,'client/dashboard.html',
+    {
+        'tags':Tag.objects.all()
+    })
     
 @login_required
 @role_required('client')
@@ -68,12 +71,43 @@ def clinet_view_individual_work(request,order_id):
 
     submission = Submission.objects.filter(order=order).first()
     subrev = SubmissionReview.objects.filter(submission=submission).first()
+    review = Review.objects.filter(order=order).first()
+
 
     return render(request, 'client/request/individual_work.html', {
         'order': order,
         'submission':submission,
-        'subrev':subrev
+        'subrev':subrev,
+        'review':review,
+        'tags':Tag.objects.all()
     })
+
+
+@login_required
+@role_required('client')
+def add_review(request):
+    if request.method == "POST":
+
+        order_id = request.POST.get('orderid')
+        order = Order.objects.get(id=order_id)
+        artist = order.artist
+        client = request.user
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+
+        Review.objects.create(
+            order = order,
+            client = client,
+            artist = artist,
+            rating = rating,
+            comment = comment
+        )
+
+        messages.success(request,"Review added successfully")
+        return redirect("clinet_view_individual_work", order.id)
+    
+    return redirect('login')
+
 
 @login_required
 @role_required('client')
