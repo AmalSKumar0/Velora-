@@ -64,8 +64,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'artwork_db',
-        'USER': 'root',
-        'PASSWORD': '2208',
+        'USER': 'velora',
+        'PASSWORD': '2208@amaL',
         'HOST': 'localhost',
         'PORT': '3306',
     }
