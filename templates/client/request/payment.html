@@ -1,76 +1,177 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Pay Now</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-</head>
-<body>
+{% extends "client/base.html" %}
+{% load static %}
 
-<h2>Complete Payment</h2>
+{% block title %}Secure Checkout | Velora{% endblock %}
 
-<button id="pay-btn">Pay ₹{{ amount }}</button>
+{% block content %}
+<div class="p-6 lg:p-10 max-w-[80rem] mx-auto w-full">
+  
+  <div class="mb-8 border-b-[4px] border-black pb-6 flex items-center gap-4">
+    <div class="w-16 h-16 bg-[#ffc86b] rounded-full border-[3px] border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
+      <i data-lucide="lock" class="w-8 h-8 text-black"></i>
+    </div>
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl mb-1">Secure Checkout</h1>
+      <p class="text-gray-600 font-medium text-lg">Review your details and complete the payment.</p>
+    </div>
+  </div>
 
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+    
+    <div class="lg:col-span-3 space-y-8">
+      
+      <div class="bg-white border-[4px] border-black rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h2 class="text-2xl font-black border-b-[3px] border-black pb-4 mb-6 flex items-center gap-2">
+            <i data-lucide="user-check" class="w-6 h-6"></i> Billing Information
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block font-bold text-gray-500 uppercase tracking-wider text-xs mb-2">Full Name</label>
+            <div class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-bold bg-gray-50">
+              {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+          </div>
+          <div>
+            <label class="block font-bold text-gray-500 uppercase tracking-wider text-xs mb-2">Email Address</label>
+            <div class="w-full border-[3px] border-black rounded-xl px-4 py-3 font-bold bg-gray-50">
+              {{ request.user.email|default:"Not provided" }}
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-8 bg-blue-50 border-[3px] border-blue-500 rounded-xl p-5 flex gap-4">
+          <i data-lucide="shield-check" class="w-8 h-8 text-blue-600 shrink-0"></i>
+          <div>
+            <h4 class="font-bold text-blue-900 text-lg mb-1">Buyer Protection Guarantee</h4>
+            <p class="text-blue-800 font-medium text-sm leading-relaxed">Your payment is securely held in escrow. It will only be released to the artist once you have reviewed and approved the final artwork delivery.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="lg:col-span-2">
+      <div class="bg-[#f9f6f0] border-[4px] border-black rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sticky top-32">
+        <h2 class="text-2xl font-black border-b-[3px] border-black pb-4 mb-6 flex items-center gap-2">
+            <i data-lucide="receipt" class="w-6 h-6"></i> Order Summary
+        </h2>
+        
+        <div class="space-y-4 mb-8">
+          <div class="flex justify-between items-start">
+            <div>
+              <p class="font-black text-xl leading-tight">{{ order.request.title|default:"Artwork Commission" }}</p>
+              <p class="text-sm font-bold text-gray-500 mt-1 flex items-center gap-1">
+                <i data-lucide="brush" class="w-4 h-4"></i> Artist: {{ order.artist.user.username|default:"Velora Artist" }}
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center py-4 border-y-[3px] border-black border-dashed">
+            <span class="font-bold text-gray-600">Subtotal</span>
+            <span class="font-black text-lg">₹{{ amount }}</span>
+          </div>
+          
+          <div class="flex justify-between items-end pt-2">
+            <span class="font-black text-xl uppercase tracking-tight">Total Amount</span>
+            <span class="font-black text-5xl">₹{{ amount }}</span>
+          </div>
+        </div>
+
+        <button id="pay-btn" class="w-full bg-[#ffc86b] text-black border-[3px] border-black py-4 rounded-xl font-black text-xl hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex items-center justify-center gap-3">
+          Pay ₹{{ amount }} <i data-lucide="arrow-right" class="w-6 h-6"></i>
+        </button>
+        
+        <div class="mt-6 flex items-center justify-center gap-2 text-gray-500 font-bold text-sm">
+          <i data-lucide="lock" class="w-4 h-4"></i> Secured by Razorpay
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-document.getElementById("pay-btn").onclick = function () {
+  // Ensure Lucide icons render
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
 
-    var options = {
-        key: "{{ key }}",                    
-        amount: "{{ amount }}00",               
-        currency: "INR",
-        name: "Artwork Commission",
-        description: "Order Payment",
-        order_id: "{{ order_id }}",           // ✔ Razorpay order id
+  document.getElementById("pay-btn").onclick = function () {
+      var options = {
+          key: "{{ key }}",                    
+          amount: "{{ amount }}00",               
+          currency: "INR",
+          name: "Velora Digital Art",
+          description: "Payment for Order #{{ order_id }}",
+          order_id: "{{ order_id }}",           
 
-        handler: function (response) {
+          // Pre-fill user data for a smoother checkout experience
+          prefill: {
+              name: "{{ request.user.get_full_name|default:request.user.username }}",
+              email: "{{ request.user.email }}"
+          },
 
-            console.log("Payment success:", response);
+          handler: function (response) {
+              console.log("Payment success:", response);
 
-            fetch("/payments/verify/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                body: JSON.stringify({
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log("Verify response:", data);
+              // Change button state to show processing animation
+              const payBtn = document.getElementById("pay-btn");
+              payBtn.innerHTML = '<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i> Verifying...';
+              payBtn.disabled = true;
+              if (typeof lucide !== 'undefined') lucide.createIcons();
 
-                if (data.status === "success") {
-                    alert("Payment successful!");
-                    window.location.href = "/commissions/all-request/";
-                } else {
-                    alert("Payment verification failed");
-                }
-            })
-            .catch(err => {
-                console.error("Verify error:", err);
-                alert("Something went wrong during verification");
-            });
-        },
+              // Send response to your Django backend
+              fetch("/payments/verify/", {
+                  method: "POST",
+                  headers: {
+                      "Content-Type": "application/json",
+                      "X-CSRFToken": "{{ csrf_token }}"
+                  },
+                  body: JSON.stringify({
+                      razorpay_order_id: response.razorpay_order_id,
+                      razorpay_payment_id: response.razorpay_payment_id,
+                      razorpay_signature: response.razorpay_signature
+                  })
+              })
+              .then(res => res.json())
+              .then(data => {
+                  console.log("Verify response:", data);
 
-        modal: {
-            ondismiss: function () {
-                console.log("Payment popup closed");
-            }
-        },
+                  if (data.status === "success") {
+                      window.location.href = "/commissions/all-request/";
+                  } else {
+                      alert("Payment verification failed. Please contact support.");
+                      payBtn.innerHTML = 'Pay ₹{{ amount }} <i data-lucide="arrow-right" class="w-6 h-6"></i>';
+                      payBtn.disabled = false;
+                      if (typeof lucide !== 'undefined') lucide.createIcons();
+                  }
+              })
+              .catch(err => {
+                  console.error("Verify error:", err);
+                  alert("Something went wrong during verification.");
+                  payBtn.innerHTML = 'Pay ₹{{ amount }} <i data-lucide="arrow-right" class="w-6 h-6"></i>';
+                  payBtn.disabled = false;
+                  if (typeof lucide !== 'undefined') lucide.createIcons();
+              });
+          },
 
-        theme: {
-            color: "#3399cc"
-        }
-    };
+          modal: {
+              ondismiss: function () {
+                  console.log("Payment popup closed");
+              }
+          },
 
-    console.log("OPTIONS:", options);  // 🔥 debug
+          theme: {
+              color: "#1a1a1a" // Matches the neo-brutalist dark tones
+          }
+      };
 
-    var rzp = new Razorpay(options);
-    rzp.open();
-};
+      console.log("OPTIONS:", options); 
+
+      var rzp = new Razorpay(options);
+      rzp.open();
+  };
 </script>
-
-</body>
-</html>
+{% endblock %}

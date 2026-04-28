@@ -1,36 +1,175 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}Admin Dashboard | Velora Digital Art{% endblock %}
+{% block title %}Manage Tags | Velora Admin{% endblock %}
+
 {% block content %}
-<h2>Tags</h2>
+<div class="p-6 lg:p-10 max-w-[90rem] mx-auto w-full space-y-8">
 
-<form method="POST">
-    {% csrf_token %}
-    <input type="text" name="name" placeholder="Enter tag name" required>
-    <button type="submit">Add Tag</button>
-</form>
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[4px] border-black pb-6">
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl mb-2 flex items-center gap-3">
+        <i data-lucide="tags" class="w-8 h-8 text-[#ffc86b] stroke-[3px]"></i> Manage Tags
+      </h1>
+      <p class="text-gray-600 font-bold text-lg">Create, edit, and organize system-wide tags.</p>
+    </div>
 
-<hr>
+    <form method="POST" action="" class="flex items-center gap-3 w-full md:w-auto">
+      {% csrf_token %}
+      <div class="relative flex-grow md:w-64">
+        <input type="text" name="name" placeholder="Enter new tag name..." required
+          class="w-full bg-white border-[3px] border-black rounded-xl px-4 py-3 font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] focus:bg-[#fff9e6] transition-all">
+      </div>
+      <button type="submit" class="bg-[#ffc86b] text-black border-[3px] border-black px-6 py-3 rounded-xl font-black text-sm hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex items-center justify-center gap-2 shrink-0 h-[52px]">
+        <i data-lucide="plus" class="w-5 h-5 stroke-[3px]"></i> Add
+      </button>
+    </form>
+  </div>
 
-<table border="1" cellpadding="10">
-    <tr>
-        <th>Name</th>
-        <th>Actions</th>
-    </tr>
-
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
     {% for tag in tags %}
-    <tr>
-        <td>{{ tag.name }}</td>
-        <td>
-            <a href="{% url 'tag_update' tag.id %}">Edit</a>
-            <a href="{% url 'tag_delete' tag.id %}">Delete</a>
-        </td>
-    </tr>
+      <div class="bg-white border-[3px] border-black rounded-2xl p-4 flex items-center justify-between shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#ffc86b] transition-all group">
+        
+        <span class="font-black text-lg truncate pr-2" title="{{ tag.name }}">{{ tag.name }}</span>
+        
+        <div class="flex items-center gap-2 shrink-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+          <button type="button" onclick="openEditModal('{{ tag.name|escapejs }}', '{% url 'tag_update' tag.id %}')" 
+            class="w-8 h-8 bg-gray-100 border-[2px] border-black rounded-lg flex items-center justify-center hover:bg-black hover:text-[#ffc86b] transition-colors" title="Edit">
+            <i data-lucide="pencil" class="w-4 h-4"></i>
+          </button>
+          
+          <button type="button" onclick="openDeleteModal('{{ tag.name|escapejs }}', '{% url 'tag_delete' tag.id %}')" 
+            class="w-8 h-8 bg-red-100 text-red-600 border-[2px] border-black rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" title="Delete">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
     {% empty %}
-    <tr>
-        <td colspan="2">No tags found</td>
-    </tr>
+      <div class="col-span-full bg-white border-[4px] border-black rounded-[2rem] p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mt-4">
+        <div class="w-20 h-20 bg-gray-100 border-[3px] border-black rounded-full flex items-center justify-center mx-auto mb-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <i data-lucide="tag" class="w-8 h-8 text-gray-400"></i>
+        </div>
+        <h2 class="font-display text-3xl mb-3">No Tags Found</h2>
+        <p class="text-gray-600 font-medium text-base max-w-sm mx-auto">
+          Your platform doesn't have any tags yet. Add one using the form above!
+        </p>
+      </div>
     {% endfor %}
-</table>
+  </div>
+
+</div>
+
+<div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div id="editModalContent" class="w-full max-w-md bg-white border-[4px] border-black rounded-[2rem] p-8 shadow-[12px_12px_0px_0px_#ffc86b] relative transform scale-95 transition-transform duration-300">
+    
+    <button type="button" onclick="closeEditModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 text-black border-[3px] border-black rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] z-20">
+      <i data-lucide="x" class="w-5 h-5 stroke-[3px]"></i>
+    </button>
+
+    <h2 class="font-display text-4xl mb-2 flex items-center gap-2">
+      <i data-lucide="pencil" class="w-6 h-6 text-[#ffc86b]"></i> Edit Tag
+    </h2>
+    <p class="text-gray-600 font-bold mb-6 text-sm">Update the name of this tag. Changes will reflect across the platform.</p>
+
+    <form id="editForm" method="POST" action="">
+      {% csrf_token %}
+      <div class="mb-6">
+        <label class="block font-black mb-2 text-xs uppercase tracking-widest text-gray-500">Tag Name</label>
+        <input type="text" id="editTagName" name="name" required
+          class="w-full bg-[#f9f6f0] border-[3px] border-black rounded-xl px-4 py-3 font-black text-lg text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:outline-none focus:shadow-none focus:translate-x-[4px] focus:translate-y-[4px] focus:bg-[#fff9e6] transition-all">
+      </div>
+      
+      <button type="submit" class="w-full bg-black text-white border-[3px] border-black py-4 rounded-xl font-black text-lg hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        Update Tag
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+  <div id="deleteModalContent" class="w-full max-w-md bg-white border-[4px] border-black rounded-[2rem] p-8 shadow-[12px_12px_0px_0px_#ef4444] relative transform scale-95 transition-transform duration-300">
+    
+    <button type="button" onclick="closeDeleteModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 text-black border-[3px] border-black rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] z-20">
+      <i data-lucide="x" class="w-5 h-5 stroke-[3px]"></i>
+    </button>
+
+    <div class="w-16 h-16 bg-red-100 border-[3px] border-black rounded-full flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+      <i data-lucide="alert-triangle" class="w-8 h-8 text-red-600 stroke-[3px]"></i>
+    </div>
+
+    <h2 class="font-display text-4xl mb-2">Delete Tag?</h2>
+    <p class="text-gray-600 font-bold mb-6 text-sm">
+      Are you sure you want to permanently delete the tag <span id="deleteTagNameDisplay" class="text-black font-black bg-gray-200 px-1 rounded"></span>? This action cannot be undone.
+    </p>
+
+    <form id="deleteForm" method="POST" action="">
+      {% csrf_token %}
+      <div class="flex gap-4">
+        <button type="button" onclick="closeDeleteModal()" class="flex-1 bg-gray-100 text-black border-[3px] border-black py-4 rounded-xl font-black text-base hover:bg-gray-200 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+          Cancel
+        </button>
+        <button type="submit" class="flex-1 bg-red-500 text-white border-[3px] border-black py-4 rounded-xl font-black text-base hover:bg-red-600 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+          Yes, Delete
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+
+  // --- EDIT MODAL LOGIC ---
+  function openEditModal(tagName, actionUrl) {
+    const modal = document.getElementById('editModal');
+    const content = document.getElementById('editModalContent');
+    
+    // Inject Data
+    document.getElementById('editTagName').value = tagName;
+    document.getElementById('editForm').action = actionUrl;
+
+    // Show Modal
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    content.classList.remove('scale-95');
+    content.classList.add('scale-100');
+  }
+
+  function closeEditModal() {
+    const modal = document.getElementById('editModal');
+    const content = document.getElementById('editModalContent');
+    
+    // Hide Modal
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    content.classList.remove('scale-100');
+    content.classList.add('scale-95');
+  }
+
+  // --- DELETE MODAL LOGIC ---
+  function openDeleteModal(tagName, actionUrl) {
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
+    
+    // Inject Data
+    document.getElementById('deleteTagNameDisplay').innerText = `"${tagName}"`;
+    document.getElementById('deleteForm').action = actionUrl;
+
+    // Show Modal
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    content.classList.remove('scale-95');
+    content.classList.add('scale-100');
+  }
+
+  function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    const content = document.getElementById('deleteModalContent');
+    
+    // Hide Modal
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    content.classList.remove('scale-100');
+    content.classList.add('scale-95');
+  }
+</script>
 {% endblock %}

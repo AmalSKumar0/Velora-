@@ -11,78 +11,151 @@
             <p class="text-gray-600 font-medium text-lg">Manage your active commissions and review artist proposals.</p>
         </div>
         <div class="flex flex-wrap gap-2" id="filterContainer">
-            <button data-filter="All" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">All</button>
-            <button data-filter="Open" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Open</button>
-            <button data-filter="In Progress" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">In Progress</button>
-            <button data-filter="Payment Required" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Payment Required</button>
-            <button data-filter="Completed" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Completed</button>
+            <button data-filter="all"             class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">All</button>
+            <button data-filter="open"            class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Open</button>
+            <button data-filter="in_progress"     class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">In Progress</button>
+            <button data-filter="payment_pending" class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Payment Required</button>
+            <button data-filter="completed"       class="filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700">Completed</button>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid-flow-row-dense items-start">
-        
-        {% for request in requests %}
-        <div data-status="{{ request.status }}" class="request-card bg-white border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col {% if request.status == 'Open' %}md:col-span-2 lg:col-span-2{% endif %}">
-            
-            <div class="flex flex-col sm:flex-row justify-between gap-6 mb-6 border-b-[3px] border-gray-100 pb-6">
-                <div>
-                    <div class="flex flex-wrap items-center gap-3 mb-3">
-                        <span class="border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] 
-                            {% if request.status == 'Open' %}bg-[#ffc86b]
-                            {% elif request.status == 'In Progress' %}bg-blue-300
-                            {% elif request.status == 'Payment Required' %}bg-red-300
-                            {% else %}bg-green-300{% endif %}">
-                            {{ request.status }}
-                        </span>
-                        <span class="text-gray-500 font-medium text-sm flex items-center gap-1">
-                            <i data-lucide="clock" class="w-4 h-4"></i> {{ request.created_at|date:"M d, Y" }}
-                        </span>
-                    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start" id="cardsGrid">
 
-                    <h2 class="text-2xl lg:text-3xl font-bold mb-2">{{ request.title }}</h2>
-                    <p class="text-gray-600 font-medium max-w-2xl mb-4">{{ request.description|truncatechars:150 }}</p>
-                    
-                    <div class="flex flex-wrap gap-2">
-                        {% for tag in request.tags.all %}
-                        <span class="text-xs font-bold bg-gray-100 border-[2px] border-black px-2 py-0.5 rounded-md">#{{ tag.name }}</span>
-                        {% endfor %}
-                    </div>
+        {% for req in requests %}
+        {% with order=req.order_set.first %}
+
+        {# ── OPEN ── #}
+        {% if req.status == 'open' %}
+        <div data-filter="open"
+             class="request-card bg-white border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+
+            <div class="flex items-center gap-3 mb-3">
+                <span class="bg-[#ffc86b] border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Open</span>
+                <span class="text-gray-500 font-medium text-sm flex items-center gap-1">
+                    <i data-lucide="clock" class="w-4 h-4"></i> {{ req.created_at|timesince }} ago
+                </span>
+            </div>
+
+            <h2 class="text-2xl font-bold mb-2">{{ req.title }}</h2>
+            <p class="text-gray-600 font-medium mb-4 line-clamp-3">{{ req.description|truncatechars:200 }}</p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+                {% for tag in req.tags.all %}
+                <span class="text-xs font-bold bg-gray-100 border-[2px] border-black px-2 py-0.5 rounded-md">#{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+
+            <div class="mt-auto pt-6 border-t-[3px] border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <div class="text-2xl font-black">₹{{ req.budget_min }} – ₹{{ req.budget_max }}</div>
+                    <div class="text-sm font-bold text-gray-500">{{ req.proposals.count }} proposal{{ req.proposals.count|pluralize }}</div>
+                </div>
+                <a href="{% url 'all_proposals' req.id %}"
+                   class="w-full sm:w-auto bg-black text-white border-[3px] border-black px-6 py-3 rounded-xl font-bold text-sm shadow-[4px_4px_0px_0px_#ffc86b] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center gap-2">
+                    View Proposals
+                </a>
+            </div>
+        </div>
+
+        {# ── IN PROGRESS — split by order status ── #}
+        {% elif req.status == 'in_progress' %}
+
+            {% if order.status == 'payment_pending' or order.status == 'submitted' %}
+            {# Payment Required variant #}
+            <div data-filter="payment_pending"
+                 class="request-card bg-white border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-[#ffc86b] border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Payment Required</span>
+                    <span class="text-gray-500 font-medium text-sm">
+                        Artist: {{ order.artist.user.get_full_name|default:order.artist.user.username }}
+                    </span>
                 </div>
 
-                <div class="flex flex-col items-start sm:items-end gap-2 shrink-0">
-                    <div class="text-2xl font-black">₹{{ request.budget_min }} - ₹{{ request.budget_max }}</div>
-                    <div class="text-sm font-bold text-gray-400">Proposals: {{ request.proposal_count }}</div>
+                <h2 class="text-2xl font-bold mb-2">{{ req.title }}</h2>
+                <p class="text-gray-600 font-medium mb-6 line-clamp-3">The artist has completed the work! Review the preview and pay to unlock the high-resolution files.</p>
+
+                <div class="mt-auto pt-6 border-t-[3px] border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="text-2xl font-black">₹{{ order.amount }}</div>
+                    <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <a href="{% url 'clinet_view_individual_work' order.id %}"
+                           class="w-full sm:w-auto bg-white text-black border-[3px] border-black px-4 py-3 rounded-xl font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center">
+                            Workspace
+                        </a>
+                        <a href="{% url 'create_payment' order.id %}"
+                           class="w-full sm:w-auto bg-[#ffc86b] text-black border-[3px] border-black px-6 py-3 rounded-xl font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center gap-2">
+                            Pay &amp; Unlock
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-auto">
-                <div class="flex -space-x-3 overflow-hidden">
-                    {% for img in request.images.all|slice:":3" %}
-                    <img class="inline-block h-10 w-10 rounded-full border-2 border-black object-cover" src="{{ img.image.url }}" alt="Ref image">
-                    {% endfor %}
+            {% else %}
+            {# Active In Progress variant #}
+            <div data-filter="in_progress"
+                 class="request-card bg-white border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+
+                <div class="flex items-center gap-3 mb-3">
+                    <span class="bg-blue-300 border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">In Progress</span>
+                    {% if order %}
+                    <span class="text-gray-500 font-medium text-sm">
+                        Artist: {{ order.artist.user.get_full_name|default:order.artist.user.username }}
+                    </span>
+                    {% endif %}
                 </div>
 
-                <div class="flex gap-3 w-full sm:w-auto">
-                    {% if request.has_order %}
-                        {% with order=request.order_set.first %}
-                            {% if request.is_paid %}
-                                <a href="{% url 'clinet_view_individual_work' order.id %}" class="bg-black text-white px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all">
-                                    View Work
-                                </a>
-                            {% else %}
-                                <a href="{% url 'create_payment' order.id %}" class="bg-[#ffc86b] text-black px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all">
-                                    Pay Now
-                                </a>
-                            {% endif %}
-                        {% endwith %}
-                    {% else %}
-                        <a href="{% url 'all_proposals' request.id %}" class="bg-white text-black px-6 py-2 rounded-xl font-bold text-sm border-[2px] border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] transition-all flex items-center gap-2">
-                            View Proposals <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
+                <h2 class="text-2xl font-bold mb-2">{{ req.title }}</h2>
+                <p class="text-gray-600 font-medium mb-6 line-clamp-3">{{ req.description|truncatechars:200 }}</p>
+
+                <div class="mt-auto pt-6 border-t-[3px] border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="text-2xl font-black">₹{{ order.amount|default:req.budget_min }}</div>
+                    {% if order %}
+                    <a href="{% url 'clinet_view_individual_work' order.id %}"
+                       class="w-full sm:w-auto bg-white text-black border-[3px] border-black px-6 py-3 rounded-xl font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center gap-2">
+                        Open Workspace
+                    </a>
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
+
+        {# ── COMPLETED ── #}
+        {% elif req.status == 'completed' %}
+        <div data-filter="completed"
+             class="request-card bg-gray-50 border-[4px] border-black rounded-[2.5rem] p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+
+            <div class="flex items-center gap-3 mb-3">
+                <span class="bg-green-300 border-[2px] border-black px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Completed</span>
+                {% if order %}
+                <span class="text-gray-500 font-medium text-sm">
+                    Artist: {{ order.artist.user.get_full_name|default:order.artist.user.username }}
+                </span>
+                {% endif %}
+            </div>
+
+            <h2 class="text-2xl font-bold mb-2">{{ req.title }}</h2>
+            <p class="text-gray-600 font-medium mb-6 line-clamp-3">{{ req.description|truncatechars:200 }}</p>
+
+            <div class="mt-auto pt-6 border-t-[3px] border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <div class="text-2xl font-black text-gray-400 line-through decoration-2 decoration-black">₹{{ order.amount|default:req.budget_min }}</div>
+                    <div class="text-sm font-bold text-green-600 flex items-center gap-1">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i> Paid in full
+                    </div>
+                </div>
+                {% if order %}
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <a href="{% url 'clinet_view_individual_work' order.id %}"
+                       class="w-full sm:w-auto bg-white text-black border-[3px] border-black px-4 py-3 rounded-xl font-bold text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center">
+                        Open Workspace
+                    </a>
+                </div>
+                {% endif %}
+            </div>
         </div>
+        {% endif %}
+
+        {% endwith %}
         {% empty %}
         <div class="col-span-full flex flex-col items-center justify-center py-20 bg-white border-[4px] border-dashed border-black rounded-[2.5rem]">
             <i data-lucide="folder-open" class="w-16 h-16 mb-4 text-gray-300"></i>
@@ -98,24 +171,19 @@
     document.addEventListener('DOMContentLoaded', () => {
         const filterBtns = document.querySelectorAll('.filter-btn');
         const requestCards = document.querySelectorAll('.request-card');
-        
+
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const filterVal = btn.getAttribute('data-filter');
-                
-                // Toggle Button Styles
+
                 filterBtns.forEach(b => {
                     b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700';
                 });
                 btn.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black';
 
-                // Filter Cards
                 requestCards.forEach(card => {
-                    if (filterVal === 'All' || card.getAttribute('data-status') === filterVal) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                    const show = filterVal === 'all' || card.getAttribute('data-filter') === filterVal;
+                    card.style.display = show ? 'flex' : 'none';
                 });
             });
         });

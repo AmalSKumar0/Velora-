@@ -1,71 +1,123 @@
 {% extends "artist/base.html" %}
 {% load static %}
 
-{% block title %}Home | Velora Digital Art{% endblock %}
+{% block title %}My Works | Velora Digital Art{% endblock %}
+
 {% block content %}
+<div class="p-4 lg:p-8 max-w-[90rem] mx-auto w-full">
+  
+  <div class="mb-6 border-b-[4px] border-black pb-4 flex items-center justify-between">
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl mb-2 flex items-center gap-3">
+        <i data-lucide="folder-kanban" class="w-8 h-8 text-[#ffc86b] stroke-[3px]"></i> My Works
+      </h1>
+      <p class="text-gray-600 font-medium text-base">Track and manage your ongoing and completed commissions.</p>
+    </div>
+  </div>
 
-<h2>My Orders</h2>
+  {% if orders %}
+    <div class="bg-white border-[4px] border-black rounded-[1.5rem] overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[1000px]">
+          <thead class="bg-[#ffc86b] border-b-[4px] border-black">
+            <tr>
+              <th class="px-6 py-5 border-r-[3px] border-black font-black text-lg w-2/5">Commission Details</th>
+              <th class="px-6 py-5 border-r-[3px] border-black font-black text-lg">Price</th>
+              <th class="px-6 py-5 border-r-[3px] border-black font-black text-lg">Status</th>
+              <th class="px-6 py-5 border-r-[3px] border-black font-black text-lg text-center">Revisions</th>
+              <th class="px-6 py-5 border-r-[3px] border-black font-black text-lg whitespace-nowrap">Timeline</th>
+              <th class="px-6 py-5 font-black text-lg text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr class="border-b-[3px] border-black last:border-b-0 hover:bg-[#fffdf8] transition-colors group">
+              
+              <td class="px-6 py-5 border-r-[3px] border-black align-middle">
+                <p class="font-black text-xl leading-tight mb-3">{{ order.request.title|truncatechars:45 }}</p>
+                <div class="flex items-center gap-2 text-sm font-bold text-gray-500">
+                  <div class="w-6 h-6 rounded-full border-[2px] border-black overflow-hidden bg-gray-100 shrink-0">
+                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ order.request.client.user.username|default:'Client' }}" alt="Client" class="w-full h-full object-cover">
+                  </div>
+                  <span>Client: <span class="text-black">{{ order.request.client.user.username|default:"Client User" }}</span></span>
+                </div>
+              </td>
+              
+              <td class="px-6 py-5 border-r-[3px] border-black align-middle">
+                <span class="text-3xl font-black text-green-700">₹{{ order.amount }}</span>
+              </td>
 
-<table border="1" cellpadding="10" cellspacing="0" width="100%">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Request</th>
-            <th>Artist</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Revisions</th>
-            <th>Created</th>
-            <th>Last Updated</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+              <td class="px-6 py-5 border-r-[3px] border-black align-middle whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1.5 border-[2px] border-black rounded-lg font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-white group-hover:shadow-[2px_2px_0px_0px_#ffc86b] transition-shadow">
+                  {% if order.status == 'completed' %}
+                    <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
+                  {% elif order.status == 'in_progress' %}
+                    <i data-lucide="loader-2" class="w-4 h-4 text-blue-600"></i>
+                  {% elif order.status == 'cancelled' %}
+                    <i data-lucide="x-circle" class="w-4 h-4 text-red-600"></i>
+                  {% else %}
+                    <i data-lucide="clock" class="w-4 h-4 text-gray-600"></i>
+                  {% endif %}
+                  {{ order.get_status_display }}
+                </div>
+              </td>
 
-    <tbody>
-        {% for order in orders %}
-        <tr>
-            <td>{{ order.id }}</td>
+              <td class="px-6 py-5 border-r-[3px] border-black align-middle text-center">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-white border-[3px] border-black rounded-full font-black text-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[3px_3px_0px_0px_#ffc86b] transition-shadow" title="Revisions Used">
+                  {{ order.revision_count }}
+                </div>
+              </td>
 
-            <td>
-                {{ order.request.title|truncatechars:30 }}
-            </td>
+              <td class="px-6 py-5 border-r-[3px] border-black align-middle whitespace-nowrap text-sm">
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center gap-2 font-bold text-gray-800" title="Order Created">
+                    <div class="w-6 h-6 rounded bg-[#f9f6f0] border-[2px] border-black flex items-center justify-center shrink-0">
+                      <i data-lucide="calendar" class="w-3 h-3 text-black"></i>
+                    </div>
+                    {{ order.created_at|date:"M d, Y" }}
+                  </div>
+                  <div class="flex items-center gap-2 font-bold text-gray-500 text-xs" title="Last Updated">
+                    <div class="w-6 h-6 rounded bg-gray-50 border-[2px] border-gray-300 flex items-center justify-center shrink-0 group-hover:border-black group-hover:text-black transition-colors">
+                      <i data-lucide="refresh-cw" class="w-3 h-3 text-inherit"></i>
+                    </div>
+                    {{ order.updated_at|date:"M d, Y" }}
+                  </div>
+                </div>
+              </td>
+              
+              <td class="px-6 py-5 align-middle text-center">
+                <a href="{% url 'individual_work' order.id %}" class="inline-flex items-center justify-center gap-2 bg-black text-white border-[3px] border-black px-5 py-2.5 rounded-xl font-bold text-base hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] whitespace-nowrap">
+                  <i data-lucide="eye" class="w-4 h-4"></i> View Details
+                </a>
+              </td>
+              
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-            <td>
-                {{ order.artist.user.username }}
-            </td>
+  {% else %}
+    <div class="bg-white border-[4px] border-black rounded-[2rem] p-8 md:p-12 text-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] mt-4">
+      <div class="w-20 h-20 bg-gray-100 border-[3px] border-black rounded-full flex items-center justify-center mx-auto mb-5 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="folder-open" class="w-8 h-8 text-gray-400"></i>
+      </div>
+      <h2 class="font-display text-3xl mb-3">No Works Found</h2>
+      <p class="text-gray-600 font-medium text-base max-w-md mx-auto">
+        You don't have any ongoing or completed orders yet. Start sending proposals to clients to get your first commission!
+      </p>
+      <a href="/" class="inline-flex items-center justify-center gap-2 mt-6 bg-[#ffc86b] text-black border-[3px] border-black px-6 py-3 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        <i data-lucide="search" class="w-5 h-5"></i> Browse Requests
+      </a>
+    </div>
+  {% endif %}
+</div>
 
-            <td>
-                ₹{{ order.amount }}
-            </td>
-
-            <td>
-                {{ order.get_status_display }}
-            </td>
-
-            <td>
-                {{ order.revision_count }}
-            </td>
-
-            <td>
-                {{ order.created_at|date:"M d, Y" }}
-            </td>
-
-            <td>
-                {{ order.updated_at|date:"M d, Y" }}
-            </td>
-            <td>
-                <a href="{% url 'individual_work' order.id %}">view</a>
-            </td>
-        </tr>
-
-        {% empty %}
-        <tr>
-            <td colspan="8" style="text-align:center;">
-                No orders found
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+<script>
+  // Ensure Lucide icons render
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
 {% endblock %}

@@ -96,16 +96,17 @@ def add_new_request(request):
 
 @login_required
 @role_required('artist')
-def send_new_proposal(request, id):
-    req = get_object_or_404(Request, id=id)
-
-    artist_profile = request.user.artist_profile
-
-    if Proposal.objects.filter(request=req, artist=artist_profile).exists():
-        messages.error(request, "You already submitted a proposal")
-        return redirect('artistDashboard')
-
+def send_new_proposal(request):
     if request.method == "POST":
+        id = request.POST.get('reqid')
+
+        req = get_object_or_404(Request, id=id)
+        artist_profile = request.user.artist_profile
+
+        if Proposal.objects.filter(request=req, artist=artist_profile).exists():
+            messages.error(request, "You already submitted a proposal")
+            return redirect('artistDashboard')
+
         price = request.POST.get('price')
         message = request.POST.get('message')
         delivery_days = request.POST.get('delivery_days')
@@ -119,11 +120,6 @@ def send_new_proposal(request, id):
         )
 
         return redirect('artistDashboard')
-
-    return render(request, 'artist/request/send_proposal.html', {
-        'req': req,
-        'tags':Tag.objects.all()
-    })
 
 @login_required
 @role_required('client')

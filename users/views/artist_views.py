@@ -15,6 +15,7 @@ from core.services.watermark import generate_preview
 @login_required
 @role_required('artist')
 def artist_dash(request):
+
     if not hasattr(request.user, 'artist_profile'):
         messages.error(request,'complete the profile first!')
         return redirect('create_artist_profile')
@@ -26,6 +27,13 @@ def artist_dash(request):
         tags__in=tags,
         status='open'
     ).distinct().prefetch_related('tags', 'images')
+
+    for req in requests:
+        if Proposal.objects.filter(artist=artist_profile,request=req):
+            req.has_proposed = True
+        else:
+            req.has_proposed = False
+
 
     return render(request, 'artist/dashboard.html', {
         'requests': requests,

@@ -2,6 +2,222 @@
 {% load static %}
 
 {% block title %}Admin Dashboard | Velora Digital Art{% endblock %}
-{% block content %}
 
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="p-6 lg:p-10 max-w-[90rem] mx-auto w-full space-y-10">
+  
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[4px] border-black pb-6">
+    <div>
+      <h1 class="font-display text-4xl md:text-5xl mb-2 flex items-center gap-3">
+        <i data-lucide="bar-chart-3" class="w-8 h-8 text-[#ffc86b] stroke-[3px]"></i> Platform Overview
+      </h1>
+      <p class="text-gray-600 font-bold text-lg">Real-time metrics, user analytics, and revenue tracking.</p>
+    </div>
+    
+    <button type="button" class="bg-[#ffc86b] text-black border-[3px] border-black px-6 py-3.5 rounded-xl font-black text-base hover:bg-yellow-400 transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex items-center justify-center gap-2 shrink-0">
+      <i data-lucide="download" class="w-5 h-5 stroke-[3px]"></i> Download PDF Report
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    
+    <div class="bg-[#ffc86b] border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-white border-[3px] border-black rounded-full flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <i data-lucide="banknote" class="w-6 h-6 text-black"></i>
+        </div>
+        <span class="bg-white px-2 py-1 border-[2px] border-black rounded-md text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <i data-lucide="trending-up" class="w-3 h-3 text-green-600 stroke-[3px]"></i> +14%
+        </span>
+      </div>
+      <div>
+        <p class="font-black text-sm uppercase tracking-widest text-black/70 mb-1">Total Revenue</p>
+        <h3 class="font-display text-4xl tracking-wide">₹8,42,500</h3>
+      </div>
+    </div>
+
+    <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#ffc86b] transition-all">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center">
+          <i data-lucide="users" class="w-6 h-6 text-black"></i>
+        </div>
+      </div>
+      <div>
+        <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Total Users</p>
+        <h3 class="font-black text-3xl">1,248</h3>
+        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-green-600">+124</span> this month</p>
+      </div>
+    </div>
+
+    <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#ffc86b] transition-all">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center">
+          <i data-lucide="paint-brush" class="w-6 h-6 text-black"></i>
+        </div>
+      </div>
+      <div>
+        <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Active Orders</p>
+        <h3 class="font-black text-3xl">342</h3>
+        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-black">18</span> pending review</p>
+      </div>
+    </div>
+
+    <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_#ffc86b] transition-all">
+      <div class="flex justify-between items-start mb-4">
+        <div class="w-12 h-12 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center">
+          <i data-lucide="clock" class="w-6 h-6 text-black"></i>
+        </div>
+        <span class="bg-white px-2 py-1 border-[2px] border-black rounded-md text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <i data-lucide="trending-down" class="w-3 h-3 text-red-600 stroke-[3px]"></i> -1.2d
+        </span>
+      </div>
+      <div>
+        <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Avg. Delivery</p>
+        <h3 class="font-black text-3xl">4.2 Days</h3>
+        <p class="text-xs font-bold text-gray-500 mt-2">Platform-wide average</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <div class="lg:col-span-2 bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div class="flex items-center justify-between mb-6 border-b-[3px] border-black border-dashed pb-4">
+        <h3 class="font-black text-2xl flex items-center gap-2">
+          <i data-lucide="activity" class="w-6 h-6"></i> Revenue Growth
+        </h3>
+        <select class="bg-gray-100 border-[3px] border-black rounded-xl px-3 py-1 font-bold text-sm focus:outline-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <option>Last 6 Months</option>
+          <option>This Year</option>
+        </select>
+      </div>
+      <div class="relative h-[300px] w-full">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <div class="lg:col-span-1 bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+      <h3 class="font-black text-xl mb-6 border-b-[3px] border-black border-dashed pb-4 flex items-center gap-2">
+        <i data-lucide="pie-chart" class="w-5 h-5"></i> Top Categories
+      </h3>
+      <div class="relative h-[220px] w-full flex-grow flex items-center justify-center">
+        <canvas id="categoryChart"></canvas>
+      </div>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#ffc86b] rounded-full"></span> Character Art</div>
+        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#ff90eb] rounded-full"></span> Environments</div>
+        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#7ae582] rounded-full"></span> UI/UX Assets</div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+
+  // Neo-Brutalist Styling Variables
+  const brutalistBorderWidth = 3;
+  const brutalistBorderColor = '#000000';
+  const defaultFontFamily = '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif';
+
+  Chart.defaults.font.family = defaultFontFamily;
+  Chart.defaults.color = '#000';
+  Chart.defaults.font.weight = 'bold';
+
+  // 1. Revenue Line Chart Initialization
+  const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctxRevenue, {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      datasets: [{
+        label: 'Platform Revenue (₹)',
+        data: [120000, 190000, 150000, 220000, 310000, 450000],
+        backgroundColor: 'rgba(255, 200, 107, 0.3)', // Light yellow fill
+        borderColor: brutalistBorderColor,
+        borderWidth: 4,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: brutalistBorderColor,
+        pointBorderWidth: 3,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        fill: true,
+        tension: 0.3 // Slight curve
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#000',
+          titleFont: { size: 14, family: defaultFontFamily, weight: 'bold' },
+          bodyFont: { size: 14, family: defaultFontFamily, weight: 'bold' },
+          padding: 12,
+          cornerRadius: 8,
+          displayColors: false,
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#e5e7eb', drawBorder: false, lineWidth: 2, borderDash: [5, 5] },
+          ticks: { font: { weight: 'bold' } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { weight: 'bold' } }
+        }
+      }
+    }
+  });
+
+  // 2. Categories Doughnut Chart Initialization
+  const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+  new Chart(ctxCategory, {
+    type: 'doughnut',
+    data: {
+      labels: ['Character Art', 'Environments', 'UI/UX Assets', 'Other'],
+      datasets: [{
+        data: [45, 25, 20, 10],
+        backgroundColor: [
+          '#ffc86b', // Yellow
+          '#ff90eb', // Pink
+          '#7ae582', // Green
+          '#f3f4f6'  // Light Gray
+        ],
+        borderColor: brutalistBorderColor,
+        borderWidth: brutalistBorderWidth,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%', // Thickness of the doughnut ring
+      plugins: {
+        legend: { display: false }, // Using custom HTML legend below the chart
+        tooltip: {
+          backgroundColor: '#000',
+          bodyFont: { size: 14, family: defaultFontFamily, weight: 'bold' },
+          padding: 10,
+          cornerRadius: 8,
+          callbacks: {
+            label: function(context) {
+              return ' ' + context.label + ': ' + context.parsed + '%';
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}
