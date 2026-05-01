@@ -57,6 +57,21 @@
                 </p>
             </div>
             
+            <div class="flex flex-wrap gap-4 mt-6">
+                <div class="bg-white border-[3px] border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 min-w-[120px]">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Total Earned</p>
+                    <p class="font-display text-2xl text-green-600">₹{{ total_earned }}</p>
+                </div>
+                <div class="bg-white border-[3px] border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 min-w-[120px]">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">In Escrow</p>
+                    <p class="font-display text-2xl text-orange-500">₹{{ total_escrow }}</p>
+                </div>
+                <div class="bg-white border-[3px] border-black rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex-1 min-w-[120px]">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Orders Completed</p>
+                    <p class="font-display text-2xl text-black">{{ total_completed }}</p>
+                </div>
+            </div>
+
             {% if artist.portfolioURL %}
             <div class="mt-6 flex items-center gap-2 font-bold group/link w-fit">
                 <div class="w-8 h-8 rounded-full bg-white border-[2px] border-black flex items-center justify-center shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover/link:bg-black group-hover/link:text-white transition-colors">

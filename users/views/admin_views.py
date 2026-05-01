@@ -150,8 +150,11 @@ def users_view(request):
         'selected_role': role_filter
     })
 
+from django.views.decorators.http import require_POST
+
 @login_required
 @role_required('admin')
+@require_POST
 def delete_user_view(request,id):
     user = get_object_or_404(User,id=id)
     user.delete()

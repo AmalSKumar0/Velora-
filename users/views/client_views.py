@@ -40,6 +40,9 @@ def update_profile(request):
         user = request.user
         new_username = request.POST.get('username')
         if new_username:
+            if User.objects.filter(username=new_username).exclude(id=user.id).exists():
+                messages.error(request, "Username already taken!")
+                return redirect('client_profile')
             user.username = new_username
         
         user.bio = request.POST.get('bio')
@@ -77,9 +80,7 @@ def client_dash(request):
 @role_required('client')
 def clinet_view_individual_work(request,order_id):
 
-    order = Order.objects.get(
-        id=order_id,
-    )
+    order = get_object_or_404(Order, id=order_id, client=request.user)
 
     if request.method == "POST":
 
@@ -140,7 +141,7 @@ def clinet_view_individual_work(request,order_id):
 @login_required
 @role_required('client')
 def delete_review(request, id):
-    review = Review.objects.get(id=id)
+    review = get_object_or_404(Review, id=id, client=request.user)
     review.delete()
     order = review.order
     return redirect("clinet_view_individual_work", order.id)
@@ -148,7 +149,7 @@ def delete_review(request, id):
 @login_required
 @role_required('client')
 def edit_review(request, id):
-    review = Review.objects.get(id=id)
+    review = get_object_or_404(Review, id=id, client=request.user)
     order = review.order
     if request.method == "POST":
         rating = request.POST.get('rating')
@@ -210,7 +211,7 @@ def download_final(request, submission_id):
 @role_required('client')
 def complete_order(request, order_id):
 
-    order = Order.objects.get(id=order_id)
+    order = get_object_or_404(Order, id=order_id, client=request.user)
     if order.status != "approved":
         messages.error(request, "Order is not approved yet")
         return redirect("clinet_view_individual_work", order.id)

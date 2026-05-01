@@ -9,8 +9,8 @@ from django.db.models import Max
 from core.models import Tag
 from users.decorators import role_required
 from core.services.watermark import generate_preview
-
-
+from payments.models import Payment
+from django.db.models import Max, Sum
 
 @login_required
 @role_required('artist')
@@ -35,9 +35,21 @@ def artist_dash(request):
             req.has_proposed = False
 
 
+    total_earned = Payment.objects.filter(
+        order__artist=artist_profile,
+        status='released'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    total_escrow = Payment.objects.filter(
+        order__artist=artist_profile,
+        status='held'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
     return render(request, 'artist/dashboard.html', {
         'requests': requests,
-        'artist_tags': tags
+        'artist_tags': tags,
+        'total_earned': total_earned,
+        'total_escrow': total_escrow
     })
 
 
@@ -51,7 +63,12 @@ def artist_profile_view(request):
         user = request.user
         
         # 1. Update Base User Fields
-        user.username = request.POST.get('username', user.username)
+        new_username = request.POST.get('username', user.username)
+        if User.objects.filter(username=new_username).exclude(id=user.id).exists():
+            messages.error(request, "Username already taken!")
+            return redirect('artist_profile')
+            
+        user.username = new_username
         if 'profile_image' in request.FILES:
             user.profile_image = request.FILES['profile_image']
         user.save()
@@ -68,9 +85,27 @@ def artist_profile_view(request):
 
     portfolio_items = artist_profile.portfolio.prefetch_related('tags').order_by('-created_at')
 
+    total_earned = Payment.objects.filter(
+        order__artist=artist_profile,
+        status='released'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    total_escrow = Payment.objects.filter(
+        order__artist=artist_profile,
+        status='held'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+
+    total_completed = Order.objects.filter(
+        artist=artist_profile,
+        status='completed'
+    ).count()
+
     context = {
         'artist': artist_profile,
-        'portfolio_items': portfolio_items
+        'portfolio_items': portfolio_items,
+        'total_earned': total_earned,
+        'total_escrow': total_escrow,
+        'total_completed': total_completed
     }
     return render(request, 'artist/profile.html', context)
 

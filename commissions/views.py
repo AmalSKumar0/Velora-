@@ -85,12 +85,8 @@ def add_new_request(request):
             )
             req.tags.set(tag_ids)
 
-            image_objs = [
-                RequestImage(request=req, image=img)
-                for img in images
-            ]
-
-            RequestImage.objects.bulk_create(image_objs)
+            for img in images:
+                RequestImage.objects.create(request=req, image=img)
             
     return redirect('all_request')
 
