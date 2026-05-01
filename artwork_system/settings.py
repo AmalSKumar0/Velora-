@@ -13,7 +13,7 @@ DEBUG = os.getenv("DEBUG")
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
-ALLOWED_HOSTS = ["18.61.227.54","velora.amalskumar.dev","*"]
+ALLOWED_HOSTS = ["18.61.227.54","velora.amalskumar.dev"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
