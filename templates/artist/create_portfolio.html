@@ -4,94 +4,94 @@
 {% block title %}Add Portfolio | Velora Digital Art{% endblock %}
 
 {% block content %}
-<div class="w-full max-w-5xl mx-auto flex flex-col lg:h-[calc(100vh-120px)] lg:max-h-[750px] relative z-10 animate-[fadeIn_0.3s_ease-out] my-8 lg:my-auto px-4 sm:px-6 gap-6 lg:gap-0">
+<div class="w-full max-w-7xl mx-auto flex flex-col lg:h-[calc(100vh-100px)] lg:max-h-[900px] relative z-10 animate-[fadeIn_0.3s_ease-out] my-8 lg:my-auto px-4 sm:px-8 gap-8 lg:gap-0">
     
-    <div class="flex items-end justify-between mb-2 lg:mb-6 shrink-0">
-        <div class="flex items-center gap-3 sm:gap-4">
-            <div class="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#ffc86b] border-[3px] border-black -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
-                <i data-lucide="image-plus" class="w-6 h-6 sm:w-7 sm:h-7 text-black"></i>
+    <div class="flex items-end justify-between mb-4 lg:mb-8 shrink-0">
+        <div class="flex items-center gap-4 sm:gap-6">
+            <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ffc86b] border-[4px] border-black -rotate-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                <i data-lucide="image-plus" class="w-8 h-8 sm:w-10 sm:h-10 text-black"></i>
             </div>
             <div>
-                <h1 class="font-display text-4xl sm:text-5xl uppercase tracking-tight leading-none mb-1">
-                    Add <span class="relative inline-block"><span class="relative z-10">Portfolio</span><span class="absolute bottom-1 left-0 w-full h-2 sm:h-3 bg-[#ffc86b] -rotate-1 z-0"></span></span>
+                <h1 class="font-display text-5xl sm:text-6xl uppercase tracking-tight leading-none mb-2">
+                    Add <span class="relative inline-block"><span class="relative z-10">Portfolio</span><span class="absolute bottom-1 left-0 w-full h-3 sm:h-4 bg-[#ffc86b] -rotate-1 z-0"></span></span>
                 </h1>
-                <p class="text-gray-600 font-bold text-xs sm:text-sm tracking-wide">Showcase your latest masterpiece to potential clients.</p>
+                <p class="text-gray-600 font-bold text-sm sm:text-base tracking-wide">Showcase your latest masterpiece to potential clients.</p>
             </div>
         </div>
     </div>
 
-    <form method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col min-h-0 gap-6">
+    <form method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col min-h-0 gap-8">
         {% csrf_token %}
 
-        <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 gap-6 min-h-0">
+        <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 gap-8 min-h-0">
             
-            <div class="flex flex-col gap-6">
+            <div class="flex flex-col gap-8">
                 
-                <div class="bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                    <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800 mb-2">Artwork Title</label>
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    <label class="block font-black text-xs sm:text-sm uppercase tracking-widest text-gray-800 mb-3">Artwork Title</label>
                     <input type="text" name="title" required placeholder="e.g. Neon Samurai 2077"
-                        class="w-full border-[2.5px] border-black rounded-xl px-4 py-3 font-bold text-sm sm:text-base focus:outline-none focus:ring-0 bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:bg-white focus:border-[#ffc86b] transition-colors">
+                        class="w-full border-[3px] border-black rounded-2xl px-6 py-4 font-bold text-base sm:text-lg focus:outline-none focus:ring-0 bg-[#f9f6f0] shadow-[inset_3px_3px_0px_0px_rgba(0,0,0,0.1)] focus:bg-white focus:border-[#ffc86b] transition-colors">
                 </div>
 
-                <div class="bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col min-h-[200px]">
-                    <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800 mb-2">Upload Artwork</label>
-                    <div class="relative flex-1 w-full border-[2.5px] border-black border-dashed rounded-xl bg-[#f9f6f0] hover:bg-[#ffc86b]/10 transition-all flex flex-col items-center justify-center cursor-pointer group overflow-hidden">
+                <div class="bg-white p-6 sm:p-8 rounded-3xl border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex-1 flex flex-col min-h-[300px] lg:min-h-[400px]">
+                    <label class="block font-black text-xs sm:text-sm uppercase tracking-widest text-gray-800 mb-3">Upload Artwork</label>
+                    <div class="relative flex-1 w-full border-[3px] border-black border-dashed rounded-2xl bg-[#f9f6f0] hover:bg-[#ffc86b]/10 transition-all flex flex-col items-center justify-center cursor-pointer group overflow-hidden">
                         
                         <input type="file" name="image" accept="image/*" required id="image-upload" 
                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
                             onchange="previewImage(event)">
                         
-                        <div id="upload-prompt" class="flex flex-col items-center text-center p-4 z-10 relative pointer-events-none">
-                            <div class="w-12 h-12 bg-white border-[2px] border-black rounded-full flex items-center justify-center mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform">
-                                <i data-lucide="upload" class="w-5 h-5 text-black"></i>
+                        <div id="upload-prompt" class="flex flex-col items-center text-center p-6 z-10 relative pointer-events-none">
+                            <div class="w-16 h-16 bg-white border-[3px] border-black rounded-full flex items-center justify-center mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:scale-110 transition-transform">
+                                <i data-lucide="upload" class="w-8 h-8 text-black"></i>
                             </div>
-                            <span class="font-black text-sm uppercase tracking-tight">Drop your art here</span>
+                            <span class="font-black text-base sm:text-lg uppercase tracking-tight">Drop your art here</span>
                         </div>
 
                         <img id="image-preview" class="absolute inset-0 w-full h-full object-cover hidden z-10" alt="Preview" />
                         
-                        <div id="change-overlay" class="absolute inset-0 bg-black/40 hidden z-10 flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                            <span class="bg-white text-black font-black uppercase text-[10px] px-3 py-1.5 border-2 border-black rounded-lg">Replace Image</span>
+                        <div id="change-overlay" class="absolute inset-0 bg-black/50 hidden z-10 flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            <span class="bg-white text-black font-black uppercase text-xs px-4 py-2 border-[3px] border-black rounded-xl">Replace Image</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-6 min-h-0">
-                <div class="flex flex-col lg:flex-1 bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] min-h-[250px] lg:min-h-0">
-                    <div class="flex justify-between items-end mb-2 shrink-0">
-                        <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800">Assign Tags</label>
-                        <span class="text-[9px] sm:text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-md border-[2px] border-black hidden sm:inline-block">Hold Ctrl/Cmd</span>
+            <div class="flex flex-col gap-8 min-h-0">
+                <div class="flex flex-col lg:flex-1 bg-white p-6 sm:p-8 rounded-3xl border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] min-h-[350px] lg:min-h-0">
+                    <div class="flex justify-between items-end mb-3 shrink-0">
+                        <label class="block font-black text-xs sm:text-sm uppercase tracking-widest text-gray-800">Assign Tags</label>
+                        <span class="text-[11px] sm:text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border-[2px] border-black hidden sm:inline-block">Hold Ctrl/Cmd</span>
                     </div>
                     <select name="tags[]" multiple required
-                        class="w-full flex-1 border-[2.5px] border-black rounded-xl p-2 sm:p-3 font-bold text-xs sm:text-sm focus:outline-none bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:border-[#ffc86b] overflow-y-auto custom-scrollbar">
+                        class="w-full flex-1 border-[3px] border-black rounded-2xl p-4 font-bold text-sm sm:text-base focus:outline-none bg-[#f9f6f0] shadow-[inset_3px_3px_0px_0px_rgba(0,0,0,0.1)] focus:border-[#ffc86b] overflow-y-auto custom-scrollbar">
                         {% for tag in tags %}
-                            <option value="{{ tag.id }}" class="p-2 mb-1 rounded-lg cursor-pointer hover:bg-gray-200 checked:bg-black checked:text-white transition-colors border-2 border-transparent checked:border-black">
+                            <option value="{{ tag.id }}" class="p-3 mb-2 rounded-xl cursor-pointer hover:bg-gray-200 checked:bg-black checked:text-white transition-colors border-[3px] border-transparent checked:border-black">
                                 #{{ tag.name }}
                             </option>
                         {% endfor %}
                     </select>
-                    <p class="text-[10px] font-bold text-gray-500 mt-2 text-center sm:hidden">Multi-select tags for search</p>
+                    <p class="text-xs font-bold text-gray-500 mt-3 text-center sm:hidden">Multi-select tags for search</p>
                 </div>
 
-                <div class="bg-[#fef9c3] p-4 rounded-2xl border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hidden lg:block">
-                    <div class="flex gap-3">
-                        <i data-lucide="info" class="w-5 h-5 text-black shrink-0"></i>
-                        <p class="text-xs font-bold leading-tight">High-quality previews lead to 80% more requests. Make sure your first portfolio item is your best work!</p>
+                <div class="bg-[#fef9c3] p-6 rounded-3xl border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hidden lg:block">
+                    <div class="flex gap-4 items-center">
+                        <i data-lucide="info" class="w-8 h-8 text-black shrink-0"></i>
+                        <p class="text-sm sm:text-base font-bold leading-snug">High-quality previews lead to 80% more requests. Make sure your first portfolio item is your best work!</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="shrink-0 flex flex-col-reverse sm:flex-row items-center justify-between pt-2 gap-4 pb-6 lg:pb-0">
-            <a href="{% url 'artistDashboard' %}" class="text-gray-500 font-black hover:text-black transition-colors uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white hover:border-black hover:border-2 border-2 border-transparent w-full sm:w-auto justify-center">
-                <i data-lucide="x" class="w-4 h-4"></i> Cancel
+        <div class="shrink-0 flex flex-col-reverse sm:flex-row items-center justify-between pt-4 gap-6 pb-8 lg:pb-0">
+            <a href="{% url 'artistDashboard' %}" class="text-gray-500 font-black hover:text-black transition-colors uppercase tracking-widest text-sm sm:text-base flex items-center gap-2 px-6 py-3 rounded-2xl hover:bg-white hover:border-black hover:border-[3px] border-[3px] border-transparent w-full sm:w-auto justify-center">
+                <i data-lucide="x" class="w-5 h-5"></i> Cancel
             </a>
             
             <button type="submit" 
-                class="w-full sm:w-auto bg-[#ffc86b] text-black px-6 sm:px-10 py-4 rounded-2xl font-black text-base sm:text-lg uppercase flex items-center justify-center gap-3 border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all group">
+                class="w-full sm:w-auto bg-[#ffc86b] text-black px-8 sm:px-12 py-5 rounded-2xl font-black text-lg sm:text-xl uppercase flex items-center justify-center gap-3 border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[6px] hover:translate-y-[6px] transition-all group">
                 Publish to Portfolio
-                <i data-lucide="plus-circle" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                <i data-lucide="plus-circle" class="w-6 h-6 group-hover:scale-110 transition-transform"></i>
             </button>
         </div>
     </form>
@@ -119,12 +119,12 @@
 </script>
 
 <style>
-    .custom-scrollbar::-webkit-scrollbar { width: 10px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f9f6f0; border-left: 2px solid black; border-radius: 0 8px 8px 0; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: black; border-radius: 0 6px 6px 0; border: 2px solid #f9f6f0; }
+    .custom-scrollbar::-webkit-scrollbar { width: 14px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f9f6f0; border-left: 3px solid black; border-radius: 0 12px 12px 0; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: black; border-radius: 0 10px 10px 0; border: 3px solid #f9f6f0; }
     
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
     }
 </style>

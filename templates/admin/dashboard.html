@@ -34,7 +34,7 @@
       </div>
       <div>
         <p class="font-black text-sm uppercase tracking-widest text-black/70 mb-1">Total Revenue</p>
-        <h3 class="font-display text-4xl tracking-wide">₹8,42,500</h3>
+        <h3 class="font-display text-4xl tracking-wide">₹{{ total_revenue }}</h3>
       </div>
     </div>
 
@@ -46,8 +46,8 @@
       </div>
       <div>
         <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Total Users</p>
-        <h3 class="font-black text-3xl">1,248</h3>
-        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-green-600">+124</span> this month</p>
+        <h3 class="font-black text-3xl">{{ total_users }}</h3>
+        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-green-600">+{{ new_users_month }}</span> this month</p>
       </div>
     </div>
 
@@ -59,8 +59,8 @@
       </div>
       <div>
         <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Active Orders</p>
-        <h3 class="font-black text-3xl">342</h3>
-        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-black">18</span> pending review</p>
+        <h3 class="font-black text-3xl">{{ active_orders }}</h3>
+        <p class="text-xs font-bold text-gray-500 mt-2"><span class="text-black">{{ pending_orders }}</span> pending review</p>
       </div>
     </div>
 
@@ -69,13 +69,10 @@
         <div class="w-12 h-12 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center">
           <i data-lucide="clock" class="w-6 h-6 text-black"></i>
         </div>
-        <span class="bg-white px-2 py-1 border-[2px] border-black rounded-md text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-          <i data-lucide="trending-down" class="w-3 h-3 text-red-600 stroke-[3px]"></i> -1.2d
-        </span>
       </div>
       <div>
         <p class="font-black text-sm uppercase tracking-widest text-gray-500 mb-1">Avg. Delivery</p>
-        <h3 class="font-black text-3xl">4.2 Days</h3>
+        <h3 class="font-black text-3xl">{{ avg_delivery_days }} Days</h3>
         <p class="text-xs font-bold text-gray-500 mt-2">Platform-wide average</p>
       </div>
     </div>
@@ -106,10 +103,15 @@
       <div class="relative h-[220px] w-full flex-grow flex items-center justify-center">
         <canvas id="categoryChart"></canvas>
       </div>
-      <div class="mt-6 flex flex-wrap justify-center gap-3">
-        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#ffc86b] rounded-full"></span> Character Art</div>
-        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#ff90eb] rounded-full"></span> Environments</div>
-        <div class="flex items-center gap-2 text-xs font-bold"><span class="w-3 h-3 border-[2px] border-black bg-[#7ae582] rounded-full"></span> UI/UX Assets</div>
+     <div class="mt-6 flex flex-wrap justify-center gap-3">
+        {% for cat in top_categories_legend %}
+        <div class="flex items-center gap-2 text-xs font-bold">
+            <span class="w-3 h-3 border-[2px] border-black rounded-full" style="background-color: {{ cat.color }};"></span> 
+            {{ cat.name }}
+        </div>
+        {% empty %}
+            <p class="text-xs text-gray-500 font-bold">No order data yet.</p>
+        {% endfor %}
       </div>
     </div>
 
@@ -122,7 +124,6 @@
     lucide.createIcons();
   }
 
-  // Neo-Brutalist Styling Variables
   const brutalistBorderWidth = 3;
   const brutalistBorderColor = '#000000';
   const defaultFontFamily = '"Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif';
@@ -131,16 +132,22 @@
   Chart.defaults.color = '#000';
   Chart.defaults.font.weight = 'bold';
 
-  // 1. Revenue Line Chart Initialization
+  // INJECT DJANGO DATA SAFELY HERE
+  const rawRevenueLabels = {{ revenue_labels|safe }};
+  const rawRevenueData = {{ revenue_data|safe }};
+  const rawCategoryLabels = {{ category_labels|safe }};
+  const rawCategoryData = {{ category_data|safe }};
+
+  // 1. Revenue Line Chart 
   const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
   new Chart(ctxRevenue, {
     type: 'line',
     data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+      labels: rawRevenueLabels,
       datasets: [{
         label: 'Platform Revenue (₹)',
-        data: [120000, 190000, 150000, 220000, 310000, 450000],
-        backgroundColor: 'rgba(255, 200, 107, 0.3)', // Light yellow fill
+        data: rawRevenueData,
+        backgroundColor: 'rgba(255, 200, 107, 0.3)',
         borderColor: brutalistBorderColor,
         borderWidth: 4,
         pointBackgroundColor: '#fff',
@@ -149,7 +156,7 @@
         pointRadius: 6,
         pointHoverRadius: 8,
         fill: true,
-        tension: 0.3 // Slight curve
+        tension: 0.3
       }]
     },
     options: {
@@ -180,20 +187,15 @@
     }
   });
 
-  // 2. Categories Doughnut Chart Initialization
+  // 2. Categories Doughnut Chart
   const ctxCategory = document.getElementById('categoryChart').getContext('2d');
   new Chart(ctxCategory, {
     type: 'doughnut',
     data: {
-      labels: ['Character Art', 'Environments', 'UI/UX Assets', 'Other'],
+      labels: rawCategoryLabels,
       datasets: [{
-        data: [45, 25, 20, 10],
-        backgroundColor: [
-          '#ffc86b', // Yellow
-          '#ff90eb', // Pink
-          '#7ae582', // Green
-          '#f3f4f6'  // Light Gray
-        ],
+        data: rawCategoryData,
+        backgroundColor: ['#ffc86b', '#ff90eb', '#7ae582', '#f3f4f6'],
         borderColor: brutalistBorderColor,
         borderWidth: brutalistBorderWidth,
         hoverOffset: 4
@@ -202,9 +204,9 @@
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '65%', // Thickness of the doughnut ring
+      cutout: '65%', 
       plugins: {
-        legend: { display: false }, // Using custom HTML legend below the chart
+        legend: { display: false }, 
         tooltip: {
           backgroundColor: '#000',
           bodyFont: { size: 14, family: defaultFontFamily, weight: 'bold' },

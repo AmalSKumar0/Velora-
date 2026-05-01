@@ -43,6 +43,48 @@ def artist_dash(request):
 
 @login_required
 @role_required('artist')
+def artist_profile_view(request):
+
+    artist_profile, created = ArtistProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        user = request.user
+        
+        # 1. Update Base User Fields
+        user.username = request.POST.get('username', user.username)
+        if 'profile_image' in request.FILES:
+            user.profile_image = request.FILES['profile_image']
+        user.save()
+
+        # 2. Update ArtistProfile Fields
+        artist_profile.display_name = request.POST.get('display_name', artist_profile.display_name)
+        artist_profile.bio = request.POST.get('bio', artist_profile.bio)
+        artist_profile.portfolioURL = request.POST.get('portfolioURL', artist_profile.portfolioURL)
+        artist_profile.is_available = 'is_available' in request.POST
+        artist_profile.save()
+        
+        messages.success(request, 'Your artist profile has been updated successfully!')
+        return redirect('artist_profile')
+
+    portfolio_items = artist_profile.portfolio.prefetch_related('tags').order_by('-created_at')
+
+    context = {
+        'artist': artist_profile,
+        'portfolio_items': portfolio_items
+    }
+    return render(request, 'artist/profile.html', context)
+
+@login_required
+def delete_portfolio_item(request, item_id):
+    if request.method == 'POST':
+        item = get_object_or_404(PortfolioItem, id=item_id, artist__user=request.user)
+        item.delete()
+        messages.success(request, "Artwork deleted from your portfolio.")
+    return redirect('my_artist_profile')
+
+
+@login_required
+@role_required('artist')
 def view_my_work(request):
 
     artist_profile = request.user.artist_profile

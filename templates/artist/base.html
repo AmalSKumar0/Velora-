@@ -27,28 +27,31 @@
     }
   </script>
 
-<style>\n    html { font-size: 13px; }\n
-   .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; }
+  <style>
+    html { font-size: 14px; } /* Slightly bumped up for better crispness */
+    
+    .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; }
     .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
     
     .modal-overlay { display: none; opacity: 0; transition: opacity 0.2s ease-out; }
     .modal-overlay.active { display: flex; opacity: 1; }
     .modal-content { transform: scale(0.95) translateY(20px); opacity: 0; transition: all 0.2s ease-out; }
     .modal-overlay.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
-    .motion-trigger { opacity: 0; transform: translateY(20px); transition: all 0.4s ease-out; }
-    .motion-visible { opacity: 1; transform: translateY(0); }
+    
+    /* Smooth transition base for navigation links */
+    .nav-link { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
   </style>
 </head>
 <body class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black flex flex-col lg:flex-row relative">
   
   {% include 'includes/message.html' %}
 
-  <header class="bg-[#ffc86b] flex flex-col py-4 lg:py-10 px-6 w-full lg:w-72 lg:h-screen border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black sticky top-0 z-50 shrink-0">
+  <header class="bg-[#ffc86b] flex flex-col py-4 lg:py-8 px-6 w-full lg:w-72 lg:h-screen border-b-[4px] lg:border-b-0 lg:border-r-[4px] border-black sticky top-0 z-50 shrink-0">
     
     <div class="flex items-center justify-between w-full lg:justify-start">
-      <a href="/" class="flex items-center gap-2 font-display text-3xl tracking-wide lg:px-2">
-        <div class="w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center bg-white shrink-0">
-           <i data-lucide="brush" class="w-4 h-4 text-black"></i>
+      <a href="/" class="flex items-center gap-3 font-display text-4xl tracking-wide lg:px-2 hover:scale-105 transition-transform origin-left">
+        <div class="w-10 h-10 rounded-full border-[3px] border-black flex items-center justify-center bg-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+           <i data-lucide="brush" class="w-5 h-5 text-black"></i>
         </div>
         VELORA
       </a>
@@ -58,64 +61,74 @@
       </button>
     </div>
 
-    <div id="retractable-menu" class="hidden absolute top-full left-0 w-full bg-[#ffc86b] border-b-[3px] border-black p-6 flex-col gap-8 lg:static lg:flex lg:flex-col lg:p-0 lg:border-none lg:mt-10 lg:h-full lg:w-full shadow-2xl lg:shadow-none z-40">
+    <div id="retractable-menu" class="hidden absolute top-full left-0 w-full bg-[#ffc86b] border-b-[4px] border-black p-6 flex-col gap-8 lg:static lg:flex lg:flex-col lg:p-0 lg:border-none lg:mt-12 lg:h-full lg:w-full shadow-2xl lg:shadow-none z-40">
       
-      <nav class="flex flex-col gap-4 w-full">
-        <a href="/" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
+      <nav class="flex flex-col gap-3 w-full">
+        <a href="/" class="nav-link px-5 py-4 rounded-2xl font-bold text-lg border-[3px] flex items-center gap-3 
+          {% if 'dashboard' in request.path %}
+            border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
+          {% else %}
+            border-transparent hover:border-black/20 hover:bg-black/5
+          {% endif %}">
           <i data-lucide="layout-dashboard" class="w-6 h-6 lg:w-5 lg:h-5"></i> Dashboard
         </a>
         
-        <a href="{% url 'view_my_work' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
+        <a href="{% url 'view_my_work' %}" class="nav-link px-5 py-4 rounded-2xl font-bold text-lg border-[3px] flex items-center gap-3
+          {% if 'work' in request.path %}
+            border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
+          {% else %}
+            border-transparent hover:border-black/20 hover:bg-black/5
+          {% endif %}">
           <i data-lucide="folder-kanban" class="w-6 h-6 lg:w-5 lg:h-5"></i> My Works
         </a>
       </nav>
 
-      <div class="mt-auto flex items-center justify-between bg-white border-[3px] border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 lg:w-10 lg:h-10 rounded-full border-[3px] border-black bg-white overflow-hidden shrink-0 flex items-center justify-center">
-             <img src="https://api.dicebear.com/7.x/shapes/svg?seed={{ request.user.username|default:'Artist' }}" alt="Profile" class="w-full h-full object-cover" />
+      <div class="mt-auto flex items-center justify-between bg-white border-[3px] border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full group hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all duration-300">
+        <a href="{% url 'artist_profile' %}" class="flex items-center gap-3">
+          <div class="w-12 h-12 lg:w-10 lg:h-10 rounded-xl border-[3px] border-black bg-[#f9f6f0] overflow-hidden shrink-0 flex items-center justify-center">
+             {% if request.user.profile_image %}
+               <img src="{{ request.user.profile_image.url }}" alt="Profile" class="w-full h-full object-cover" />
+             {% else %}
+               <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ request.user.username|default:'Artist' }}" alt="Profile" class="w-full h-full object-cover" />
+             {% endif %}
           </div>
           <div>
-            <div class="font-bold text-base lg:text-sm truncate max-w-[120px] lg:max-w-[100px]">{{ request.user.username|default:'Artist' }}</div>
-            <div class="text-xs font-black text-[#ffc86b] uppercase tracking-wider" style="text-shadow: 1px 1px 0 #000;">Artist</div>
+            <div class="font-black text-base lg:text-sm truncate max-w-[110px]">{{ request.user.username|default:'Artist' }}</div>
+            <div class="text-[10px] font-black text-white bg-black px-2 py-0.5 rounded uppercase tracking-wider inline-block mt-0.5">Artist</div>
           </div>
-        </div>
+        </a>
 
-        <a href="{% url 'logout' %}" class="bg-gray-100 hover:bg-red-400 hover:text-white border-[2px] border-black rounded-lg w-10 h-10 lg:w-8 lg:h-8 flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] shrink-0" title="Logout">
+        <a href="{% url 'logout' %}" class="bg-[#f9f6f0] hover:bg-[#ff6b6b] hover:text-white border-[3px] border-black rounded-xl w-11 h-11 lg:w-10 lg:h-10 flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] shrink-0" title="Logout">
           <i data-lucide="log-out" class="w-5 h-5 lg:w-4 lg:h-4"></i>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="flex-1 w-full">
+  <main class="flex-1 w-full bg-[#fffdf8] relative">
     {% block content %}{% endblock %}
   </main>
 
   <script>
-    // Initialize standard icons
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
     }
 
-    // Hamburger Menu Logic
+    // Hamburger Menu Interaction
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const retractableMenu = document.getElementById('retractable-menu');
     const menuIcon = document.getElementById('menu-icon');
 
     mobileMenuBtn.addEventListener('click', () => {
-      // Toggle visibility
       retractableMenu.classList.toggle('hidden');
       retractableMenu.classList.toggle('flex');
       
-      // Toggle icon graphic between 'menu' and 'x'
       if (retractableMenu.classList.contains('hidden')) {
         menuIcon.setAttribute('data-lucide', 'menu');
       } else {
         menuIcon.setAttribute('data-lucide', 'x');
       }
       
-      // Re-render the icon change
       lucide.createIcons();
     });
   </script>

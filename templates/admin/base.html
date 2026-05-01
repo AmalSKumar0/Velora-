@@ -61,6 +61,10 @@
           <i data-lucide="users" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Users
         </a>
 
+        <a href="{% url 'admin_requests' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
+          <i data-lucide="users" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Requests
+        </a>
+
         <a href="{% url 'tag_list' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
           <i data-lucide="tags" class="w-6 h-6 lg:w-5 lg:h-5"></i> Manage Tags
         </a>
@@ -83,7 +87,6 @@
       </div>
     </div>
   </header>
-
   <main class="flex-1 w-full bg-[#fffdf8]">
     <div class="bg-white border-b-[4px] border-black sticky top-0 z-30 hidden lg:block">
       <div class="px-6 lg:px-12 h-20 flex items-center justify-between">

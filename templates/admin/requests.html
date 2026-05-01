@@ -1,0 +1,163 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Manage Requests | Velora Digital Art{% endblock %}
+
+{% block content %}
+<div class="p-6 lg:p-10 max-w-[90rem] mx-auto w-full space-y-10 animate-[fadeIn_0.3s_ease-out]">
+  
+  <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[4px] border-black pb-6">
+    <div>
+      <h1 class="font-display text-5xl md:text-6xl mb-2 flex items-center gap-4 uppercase tracking-tight">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#ff90eb] border-[4px] border-black -rotate-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
+            <i data-lucide="clipboard-list" class="w-7 h-7 text-black"></i>
+        </div>
+        Platform Requests
+      </h1>
+      <p class="text-gray-600 font-bold text-lg">Monitor and manage all client commission requests.</p>
+    </div>
+    
+    <div class="flex gap-4">
+        <select class="bg-white border-[3px] border-black rounded-xl px-4 py-3 font-bold text-sm focus:outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer">
+            <option value="all">All Statuses</option>
+            <option value="open">Open</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+        </select>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for req in requests %}
+    <div class="bg-white border-[4px] border-black rounded-3xl p-6 sm:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#ffc86b] transition-all flex flex-col group">
+      
+      <div class="flex justify-between items-start mb-6 shrink-0">
+        {% if req.status == 'open' %}
+            <span class="bg-[#7ae582] px-3 py-1.5 border-[3px] border-black rounded-lg text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Open</span>
+        {% elif req.status == 'in_progress' %}
+            <span class="bg-[#ffc86b] px-3 py-1.5 border-[3px] border-black rounded-lg text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">In Progress</span>
+        {% elif req.status == 'completed' %}
+            <span class="bg-gray-200 px-3 py-1.5 border-[3px] border-black rounded-lg text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Completed</span>
+        {% else %}
+            <span class="bg-[#ff90eb] px-3 py-1.5 border-[3px] border-black rounded-lg text-xs font-black uppercase tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{{ req.get_status_display }}</span>
+        {% endif %}
+
+        <span class="text-xs font-bold text-gray-500">{{ req.created_at|date:"M d, Y" }}</span>
+      </div>
+
+      <div class="flex-1 flex flex-col">
+          <h3 class="font-black text-2xl mb-2 line-clamp-2 leading-tight">{{ req.title }}</h3>
+          <p class="text-sm font-bold text-gray-600 mb-4 line-clamp-3">
+            {{ req.description }}
+          </p>
+          
+          <div class="flex items-center gap-2 mb-6">
+              <div class="w-8 h-8 bg-gray-200 border-[2px] border-black rounded-full overflow-hidden shrink-0">
+                  {% if req.client.profile_image %}
+                      <img src="{{ req.client.profile_image.url }}" alt="{{ req.client.username }}" class="w-full h-full object-cover">
+                  {% else %}
+                      <div class="w-full h-full flex items-center justify-center font-black text-xs">{{ req.client.username|make_list|first|upper }}</div>
+                  {% endif %}
+              </div>
+              <span class="font-bold text-sm text-gray-800">@{{ req.client.username }}</span>
+          </div>
+
+          <div class="flex flex-wrap gap-2 mb-6">
+              {% for tag in req.tags.all|slice:":3" %}
+                  <span class="text-[10px] font-black uppercase bg-[#f9f6f0] border-[2px] border-black px-2 py-1 rounded-md">#{{ tag.name }}</span>
+              {% endfor %}
+              {% if req.tags.count > 3 %}
+                  <span class="text-[10px] font-black uppercase bg-gray-100 border-[2px] border-black px-2 py-1 rounded-md">+{{ req.tags.count|add:"-3" }}</span>
+              {% endif %}
+          </div>
+      </div>
+
+      <div class="flex items-center justify-between border-t-[3px] border-black border-dashed pt-6 mt-auto">
+          <div>
+              <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Budget Range</p>
+              <p class="font-black text-lg">₹{{ req.budget_min }} - ₹{{ req.budget_max }}</p>
+          </div>
+          <button class="w-12 h-12 bg-black text-white rounded-xl flex items-center justify-center hover:bg-[#ffc86b] hover:text-black border-[3px] border-transparent hover:border-black transition-colors group-hover:scale-110 group-hover:-rotate-3">
+              <i data-lucide="arrow-right" class="w-6 h-6 stroke-[3px]"></i>
+          </button>
+      </div>
+
+    </div>
+    {% empty %}
+    <div class="col-span-full bg-[#f9f6f0] border-[4px] border-black rounded-3xl p-12 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div class="w-20 h-20 bg-white border-[4px] border-black rounded-full flex items-center justify-center mx-auto mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <i data-lucide="inbox" class="w-10 h-10 text-black"></i>
+        </div>
+        <h3 class="font-black text-3xl mb-2">No Requests Yet</h3>
+        <p class="text-lg font-bold text-gray-600">When clients post new commission requests, they will appear here.</p>
+    </div>
+    {% endfor %}
+    {% if requests.has_other_pages %}
+  <div class="flex flex-col items-center justify-center gap-6 pt-16 pb-10">
+    
+    <nav class="flex items-center gap-3">
+      
+      {% if requests.has_previous %}
+      <a href="?page={{ requests.previous_page_number }}" 
+         class="w-14 h-14 flex items-center justify-center bg-white border-[3px] border-black rounded-2xl hover:bg-[#ffc86b] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] group">
+        <i data-lucide="arrow-left" class="w-6 h-6 stroke-[3px] group-hover:-translate-x-1 transition-transform"></i>
+      </a>
+      {% else %}
+      <div class="w-14 h-14 flex items-center justify-center bg-gray-100 border-[3px] border-black rounded-2xl opacity-40 cursor-not-allowed">
+        <i data-lucide="arrow-left" class="w-6 h-6 stroke-[3px]"></i>
+      </div>
+      {% endif %}
+
+      <div class="flex items-center gap-2 px-2">
+        {% for num in requests.paginator.page_range %}
+          {% if requests.number == num %}
+          <div class="w-14 h-14 flex items-center justify-center bg-[#ffc86b] text-black border-[3px] border-black rounded-2xl font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative z-10">
+            {{ num }}
+          </div>
+          {% elif num > requests.number|add:'-3' and num < requests.number|add:'3' %}
+          <a href="?page={{ num }}" 
+             class="w-14 h-14 hidden sm:flex items-center justify-center bg-white border-[3px] border-black rounded-2xl font-black text-xl hover:bg-black hover:text-white transition-all hover:-rotate-3">
+            {{ num }}
+          </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if requests.has_next %}
+      <a href="?page={{ requests.next_page_number }}" 
+         class="w-14 h-14 flex items-center justify-center bg-white border-[3px] border-black rounded-2xl hover:bg-[#ffc86b] transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] group">
+        <i data-lucide="arrow-right" class="w-6 h-6 stroke-[3px] group-hover:translate-x-1 transition-transform"></i>
+      </a>
+      {% else %}
+      <div class="w-14 h-14 flex items-center justify-center bg-gray-100 border-[3px] border-black rounded-2xl opacity-40 cursor-not-allowed">
+        <i data-lucide="arrow-right" class="w-6 h-6 stroke-[3px]"></i>
+      </div>
+      {% endif %}
+
+    </nav>
+
+    <div class="bg-black text-white px-4 py-1.5 rounded-full border-[2px] border-black">
+        <p class="font-black text-[10px] uppercase tracking-[0.2em]">
+          Viewing Page {{ requests.number }} of {{ requests.paginator.num_pages }}
+        </p>
+    </div>
+
+  </div>
+  {% endif %}
+  </div>
+
+</div>
+
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
