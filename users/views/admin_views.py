@@ -1,3 +1,4 @@
+import tempfile
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
@@ -13,6 +14,47 @@ import json
 from django.db.models.functions import TruncMonth
 from datetime import timedelta
 from django.utils import timezone
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from weasyprint import HTML
+
+
+def download_admin_report(request):
+    # 1. Gather Data from Database
+    now = timezone.now()
+    
+    data = {
+        'generated_at': now,
+        'total_revenue': Payment.objects.filter(status='released').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'escrow_funds': Payment.objects.filter(status='held').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'total_users': User.objects.count(),
+        'total_orders': Order.objects.count(),
+        'completion_rate': 0,
+        'recent_orders': Order.objects.select_related('client', 'artist').order_by('-created_at')[:10],
+        'top_tags': Tag.objects.annotate(num_req=Count('requests')).order_by('-num_req')[:5],
+    }
+
+    total_orders = data['total_orders']
+    if total_orders > 0:
+        completed = Order.objects.filter(status='completed').count()
+        data['completion_rate'] = round((completed / total_orders) * 100, 1)
+
+    html_string = render_to_string('admin/reports/pdf_template.html', data)
+
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+    result = html.write_pdf()
+
+    response = HttpResponse(content_type='application/pdf;')
+    response['Content-Disposition'] = f'attachment; filename=Velora_Global_Report_{now.strftime("%Y%m%d")}.pdf'
+    response['Content-Transfer-Encoding'] = 'binary'
+    
+    with tempfile.NamedTemporaryFile(delete=True) as output:
+        output.write(result)
+        output.flush()
+        output = open(output.name, 'rb')
+        response.write(output.read())
+
+    return response
 
 
 # admin
@@ -127,3 +169,44 @@ def admin_requests(request):
         'requests': page_obj, 
     }
     return render(request, 'admin/requests.html', context)
+
+@login_required
+@role_required('admin')
+def admin_orders(request):
+    orders_list = Order.objects.select_related(
+        'client', 'artist__user', 'request'
+    ).prefetch_related('submissions').order_by('-created_at')
+    
+    status_filter = request.GET.get('status')
+    if status_filter:
+        orders_list = orders_list.filter(status=status_filter)
+
+    # Paginate 8 orders per page
+    paginator = Paginator(orders_list, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'orders': page_obj,
+        'current_status': status_filter
+    }
+    return render(request, 'admin/orders.html', context)
+
+@login_required
+@role_required('admin')
+def admin_payments(request):
+    payments_list = Payment.objects.select_related('order__client', 'order__artist').order_by('-created_at')
+    
+    # Financial Summary
+    total_escrow = Payment.objects.filter(status='held').aggregate(Sum('amount'))['amount__sum'] or 0
+    total_released = Payment.objects.filter(status='released').aggregate(Sum('amount'))['amount__sum'] or 0
+    
+    paginator = Paginator(payments_list, 10)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    context = {
+        'payments': page_obj,
+        'total_escrow': total_escrow,
+        'total_released': total_released,
+    }
+    return render(request, 'admin/payments.html', context)

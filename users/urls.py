@@ -12,10 +12,15 @@ urlpatterns = [
     path('artist-dashboard/',artist_dash,name='artistDashboard'),
 
 
+    path('admin/download-report/', download_admin_report, name='download_report'),
+
     # admin
     path('admin/all-users/',users_view,name="allusers"),
     path('admin/delete-user/<uuid:id>/',delete_user_view,name="deleteuser"),
     path('admin/requests/', admin_requests, name='admin_requests'),
+    path('admin/orders/', admin_orders, name='admin_orders'),
+    path('admin/payments/',admin_payments,name="admin_payments"),
+
 
 
     # artists

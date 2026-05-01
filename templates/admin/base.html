@@ -52,23 +52,68 @@
 
     <div id="retractable-menu" class="hidden absolute top-full left-0 w-full bg-[#ffc86b] border-b-[3px] border-black p-6 flex-col gap-8 lg:static lg:flex lg:flex-col lg:p-0 lg:border-none lg:mt-10 lg:h-full lg:w-full shadow-2xl lg:shadow-none z-40">
       
-      <nav class="flex flex-col gap-4 w-full">
-        <a href="{% url 'adminDashboard' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3">
-          <i data-lucide="layout-dashboard" class="w-6 h-6 lg:w-5 lg:h-5"></i> Dashboard
-        </a>
-        
-        <a href="{% url 'allusers' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
-          <i data-lucide="users" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Users
-        </a>
+    <nav class="flex flex-col gap-4 w-full">
+  <a href="{% url 'adminDashboard' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'adminDashboard' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-x-[1px] translate-y-[1px]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="layout-dashboard" class="w-6 h-6 lg:w-5 lg:h-5 {% if request.resolver_match.url_name == 'adminDashboard' %}text-black{% else %}text-black/60{% endif %}"></i> 
+    <span class="tracking-tight">Dashboard</span>
+  </a>
+  
+  <a href="{% url 'allusers' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'allusers' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="users" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Users
+  </a>
 
-        <a href="{% url 'admin_requests' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
-          <i data-lucide="users" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Requests
-        </a>
+  <a href="{% url 'admin_requests' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'admin_requests' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="clipboard-list" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Requests
+  </a>
 
-        <a href="{% url 'tag_list' %}" class="px-5 py-4 lg:py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20 flex items-center gap-3">
-          <i data-lucide="tags" class="w-6 h-6 lg:w-5 lg:h-5"></i> Manage Tags
-        </a>
-      </nav>
+  <a href="{% url 'admin_orders' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'admin_orders' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="shopping-bag" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Orders
+  </a>
+
+  <a href="{% url 'admin_payments' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'admin_payments' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="banknote" class="w-6 h-6 lg:w-5 lg:h-5"></i> All Payments
+  </a>
+
+  <a href="{% url 'tag_list' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center gap-3 
+     {% if request.resolver_match.url_name == 'tag_list' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <i data-lucide="tags" class="w-6 h-6 lg:w-5 lg:h-5"></i> Manage Tags
+  </a>
+</nav>
 
       <div class="mt-auto flex items-center justify-between bg-black text-white border-[3px] border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full">
         <div class="flex items-center gap-3">

@@ -1,0 +1,72 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="p-6 lg:p-10 max-w-[90rem] mx-auto w-full space-y-10 animate-[fadeIn_0.3s_ease-out]">
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-[#7ae582] border-[4px] border-black rounded-3xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <p class="font-black uppercase text-xs tracking-widest mb-2">Funds in Escrow (Held)</p>
+            <h2 class="font-display text-5xl">₹{{ total_escrow }}</h2>
+        </div>
+        <div class="bg-white border-[4px] border-black rounded-3xl p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+            <p class="font-black uppercase text-xs tracking-widest mb-2 text-gray-500">Total Payouts (Released)</p>
+            <h2 class="font-display text-5xl text-gray-400">₹{{ total_released }}</h2>
+        </div>
+    </div>
+
+    <div class="bg-white border-[4px] border-black rounded-[2.5rem] overflow-hidden shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
+        <div class="p-8 border-b-[4px] border-black bg-[#f9f6f0] flex justify-between items-center">
+            <h3 class="font-black text-2xl uppercase tracking-tight">Transaction History</h3>
+            <i data-lucide="refresh-cw" class="w-6 h-6 cursor-pointer hover:rotate-180 transition-transform duration-500"></i>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b-[3px] border-black bg-white">
+                        <th class="px-6 py-4 font-black uppercase text-xs">Date</th>
+                        <th class="px-6 py-4 font-black uppercase text-xs">Client/Order</th>
+                        <th class="px-6 py-4 font-black uppercase text-xs">Amount</th>
+                        <th class="px-6 py-4 font-black uppercase text-xs">Status</th>
+                        <th class="px-6 py-4 font-black uppercase text-xs text-right">Gateway ID</th>
+                    </tr>
+                </thead>
+                <tbody class="font-bold text-sm">
+                    {% for p in payments %}
+                    <tr class="border-b-[2px] border-black/10 hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-5">{{ p.created_at|date:"d M Y" }}</td>
+                        <td class="px-6 py-5">
+                            <span class="block">@{{ p.order.client.username }}</span>
+                            <span class="text-[10px] text-gray-400 font-mono">ORD-{{ p.order.id|stringformat:".6s" }}</span>
+                        </td>
+                        <td class="px-6 py-5 text-lg">₹{{ p.amount }}</td>
+                        <td class="px-6 py-5">
+                            {% if p.status == 'held' %}
+                                <span class="bg-[#ffc86b] border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Held</span>
+                            {% elif p.status == 'released' %}
+                                <span class="bg-[#7ae582] border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Released</span>
+                            {% elif p.status == 'refunded' %}
+                                <span class="bg-black text-white border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Refunded</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-5 text-right font-mono text-xs text-gray-500">{{ p.provider_payment_id|default:"N/A" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="flex justify-center gap-4">
+        {% if payments.has_previous %}
+            <a href="?page={{ payments.previous_page_number }}" class="bg-white border-[3px] border-black px-6 py-2 rounded-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">Prev</a>
+        {% endif %}
+        <div class="bg-black text-white px-6 py-2 rounded-xl font-black border-[3px] border-black">
+            {{ payments.number }}
+        </div>
+        {% if payments.has_next %}
+            <a href="?page={{ payments.next_page_number }}" class="bg-white border-[3px] border-black px-6 py-2 rounded-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
