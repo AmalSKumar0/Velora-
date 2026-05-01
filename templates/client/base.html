@@ -44,48 +44,100 @@
   
   {% include 'includes/message.html' %}
 
-  <header class="bg-[#ffc86b] flex lg:flex-col items-center lg:items-start justify-between py-4 lg:py-10 px-8 lg:px-6 w-full lg:w-72 lg:h-screen border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black sticky top-0 z-40 shrink-0">
-    <div class="flex lg:flex-col items-center lg:items-start gap-12 lg:gap-10 lg:w-full">
-      <a href="{% url 'home' %}" class="flex items-center gap-2 font-display text-3xl tracking-wide lg:px-2">
-        <div class="w-8 h-8 rounded-full border-[3px] border-black flex items-center justify-center bg-white shrink-0">
+<header class="bg-[#ffc86b] flex lg:flex-col items-center lg:items-start justify-between py-4 lg:py-8 px-6 lg:px-5 w-full lg:w-64 lg:h-screen border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black sticky top-0 z-40 shrink-0">
+    <div class="flex lg:flex-col items-center lg:items-start gap-8 lg:gap-8 lg:w-full">
+      <a href="{% url 'home' %}" class="group flex items-center gap-2.5 font-display text-3xl tracking-tighter lg:px-1 transition-transform hover:-rotate-1">
+        <div class="w-8 h-8 rounded-lg border-[2.5px] border-black flex items-center justify-center bg-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[1px] group-hover:translate-y-[1px] transition-all">
            <i data-lucide="brush" class="w-4 h-4"></i>
         </div>
-        VELORA
+        <span class="drop-shadow-[1px_1px_0px_#fff]">VELORA</span>
       </a>
       
-      <nav class="hidden md:flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full">
-        <button onclick="window.location.href=`{% url 'clientDashboard' %}`" data-tab="discover" class="tab-btn px-5 py-2 lg:py-4 rounded-full lg:rounded-2xl font-bold text-sm lg:text-base border-[3px] transition-all text-left border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          Discover Artists
-        </button>
-        <button data-tab="requests" onclick="window.location.href=`{% url 'all_request' %}`" class="tab-btn px-5 py-2 lg:py-4 rounded-full lg:rounded-2xl font-bold text-sm lg:text-base border-[3px] transition-all text-left border-transparent hover:border-black/20">
-          My Requests
+      <nav class="hidden md:flex lg:flex-col items-center lg:items-stretch gap-3.5 lg:w-full mt-2">
+        <a href="{% url 'clientDashboard' %}" 
+           class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] transition-all border-black 
+           {% if active_tab == 'discover' %}
+             bg-black text-white shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
+           {% else %}
+             bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]
+           {% endif %}">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="compass" class="w-4 h-4"></i>
+            <span>Discover</span>
+          </div>
+         
+        </a>
+
+        <a href="{% url 'all_request' %}" 
+           class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] transition-all border-black
+           {% if active_tab == 'requests' %}
+             bg-black text-white shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
+           {% else %}
+             bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]
+           {% endif %}">
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            <span>My Requests</span>
+          </div>
+          {% if requests_count %}
+          <span class="text-[9px] px-1.5 py-0.5 rounded border-2 border-black font-black bg-[#ffc86b] text-black">
+            {{ requests_count }}
+          </span>
+          {% endif %}
+        </a>
+
+        <button onclick="openModal()" 
+          class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] border-black transition-all bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] mt-2">
+          <div class="flex items-center gap-2.5">
+            <div class="bg-[#ffc86b] text-black rounded p-0.5 group-hover:rotate-6 transition-transform border-[1.5px] border-black">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            </div>
+            <span>Post Request</span>
+          </div>
         </button>
       </nav>
     </div>
 
-    <div class="flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full lg:mt-auto">
-      <button onclick="openModal()" class="hidden md:flex bg-[#1a1a1a] text-white px-5 py-2.5 lg:py-4 rounded-full lg:rounded-2xl text-sm lg:text-base font-bold hover:bg-black transition-colors items-center justify-center gap-2 border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
-        <i data-lucide="plus" class="w-4 h-4"></i> Post Request
-      </button>
+    <div class="flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full lg:mt-auto pt-4">
+    <div class="flex items-center justify-between lg:border-[2.5px] lg:border-black lg:rounded-2xl lg:p-2.5 transition-all
+        {% if active_tab == 'profile' %}
+            lg:bg-black lg:shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
+        {% else %}
+            lg:bg-white lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
+        {% endif %}">
+        
+        <a href="{% url 'client_profile' %}" class="flex items-center gap-2 group">
+            <div class="w-9 h-9 rounded-xl border-[2px] overflow-hidden shrink-0 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none transition-all
+                {% if active_tab == 'profile' %}border-white bg-gray-800{% else %}border-black bg-[#f9f6f0]{% endif %}">
+                <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ request.user.username|default:'John' }}" alt="Profile" class="w-full h-full object-cover" />
+            </div>
 
-      <div class="flex items-center justify-between lg:mt-4 lg:bg-white lg:border-[3px] lg:border-black lg:rounded-2xl lg:p-3 lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full border-[3px] border-black bg-white overflow-hidden shrink-0">
-            <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ request.user.username|default:'John' }}" alt="Profile" class="w-full h-full object-cover" />
-          </div>
-          <div class="hidden lg:block">
-            <div class="font-bold text-sm truncate max-w-[100px]">{{ request.user.username|default:'John Doe' }}</div>
-            <div class="text-xs font-medium text-gray-500">Client</div>
-          </div>
-        </div>
-
-        <a href="{% url 'logout' %}" class="bg-gray-100 hover:bg-red-400 hover:text-white border-[2px] border-black rounded-lg w-8 h-8 flex items-center justify-center transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] ml-2 shrink-0" title="Logout">
-          <i data-lucide="log-out" class="w-4 h-4"></i>
+            <div class="hidden lg:block">
+                <div class="font-black text-[11px] truncate max-w-[70px] uppercase tracking-tight 
+                    {% if active_tab == 'profile' %}text-white{% else %}text-black{% endif %}">
+                    {{ request.user.username|default:'User' }}
+                </div>
+                <div class="text-[9px] font-bold flex items-center gap-1 uppercase
+                    {% if active_tab == 'profile' %}text-gray-400{% else %}text-gray-500{% endif %}">
+                    <span class="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span> Client
+                </div>
+            </div>
         </a>
-      </div>
+        
+        <a href="{% url 'logout' %}" 
+           class="rounded-lg w-8 h-8 flex items-center justify-center transition-all shrink-0 border-[2px]
+           {% if active_tab == 'profile' %}
+                bg-white text-black border-white shadow-[2px_2px_0px_0px_#ffc86b] hover:bg-red-400 hover:text-white
+           {% else %}
+                bg-red-50 text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-500 hover:text-white
+           {% endif %}
+           hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]" 
+           title="Logout">
+            <i data-lucide="power" class="w-4 h-4"></i>
+        </a>
     </div>
-  </header>
-
+</div>
+</header>
   <main class="flex-1 p-6 lg:p-10 max-w-[90rem] mx-auto w-full">
     {% block content %}{% endblock %}
   </main>

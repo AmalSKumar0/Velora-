@@ -36,6 +36,7 @@ def request_view(request):
 
     return render(request, 'client/request/requests.html', {
         'requests': requests,
+        'active_tab':'requests',
         'tags':Tag.objects.all()
     })
 

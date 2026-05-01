@@ -13,7 +13,7 @@ DEBUG = os.getenv("DEBUG")
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["18.61.227.54","velora.amalskumar.dev","*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -64,8 +64,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'artwork_db',
-        'USER': 'velora',
-        'PASSWORD': '2208@amaL',
+        'USER': os.getenv("DBUser"),
+        'PASSWORD':  os.getenv("DBPass"),
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -107,3 +107,4 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATIC_ROOT = BASE_DIR / "staticfiles"

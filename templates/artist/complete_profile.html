@@ -1,23 +1,139 @@
-<form method="POST">
-    {% csrf_token %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile | Velora</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Caveat Brush"', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white min-h-screen lg:h-screen lg:overflow-hidden font-sans text-gray-900 flex flex-col justify-center items-center p-4 sm:p-6 lg:p-8 selection:bg-[#ffc86b] selection:text-black">
 
-    <label>Display Name:</label><br>
-    <input type="text" name="display_name" required><br><br>
+    <div class="w-full max-w-5xl flex flex-col lg:h-full lg:max-h-[750px] relative z-10 animate-[fadeIn_0.3s_ease-out] my-auto gap-6 lg:gap-0">
+        
+        <div class="flex items-end justify-between mb-2 lg:mb-6 shrink-0">
+            <div class="flex items-center gap-3 sm:gap-4">
+                <div class="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#ffc86b] border-[3px] border-black -rotate-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] shrink-0">
+                    <i data-lucide="brush" class="w-6 h-6 sm:w-7 sm:h-7 text-black"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-4xl sm:text-5xl uppercase tracking-tight leading-none mb-1">
+                        Claim Your <span class="relative inline-block"><span class="relative z-10">Canvas</span><span class="absolute bottom-1 left-0 w-full h-2 sm:h-3 bg-[#ffc86b] -rotate-1 z-0"></span></span>
+                    </h1>
+                    <p class="text-gray-600 font-bold text-xs sm:text-sm tracking-wide">Set up your storefront to start accepting commissions.</p>
+                </div>
+            </div>
+        </div>
 
-    <label>Bio:</label><br>
-    <textarea name="bio"></textarea><br><br>
+        <form method="POST" class="flex-1 flex flex-col min-h-0 gap-6">
+            {% csrf_token %}
 
-    <input type="text" name="portfolioURL" placeholder="Portfolio URL"><br><br>
-    <label>Tags:</label><br>
-    <select name="tags" multiple>
-        {% for tag in tags %}
-            <option value="{{ tag.id }}">{{ tag.name }}</option>
-        {% endfor %}
-    </select><br><br>
-    <label>
-        <input type="checkbox" name="is_available">
-        Available for work
-    </label><br><br>
+            <div class="flex-1 flex flex-col lg:grid lg:grid-cols-2 gap-6 min-h-0">
+                
+                <div class="flex flex-col gap-6">
+                    
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                        <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800 mb-2">Public Display Name</label>
+                        <input type="text" name="display_name" required placeholder="e.g. Studio Ghibli Fan"
+                            class="w-full border-[2.5px] border-black rounded-xl px-4 py-3 font-bold text-sm sm:text-base focus:outline-none focus:ring-0 bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:bg-white focus:border-[#ffc86b] transition-colors">
+                    </div>
 
-    <button type="submit">Create Profile</button>
-</form>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+                        <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800 mb-2">Portfolio Link</label>
+                        <div class="relative group">
+                            <div class="absolute left-3 top-1/2 -translate-y-1/2 bg-[#ffc86b] border-[2px] border-black p-1.5 rounded-lg">
+                                <i data-lucide="link" class="w-4 h-4 text-black"></i>
+                            </div>
+                            <input type="text" name="portfolioURL" required placeholder="https://behance.net/yourname"
+                                class="w-full border-[2.5px] border-black rounded-xl pl-12 sm:pl-14 pr-4 py-3 font-bold text-sm sm:text-base focus:outline-none focus:ring-0 bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:bg-white focus:border-[#ffc86b] transition-colors">
+                        </div>
+                    </div>
+
+                    <div class="bg-[#e0e7ff] p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-between lg:mt-auto">
+                        <div>
+                            <span class="block font-black text-base sm:text-lg uppercase tracking-tight">Open for Work?</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-gray-600">Clients can send you requests</span>
+                        </div>
+                        <label class="relative cursor-pointer flex items-center">
+                            <input type="checkbox" name="is_available" checked class="sr-only peer">
+                            <div class="w-12 sm:w-14 h-7 sm:h-8 bg-white border-[3px] border-black rounded-full peer-checked:bg-[#4ade80] transition-colors shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.2)]"></div>
+                            <div class="absolute left-1 top-1 w-5 sm:w-6 h-5 sm:h-6 bg-white border-[3px] border-black rounded-full transition-transform peer-checked:translate-x-5 sm:peer-checked:translate-x-6"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-6 min-h-0">
+                    
+                    <div class="flex flex-col lg:flex-1 bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] min-h-[150px] lg:min-h-0">
+                        <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800 mb-2">Bio / About You</label>
+                        <textarea name="bio" required placeholder="Tell clients about your unique style, your tools, and what you love to create..."
+                            class="w-full flex-1 border-[2.5px] border-black rounded-xl px-4 py-3 font-bold text-sm sm:text-base focus:outline-none focus:ring-0 bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:bg-white focus:border-[#ffc86b] transition-colors resize-none"></textarea>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-1 bg-white p-4 sm:p-5 rounded-2xl border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] min-h-[180px] lg:min-h-0">
+                        <div class="flex justify-between items-end mb-2 shrink-0">
+                            <label class="block font-black text-[10px] sm:text-xs uppercase tracking-wider text-gray-800">Specialties</label>
+                            <span class="text-[9px] sm:text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-md border-[2px] border-black hidden sm:inline-block">Hold Ctrl/Cmd</span>
+                        </div>
+                        <select name="tags" multiple 
+                            class="w-full flex-1 border-[2.5px] border-black rounded-xl p-2 sm:p-3 font-bold text-xs sm:text-sm focus:outline-none bg-[#f9f6f0] shadow-[inset_2px_2px_0px_0px_rgba(0,0,0,0.1)] focus:border-[#ffc86b] overflow-y-auto custom-scrollbar">
+                            {% for tag in tags %}
+                                <option value="{{ tag.id }}" class="p-2 mb-1 rounded-lg cursor-pointer hover:bg-gray-200 checked:bg-black checked:text-white transition-colors border-2 border-transparent checked:border-black">
+                                    #{{ tag.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <p class="text-[10px] font-bold text-gray-500 mt-2 text-center sm:hidden">Tap to select multiple items</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shrink-0 flex flex-col-reverse sm:flex-row items-center justify-between pt-2 gap-4 pb-6 lg:pb-0">
+                <a href="{% url 'logout' %}" class="text-gray-500 font-black hover:text-red-500 transition-colors uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-white hover:border-black hover:border-2 border-2 border-transparent w-full sm:w-auto justify-center">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Sign Out
+                </a>
+                
+                <button type="submit" 
+                    class="w-full sm:w-auto bg-[#ffc86b] text-black px-6 sm:px-10 py-4 rounded-2xl font-black text-base sm:text-lg uppercase flex items-center justify-center gap-3 border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all group">
+                    Launch Profile 
+                    <i data-lucide="rocket" class="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 10px; sm:width: 12px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f9f6f0; border-left: 2.5px solid black; border-radius: 0 8px 8px 0; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: black; border-radius: 0 6px 6px 0; border: 2px solid #f9f6f0; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
