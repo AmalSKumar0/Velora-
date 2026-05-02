@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-<div class="p-6 lg:p-12 max-w-7xl mx-auto space-y-10">
+<div class="p-6 lg:p-12 max-w-[100rem] mx-auto space-y-10">
 
   <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
@@ -18,40 +18,40 @@
       <table class="w-full text-left border-collapse">
         <thead>
           <tr class="bg-[#ffc86b] border-b-[4px] border-black text-black">
-            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Date</th>
-            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Order ID</th>
-            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Raised By</th>
-            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Status</th>
-            <th class="p-5 font-black uppercase tracking-wider text-sm">Action</th>
+            <th class="py-6 px-8 font-black uppercase tracking-wider text-base border-r-[4px] border-black">Date</th>
+            <th class="py-6 px-8 font-black uppercase tracking-wider text-base border-r-[4px] border-black">Order ID</th>
+            <th class="py-6 px-8 font-black uppercase tracking-wider text-base border-r-[4px] border-black">Raised By</th>
+            <th class="py-6 px-8 font-black uppercase tracking-wider text-base border-r-[4px] border-black">Status</th>
+            <th class="py-6 px-8 font-black uppercase tracking-wider text-base">Action</th>
           </tr>
         </thead>
         <tbody class="font-medium text-gray-800 divide-y-[4px] divide-black">
           {% for dispute in disputes %}
             <tr class="hover:bg-[#fffdf8] transition-colors">
-              <td class="p-5 border-r-[4px] border-black font-bold">{{ dispute.created_at|date:"M d, Y" }}</td>
-              <td class="p-5 border-r-[4px] border-black font-bold">#{{ dispute.order.id|truncatechars:10 }}</td>
-              <td class="p-5 border-r-[4px] border-black font-bold">
+              <td class="py-6 px-8 border-r-[4px] border-black font-bold text-lg">{{ dispute.created_at|date:"M d, Y" }}</td>
+              <td class="py-6 px-8 border-r-[4px] border-black font-bold text-lg">#{{ dispute.order.id|truncatechars:10 }}</td>
+              <td class="py-6 px-8 border-r-[4px] border-black font-bold text-lg">
                   {{ dispute.raised_by.username }}
-                  <span class="text-xs text-gray-500 uppercase tracking-widest block">{{ dispute.raised_by.role }}</span>
+                  <span class="text-sm text-gray-500 uppercase tracking-widest block mt-1">{{ dispute.raised_by.role }}</span>
               </td>
-              <td class="p-5 border-r-[4px] border-black font-bold">
+              <td class="py-6 px-8 border-r-[4px] border-black font-bold text-lg">
                 {% if dispute.status == 'open' %}
-                  <span class="bg-red-500 text-white border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Open</span>
+                  <span class="bg-red-500 text-white border-[2px] border-black px-4 py-2 rounded-lg text-sm uppercase tracking-wider">Open</span>
                 {% elif dispute.status == 'resolved' %}
-                  <span class="bg-green-400 text-black border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Resolved</span>
+                  <span class="bg-green-400 text-black border-[2px] border-black px-4 py-2 rounded-lg text-sm uppercase tracking-wider">Resolved</span>
                 {% else %}
-                  <span class="bg-gray-300 text-black border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Rejected</span>
+                  <span class="bg-gray-300 text-black border-[2px] border-black px-4 py-2 rounded-lg text-sm uppercase tracking-wider">Rejected</span>
                 {% endif %}
               </td>
-              <td class="p-5">
-                <a href="{% url 'admin_dispute_detail' dispute.id %}" class="inline-flex items-center gap-2 bg-black text-white border-[3px] border-black px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
-                  <i data-lucide="eye" class="w-4 h-4"></i> Review Case
+              <td class="py-6 px-8">
+                <a href="{% url 'admin_dispute_detail' dispute.id %}" class="inline-flex items-center gap-2 bg-black text-white border-[3px] border-black px-5 py-3 rounded-xl font-bold text-base hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+                  <i data-lucide="eye" class="w-5 h-5"></i> Review Case
                 </a>
               </td>
             </tr>
           {% empty %}
             <tr>
-              <td colspan="5" class="p-12 text-center text-gray-500 font-bold text-lg">No disputes found.</td>
+              <td colspan="5" class="py-16 px-8 text-center text-gray-500 font-bold text-2xl">No disputes found.</td>
             </tr>
           {% endfor %}
         </tbody>
