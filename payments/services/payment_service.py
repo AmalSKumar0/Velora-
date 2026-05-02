@@ -195,7 +195,7 @@ class PaymentService:
             raise Exception("No payment ID for refund")
 
         # Razorpay refund
-        self.client.payment.refund(payment.provider_payment_id)
+        self.client.payment.refund(payment.provider_payment_id, {"amount": int(payment.amount * 100)})
 
         payment.status = Payment.Status.REFUNDED
         payment.refunded_at = timezone.now()

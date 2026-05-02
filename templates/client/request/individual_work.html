@@ -2,149 +2,154 @@
 {% load static %}
 
 {% block content %}
-<!-- Header -->
-<div class="bg-[#ffc86b] border-b-[4px] border-black sticky top-0 z-30">
-  <div class="px-6 lg:px-12 h-24 flex items-center justify-between max-w-[100rem] mx-auto">
-    <div class="flex items-center gap-6">
-      <a href="javascript:history.back()" class="w-12 h-12 bg-white border-[3px] border-black rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
-        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+<!-- Minimal Header -->
+<div class="bg-white border-b-[2px] border-black sticky top-0 z-30 bg-opacity-90 backdrop-blur-md">
+  <div class="px-6 lg:px-12 h-20 flex items-center justify-between max-w-[90rem] mx-auto">
+    
+    <div class="flex items-center gap-4">
+      <a href="javascript:history.back()" class="w-10 h-10 bg-white border-[2px] border-black text-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none">
+        <i data-lucide="arrow-left" class="w-5 h-5"></i>
       </a>
-      <div>
-        <h1 class="text-3xl md:text-4xl font-display uppercase tracking-tight">Order Workspace</h1>
-        <p class="font-black text-sm tracking-widest uppercase">ID: {{ order.id|truncatechars:10 }}</p>
+      <div class="flex flex-col">
+        <h1 class="text-xl font-bold text-gray-900 tracking-tight">Order Workspace</h1>
+        <p class="text-xs text-gray-500 font-mono font-bold">ID: {{ order.id|stringformat:".8s" }}</p>
       </div>
     </div>
+
+    <!-- Dispute Button Moved to Top -->
+    {% if order.status != 'completed' and order.status != 'cancelled' and order.status != 'disputed' %}
+    <div>
+        <button type="button" onclick="openDisputeModal()" class="text-xs font-bold text-black hover:text-white bg-[#ffc86b] hover:bg-red-500 border-[2px] border-black px-4 py-2 rounded-full transition-colors flex items-center gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none">
+            <i data-lucide="flag" class="w-3.5 h-3.5"></i> Raise Dispute
+        </button>
+    </div>
+    {% endif %}
+
   </div>
 </div>
 
-<div class="p-6 lg:p-12 max-w-[100rem] mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-10 items-start pb-32">
+<div class="p-6 lg:p-12 max-w-[90rem] mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-12 items-start pb-32">
 
-  <!-- Main Content Area -->
-  <div class="lg:col-span-2 space-y-10">
+  <!-- Main Canvas Area -->
+  <div class="lg:col-span-2 space-y-8">
     
-    <!-- Status Banner -->
+    <!-- Minimal Status Banner -->
     {% if order.status == 'disputed' %}
-    <div class="bg-[#ff6b6b] border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-white flex items-center gap-4 animate-pulse">
-        <i data-lucide="alert-triangle" class="w-10 h-10"></i>
+    <div class="bg-red-100 border-[2px] border-black rounded-2xl p-5 text-red-900 flex items-center gap-4 animate-pulse shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="alert-circle" class="w-6 h-6 text-red-600"></i>
         <div>
-            <h2 class="font-display text-3xl uppercase tracking-tight">Order Disputed</h2>
-            <p class="font-bold">This order is currently under dispute review. An admin will contact you shortly.</p>
+            <h2 class="text-sm font-bold tracking-wide">Order Disputed</h2>
+            <p class="text-xs font-bold text-red-700 mt-1">This order is currently under administrative review.</p>
         </div>
     </div>
     {% elif order.status == 'completed' %}
-    <div class="bg-[#4ade80] border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex items-center gap-4">
-        <i data-lucide="check-circle" class="w-10 h-10"></i>
+    <div class="bg-[#7ae582] border-[2px] border-black rounded-2xl p-5 text-black flex items-center gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="check-circle-2" class="w-6 h-6 text-black"></i>
         <div>
-            <h2 class="font-display text-3xl uppercase tracking-tight">Order Completed</h2>
-            <p class="font-bold">This commission has been successfully completed and funds released.</p>
+            <h2 class="text-sm font-bold tracking-wide">Order Completed</h2>
+            <p class="text-xs font-bold mt-1">The commission has been successfully finalized.</p>
         </div>
     </div>
     {% endif %}
 
-
     {% if submission %}
       
-      <!-- Submission Preview -->
-      <div class="bg-white border-[4px] border-black rounded-[2.5rem] overflow-hidden shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-        <div class="bg-black text-white p-6 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-              <i data-lucide="image" class="w-8 h-8 text-[#ffc86b]"></i>
-              <h2 class="text-3xl font-display uppercase tracking-tight">
-                {% if order.status == 'completed' %}Final Delivery{% else %}Submission Preview{% endif %}
-              </h2>
-          </div>
-          <span class="bg-white text-black px-4 py-1 rounded-full font-black text-sm border-[2px] border-black">v{{ submission.version }}</span>
+      <!-- Artistic Submission Viewer -->
+      <div class="bg-white border-[2px] border-black rounded-3xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div class="px-8 py-5 border-b-[2px] border-black flex items-center justify-between bg-white">
+          <h2 class="text-sm font-bold tracking-wide uppercase">
+            {% if order.status == 'completed' %}Final Artwork{% else %}Preview Canvas{% endif %}
+          </h2>
+          <span class="bg-black text-white px-3 py-1 rounded-full text-xs font-mono font-bold border-[2px] border-black">v{{ submission.version }}</span>
         </div>
         
-        <div class="p-8 bg-gray-50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+        <!-- Canvas Background -->
+        <div class="p-8 bg-[#f9f6f0] flex justify-center items-center min-h-[50vh]">
           {% if order.status != 'completed' %}
-            <div class="relative rounded-[2rem] border-[4px] border-black overflow-hidden bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group">
-              <img src="{{ submission.preview_file.url }}" alt="Preview" class="w-full h-auto max-h-[70vh] object-contain" />
-              <!-- Watermark Overlay visually represented -->
+            <div class="relative max-w-full rounded-lg overflow-hidden group bg-white border-[2px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <img src="{{ submission.preview_file.url }}" alt="Preview" class="w-auto h-auto max-h-[65vh] object-contain transition-transform duration-700 hover:scale-[1.02]" />
+              <!-- Elegant Watermark -->
               <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
-                  <div class="text-[10rem] font-black uppercase text-black -rotate-45">PREVIEW</div>
+                  <div class="text-6xl font-black tracking-[1em] text-gray-900 -rotate-12 select-none">PREVIEW</div>
               </div>
             </div>
           {% else %}
-            <div class="rounded-[2rem] border-[4px] border-black overflow-hidden bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-              <img src="{{ submission.original_file.url }}" alt="Final Work" class="w-full h-auto max-h-[70vh] object-contain" />
+            <div class="max-w-full rounded-lg overflow-hidden bg-white border-[2px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <img src="{{ submission.original_file.url }}" alt="Final Work" class="w-auto h-auto max-h-[65vh] object-contain" />
             </div>
           {% endif %}
         </div>
       </div>
 
       <!-- Action Area -->
+      <div class="transition-opacity duration-300 {% if order.status == 'disputed' %}opacity-60 pointer-events-none grayscale{% endif %}">
       {% if subrev %}
         {% if subrev.action == 'approved' %}
           {% if order.status == 'completed' %}
             
-            <a href="{% url 'download_final' submission.id %}" class="w-full bg-[#ffc86b] text-black border-[4px] border-black px-8 py-5 rounded-[2rem] font-black text-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center justify-center gap-4 mb-10">
-              <i data-lucide="download-cloud" class="w-8 h-8"></i> Download Final High-Res File
+            <a href="{% url 'download_final' submission.id %}" class="w-full bg-[#ffc86b] text-black border-[2px] border-black hover:bg-black hover:text-[#ffc86b] px-8 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-center gap-3 mb-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none">
+              <i data-lucide="download" class="w-5 h-5"></i> Download High Resolution File
             </a>
 
-            <!-- Reviews -->
+            <!-- Minimal Reviews -->
             {% if review %}
-               <div id="review-display" class="bg-white border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] block">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-                  <h3 class="text-3xl font-display uppercase tracking-tight">Your Review</h3>
-                  <div class="flex gap-2 items-center bg-[#fffdf8] px-5 py-2 border-[3px] border-black rounded-xl font-black text-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                    <i data-lucide="star" class="w-6 h-6 text-[#ffc86b] fill-current"></i>
-                    {{ review.rating }} / 5
+               <div id="review-display" class="bg-white border-[2px] border-black rounded-3xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] block">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-sm font-bold tracking-wide uppercase">Your Review</h3>
+                  <div class="flex gap-1 items-center bg-[#ffc86b] border-[2px] border-black text-black px-3 py-1 rounded-full text-sm font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                    {{ review.rating }}.0
                   </div>
                 </div>
                 
-                <div class="bg-gray-50 border-[3px] border-dashed border-gray-300 p-6 rounded-[1.5rem] mb-6 relative">
-                    <i data-lucide="quote" class="w-10 h-10 text-gray-200 absolute top-4 left-4"></i>
-                    <p class="text-xl font-medium italic text-gray-800 relative z-10 pl-8 pt-4">"{{ review.comment }}"</p>
-                </div>
+                <p class="text-lg font-medium text-gray-800 leading-relaxed mb-8 italic text-center px-4">"{{ review.comment }}"</p>
                 
-                <div class="flex flex-wrap items-center gap-4">
-                  <button onclick="toggleReviewEdit()" class="bg-black text-white border-[3px] border-black px-6 py-3 rounded-xl font-black shadow-[4px_4px_0px_0px_#ffc86b] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all flex items-center gap-2">
-                    <i data-lucide="edit-2" class="w-4 h-4"></i> Edit Review
+                <div class="flex items-center justify-center gap-4">
+                  <button onclick="toggleReviewEdit()" class="text-xs font-bold text-black border-[2px] border-black px-4 py-2 rounded-lg bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all flex items-center gap-1.5">
+                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i> Edit
                   </button>
-                  
                   <form method="POST" action="{% url 'delete_review' review.id %}" onsubmit="return confirm('Delete this review permanently?');">
                     {% csrf_token %}
-                    <button type="submit" class="bg-white text-[#ff6b6b] border-[3px] border-black px-6 py-3 rounded-xl font-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:bg-[#ff6b6b] hover:text-white transition-all flex items-center gap-2">
-                      <i data-lucide="trash-2" class="w-4 h-4"></i> Delete
+                    <button type="submit" class="text-xs font-bold text-white bg-red-500 border-[2px] border-black px-4 py-2 rounded-lg shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all flex items-center gap-1.5">
+                      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Delete
                     </button>
                   </form>
                 </div>
               </div>
 
-              <!-- Edit Form -->
-              <div id="review-edit" class="bg-white border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hidden">
-                <div class="flex items-center justify-between mb-6 border-b-[4px] border-black pb-4">
-                  <h3 class="text-3xl font-display uppercase tracking-tight">Edit Review</h3>
-                  <button onclick="toggleReviewEdit()" class="w-10 h-10 bg-white border-[3px] border-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+              <!-- Minimal Edit Form -->
+              <div id="review-edit" class="bg-white border-[2px] border-black rounded-3xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hidden">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="text-sm font-bold tracking-wide uppercase">Edit Review</h3>
+                  <button onclick="toggleReviewEdit()" class="w-8 h-8 flex items-center justify-center bg-white border-[2px] border-black rounded-full shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all text-black">
+                    <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
                 </div>
                 
                 <form method="POST" action="{% url 'edit_review' review.id %}">
                   {% csrf_token %}
                   
-                  <div class="mb-6">
-                    <label for="edit_rating" class="block font-black text-lg mb-2 uppercase tracking-widest text-gray-600">Rating (1–5)</label>
-                    <select name="rating" id="edit_rating" required class="w-full border-[4px] border-black rounded-[1.5rem] p-5 font-black text-xl focus:outline-none focus:ring-4 focus:ring-[#ffc86b] appearance-none bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <div class="mb-5">
+                    <label class="block text-xs font-bold mb-2">Rating</label>
+                    <select name="rating" required class="w-full border-[2px] border-black rounded-xl p-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#ffc86b] appearance-none bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
                       <option value="1" {% if review.rating == 1 %}selected{% endif %}>1 - Poor</option>
                       <option value="2" {% if review.rating == 2 %}selected{% endif %}>2 - Fair</option>
                       <option value="3" {% if review.rating == 3 %}selected{% endif %}>3 - Good</option>
                       <option value="4" {% if review.rating == 4 %}selected{% endif %}>4 - Very Good</option>
-                      <option value="5" {% if review.rating == 5 %}selected{% endif %}>5 - Excellent!</option>
+                      <option value="5" {% if review.rating == 5 %}selected{% endif %}>5 - Excellent</option>
                     </select>
                   </div>
                   
-                  <div class="mb-8">
-                    <label for="edit_comment" class="block font-black text-lg mb-2 uppercase tracking-widest text-gray-600">Comment</label>
-                    <textarea name="comment" id="edit_comment" rows="4" required class="w-full border-[4px] border-black rounded-[1.5rem] p-5 font-bold text-lg focus:outline-none focus:ring-4 focus:ring-[#ffc86b] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">{{ review.comment }}</textarea>
+                  <div class="mb-6">
+                    <label class="block text-xs font-bold mb-2">Comment</label>
+                    <textarea name="comment" rows="3" required class="w-full border-[2px] border-black rounded-xl p-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#ffc86b] bg-white resize-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{{ review.comment }}</textarea>
                   </div>
                   
-                  <div class="flex gap-4">
-                    <button type="submit" class="flex-1 bg-black text-[#ffc86b] border-[4px] border-black px-6 py-4 rounded-[1.5rem] font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                  <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-black text-white border-[2px] border-black px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-800 transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none">
                       Save Changes
                     </button>
-                    <button type="button" onclick="toggleReviewEdit()" class="bg-gray-100 text-black border-[4px] border-black px-6 py-4 rounded-[1.5rem] font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+                    <button type="button" onclick="toggleReviewEdit()" class="flex-1 bg-white border-[2px] border-black text-black px-4 py-2.5 rounded-xl text-sm font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none">
                       Cancel
                     </button>
                   </div>
@@ -153,34 +158,29 @@
 
             {% else %}
                <!-- Write Review Form -->
-               <div class="bg-white border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <div class="flex items-center gap-3 mb-8 border-b-[4px] border-black pb-4">
-                    <i data-lucide="star" class="w-8 h-8 text-[#ffc86b] fill-current"></i>
-                    <h3 class="text-3xl font-display uppercase tracking-tight">Leave a Review</h3>
-                </div>
+               <div class="bg-white border-[2px] border-black rounded-3xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <h3 class="text-sm font-bold tracking-wide uppercase mb-6 text-center">Leave a Review</h3>
                 <form method="POST" action="{% url 'submit_review' %}">
                   {% csrf_token %}
                   <input type="hidden" name="orderid" value="{{ order.id }}">
                   
-                  <div class="mb-6">
-                    <label for="rating" class="block font-black text-lg mb-2 uppercase tracking-widest text-gray-600">Rating (1–5)</label>
-                    <select name="rating" id="rating" required class="w-full border-[4px] border-black rounded-[1.5rem] p-5 font-black text-xl focus:outline-none focus:ring-4 focus:ring-[#ffc86b] appearance-none bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                      <option value="">Select rating...</option>
-                      <option value="1">1 - Poor</option>
-                      <option value="2">2 - Fair</option>
-                      <option value="3">3 - Good</option>
-                      <option value="4">4 - Very Good</option>
-                      <option value="5">5 - Excellent!</option>
+                  <div class="mb-5">
+                    <select name="rating" required class="w-full border-[2px] border-black rounded-xl p-3 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#ffc86b] appearance-none bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <option value="">Select a rating</option>
+                      <option value="1">1 Star</option>
+                      <option value="2">2 Stars</option>
+                      <option value="3">3 Stars</option>
+                      <option value="4">4 Stars</option>
+                      <option value="5">5 Stars</option>
                     </select>
                   </div>
                   
-                  <div class="mb-8">
-                    <label for="comment" class="block font-black text-lg mb-2 uppercase tracking-widest text-gray-600">Your Experience</label>
-                    <textarea name="comment" id="comment" rows="4" placeholder="Write your feedback for the artist..." required class="w-full border-[4px] border-black rounded-[1.5rem] p-5 font-bold text-lg focus:outline-none focus:ring-4 focus:ring-[#ffc86b] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"></textarea>
+                  <div class="mb-6">
+                    <textarea name="comment" rows="3" placeholder="Share your experience..." required class="w-full border-[2px] border-black rounded-xl p-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#ffc86b] bg-white resize-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"></textarea>
                   </div>
                   
-                  <button type="submit" class="w-full bg-black text-[#ffc86b] border-[4px] border-black px-8 py-4 rounded-[1.5rem] font-black text-xl shadow-[6px_6px_0px_0px_#ffc86b] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all">
-                    Submit Review
+                  <button type="submit" class="w-full bg-black text-[#ffc86b] border-[2px] border-black px-4 py-3 rounded-xl text-sm font-bold transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none">
+                    Submit Feedback
                   </button>
                 </form>
               </div>
@@ -188,186 +188,151 @@
 
           {% else %}
             <!-- Ready to complete state -->
-            <div class="bg-white border-[4px] border-black rounded-[2.5rem] p-10 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-              <div class="inline-flex bg-[#ffc86b] border-[4px] border-black rounded-full p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-bounce">
-                  <i data-lucide="check" class="w-10 h-10 text-black stroke-[3]"></i>
+            <div class="bg-white border-[2px] border-black rounded-3xl p-10 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <div class="w-16 h-16 bg-[#7ae582] border-[2px] border-black text-black rounded-full flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                  <i data-lucide="check" class="w-8 h-8"></i>
               </div>
-              <h3 class="font-display text-5xl uppercase tracking-tight mb-4">Submission Approved!</h3>
-              <p class="text-xl font-bold text-gray-600 mb-10 max-w-lg mx-auto">You've approved the preview. Complete the order now to release funds to the artist and download the high-resolution final file.</p>
+              <h3 class="text-2xl font-black mb-3">Submission Approved</h3>
+              <p class="text-sm font-bold text-gray-600 mb-8 max-w-sm mx-auto">Please finalize the order to release funds to the artist and unlock your high-resolution download.</p>
               
               <form method="get" action="{% url 'complete_order' order.id %}">
-                <button type="submit" onclick="return confirm('Finish order and release funds?')" class="bg-black text-[#ffc86b] border-[4px] border-black px-12 py-5 rounded-[2rem] font-black text-2xl shadow-[8px_8px_0px_0px_#ffc86b] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all inline-flex items-center gap-3">
-                  <i data-lucide="award" class="w-6 h-6"></i> Complete Order
+                <button type="submit" onclick="return confirm('Complete order and release funds?')" class="bg-black text-[#ffc86b] border-[2px] border-black px-8 py-3.5 rounded-2xl text-sm font-bold transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none inline-flex items-center gap-2">
+                  Complete Order
                 </button>
               </form>
             </div>
           {% endif %}
           
         {% else %}
-          <div class="bg-white border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-6">
-            <div class="w-20 h-20 bg-black rounded-[1.5rem] border-[4px] border-[#ffc86b] flex items-center justify-center shrink-0">
-              <i data-lucide="refresh-cw" class="w-10 h-10 text-[#ffc86b] animate-spin-slow"></i>
+          <div class="bg-white border-[2px] border-black rounded-3xl p-8 flex flex-col md:flex-row items-center justify-center text-center md:text-left gap-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <div class="w-12 h-12 bg-white border-[2px] border-black rounded-full flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <i data-lucide="refresh-cw" class="w-5 h-5 text-black animate-spin-slow"></i>
             </div>
             <div>
-              <h3 class="font-display text-3xl uppercase tracking-tight mb-2">Revisions Requested</h3>
-              <p class="text-lg font-bold text-gray-600">You've requested changes to this submission. The artist has been notified and is working on the next version.</p>
+              <h3 class="text-lg font-black text-black mb-1">Revisions Requested</h3>
+              <p class="text-sm font-bold text-gray-600">The artist is currently working on an updated version based on your feedback.</p>
             </div>
           </div>
         {% endif %}
         
       {% else %}
         
-        <!-- Review Action Box -->
-        <div class="bg-white border-[4px] border-black rounded-[2.5rem] p-10 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-          <h3 class="font-display text-4xl uppercase tracking-tight mb-8 border-b-[4px] border-black pb-4">Decision Required</h3>
+        <!-- Decision Area Minimal -->
+        <div class="bg-white border-[2px] border-black rounded-3xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <h3 class="text-sm font-bold tracking-wide uppercase mb-6 text-center">Your Decision</h3>
           
-          <form method="POST" action="{% url 'clinet_view_individual_work' order.id %}" class="space-y-8">
+          <form method="POST" action="{% url 'clinet_view_individual_work' order.id %}" class="space-y-6 max-w-lg mx-auto">
             {% csrf_token %}
             <input type="hidden" name="subid" value="{{ submission.id }}">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-2 gap-4">
               <label class="relative block cursor-pointer group">
                 <input type="radio" name="action" value="approved" required class="peer sr-only">
-                <div class="h-full bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] peer-checked:bg-[#4ade80] peer-checked:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-all">
-                    <i data-lucide="thumbs-up" class="w-10 h-10 mb-4 peer-checked:fill-black"></i>
-                    <h4 class="font-display text-2xl uppercase mb-2">Approve</h4>
-                    <p class="font-bold text-sm">Looks perfect! Ready to proceed to final delivery.</p>
+                <div class="h-full bg-white border-[2px] border-black rounded-2xl p-4 text-center peer-checked:bg-[#7ae582] peer-checked:shadow-[inset_3px_3px_0px_0px_rgba(0,0,0,0.15)] transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="check" class="w-5 h-5 mx-auto mb-2 text-black"></i>
+                    <h4 class="text-sm font-bold text-black">Approve</h4>
                 </div>
               </label>
               
               <label class="relative block cursor-pointer group">
                 <input type="radio" name="action" value="changes_requested" class="peer sr-only">
-                <div class="h-full bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] peer-checked:bg-[#ffc86b] peer-checked:shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.2)] transition-all">
-                    <i data-lucide="edit-3" class="w-10 h-10 mb-4"></i>
-                    <h4 class="font-display text-2xl uppercase mb-2">Request Revisions</h4>
-                    <p class="font-bold text-sm">Needs some tweaks. Send feedback to the artist.</p>
+                <div class="h-full bg-white border-[2px] border-black rounded-2xl p-4 text-center peer-checked:bg-[#ffc86b] peer-checked:shadow-[inset_3px_3px_0px_0px_rgba(0,0,0,0.15)] transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="edit-3" class="w-5 h-5 mx-auto mb-2 text-black"></i>
+                    <h4 class="text-sm font-bold text-black">Request Change</h4>
                 </div>
               </label>
             </div>
             
             <div>
-              <label class="block font-black text-lg mb-2 uppercase tracking-widest text-gray-600">Provide detailed feedback</label>
-              <textarea name="comment" rows="4" placeholder="What do you like? What needs changing?" class="w-full border-[4px] border-black rounded-[1.5rem] p-5 font-bold text-lg focus:outline-none focus:ring-4 focus:ring-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"></textarea>
+              <textarea name="comment" rows="3" placeholder="Add notes or feedback for the artist..." class="w-full border-[2px] border-black rounded-2xl p-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-black bg-white resize-none transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"></textarea>
             </div>
             
-            <button type="submit" class="w-full bg-black text-white border-[4px] border-black px-8 py-5 rounded-[2rem] font-black text-2xl shadow-[6px_6px_0px_0px_#ffc86b] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none transition-all flex items-center justify-center gap-3">
-              <i data-lucide="send" class="w-6 h-6"></i> Submit Decision
+            <button type="submit" class="w-full bg-black text-[#ffc86b] border-[2px] border-black px-6 py-3 rounded-2xl text-sm font-bold transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none">
+              Submit Decision
             </button>
           </form>
         </div>
       {% endif %}
+      </div>
 
     {% else %}
-      <div class="bg-white border-[4px] border-black rounded-[3rem] p-16 text-center shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-        <div class="w-32 h-32 bg-[#fffdf8] border-[4px] border-black rounded-full flex items-center justify-center mx-auto mb-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-          <i data-lucide="hourglass" class="w-12 h-12 text-[#ffc86b] animate-pulse"></i>
+      <div class="bg-white border-[2px] border-black rounded-3xl p-20 text-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div class="w-16 h-16 bg-white border-[2px] border-black rounded-full flex items-center justify-center mx-auto mb-6 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <i data-lucide="palette" class="w-6 h-6 text-black"></i>
         </div>
-        <h2 class="font-display text-5xl uppercase tracking-tight mb-4">Awaiting Submission</h2>
-        <p class="text-xl font-bold text-gray-600 max-w-lg mx-auto">
-          The artist is currently working on your request. Check back later for the first preview!
+        <h2 class="text-xl font-black text-black mb-2">Awaiting Masterpiece</h2>
+        <p class="text-sm font-bold text-gray-600 max-w-sm mx-auto">
+          The artist is currently working on your request. Check back later for the first preview.
         </p>
       </div>
     {% endif %}
 
   </div>
 
-  <!-- Sidebar: Order Summary & Actions -->
-  <div class="lg:col-span-1 space-y-8">
-    <div class="bg-white border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sticky top-32">
+  <!-- Minimal Sidebar: Details -->
+  <div class="lg:col-span-1 space-y-6">
+    <div class="bg-white border-[2px] border-black rounded-3xl p-6 sticky top-28 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
       
-      <!-- Summary Header -->
-      <h3 class="font-display text-3xl uppercase tracking-tight mb-6 border-b-[4px] border-black pb-4 flex items-center gap-3">
-        <i data-lucide="receipt" class="w-8 h-8"></i> Details
-      </h3>
+      <h3 class="text-xs font-bold text-gray-500 tracking-widest uppercase mb-6 text-center">Order Details</h3>
       
-      <div class="space-y-6">
-        <div>
-          <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Request Subject</p>
-          <p class="font-bold text-xl leading-tight">{{ order.request.title }}</p>
+      <div class="space-y-5">
+        <div class="text-center">
+          <h4 class="text-lg font-black text-black mb-1 leading-tight">{{ order.request.title }}</h4>
+          <p class="text-xs font-bold text-gray-600">Artist: <span class="text-black">@{{ order.artist.user.username }}</span></p>
         </div>
         
-        <div class="flex items-center justify-between py-5 border-y-[4px] border-black border-dashed">
-          <div>
-            <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Artist</p>
-            <p class="font-black text-lg flex items-center gap-2 bg-[#f9f6f0] px-3 py-1 rounded-lg border-[2px] border-black">
-              <i data-lucide="user" class="w-4 h-4"></i> {{ order.artist.user.username }}
-            </p>
-          </div>
-          <div class="text-right">
-            <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-2">Amount</p>
-            <p class="font-display text-3xl text-[#ffc86b] drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">₹{{ order.amount }}</p>
-          </div>
+        <div class="flex items-center justify-between py-4 border-y-[2px] border-black border-dashed">
+          <span class="text-sm font-bold text-gray-600">Commission Fee</span>
+          <span class="text-lg font-black text-black">₹{{ order.amount }}</span>
         </div>
 
-        <div>
-          <p class="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Order Status</p>
-          <div class="w-full text-center px-4 py-3 rounded-xl font-black uppercase tracking-widest border-[3px] border-black 
-            {% if order.status == 'completed' %}bg-[#4ade80] text-black
-            {% elif order.status == 'disputed' %}bg-[#ff6b6b] text-white
-            {% else %}bg-[#ffc86b] text-black{% endif %} shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div class="flex items-center justify-between py-1">
+          <span class="text-sm font-bold text-gray-600">Status</span>
+          <span class="text-xs font-bold px-2.5 py-1 rounded-full border-[2px] border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black">
             {{ order.get_status_display }}
-          </div>
+          </span>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 pt-4 border-t-[4px] border-black border-dashed bg-gray-50 p-4 rounded-xl">
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Revisions Used</p>
-            <p class="font-display text-2xl">{{ order.revision_count }}</p>
-          </div>
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Created On</p>
-            <p class="font-bold">{{ order.created_at|date:"M d" }}</p>
-          </div>
+        <div class="flex items-center justify-between py-1">
+          <span class="text-sm font-bold text-gray-600">Revisions</span>
+          <span class="text-sm font-black text-black">{{ order.revision_count }}</span>
         </div>
+
+        <div class="flex items-center justify-between py-1">
+          <span class="text-sm font-bold text-gray-600">Created</span>
+          <span class="text-sm font-black text-black">{{ order.created_at|date:"M d, Y" }}</span>
+        </div>
+
       </div>
     </div>
-
-    <!-- Dispute Action -->
-    {% if order.status != 'completed' and order.status != 'cancelled' and order.status != 'disputed' %}
-    <div class="bg-gray-100 border-[4px] border-black rounded-[2.5rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <div class="flex items-center gap-3 mb-4">
-            <i data-lucide="alert-octagon" class="w-6 h-6 text-[#ff6b6b]"></i>
-            <h3 class="font-display text-2xl uppercase tracking-tight">Having Issues?</h3>
-        </div>
-        <p class="text-sm font-bold text-gray-600 mb-6">If the artist is unresponsive or violating terms, you can raise a formal dispute.</p>
-        <button type="button" onclick="openDisputeModal()" class="w-full bg-white border-[3px] border-black text-black font-black uppercase tracking-widest px-6 py-4 rounded-[1.5rem] hover:bg-[#ff6b6b] hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center gap-2">
-            <i data-lucide="flag" class="w-4 h-4"></i> Raise Dispute
-        </button>
-    </div>
-    {% endif %}
-
   </div>
 </div>
 
-<!-- Dispute Modal -->
+<!-- Minimal Dispute Modal -->
 <div id="disputeModal" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeDisputeModal()"></div>
-    <div class="relative w-full max-w-lg bg-white border-[4px] border-black rounded-[2.5rem] shadow-[12px_12px_0px_0px_#ff6b6b] p-10 transform scale-95 opacity-0 transition-all duration-200" id="disputeModalContent">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="closeDisputeModal()"></div>
+    <div class="relative w-full max-w-md bg-white border-[2px] border-black rounded-3xl p-8 transform scale-95 opacity-0 transition-all duration-300 ease-out shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" id="disputeModalContent">
         
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="font-display text-4xl uppercase tracking-tight flex items-center gap-3 text-[#ff6b6b]">
-                <i data-lucide="alert-triangle" class="w-8 h-8 fill-current text-black"></i> Raise Dispute
-            </h2>
-            <button onclick="closeDisputeModal()" class="w-10 h-10 border-[3px] border-black rounded-full flex items-center justify-center hover:bg-gray-100 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+        <div class="text-center mb-6">
+            <div class="w-12 h-12 bg-white border-[2px] border-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <i data-lucide="flag" class="w-5 h-5 text-red-500"></i>
+            </div>
+            <h2 class="text-xl font-black text-black mb-2">Raise a Dispute</h2>
+            <p class="text-xs font-bold text-gray-600 px-4">This action freezes the order. An administrator will review your case and mediate the situation.</p>
         </div>
-
-        <p class="font-bold text-gray-700 mb-8 border-l-[4px] border-[#ff6b6b] pl-4">Opening a dispute will freeze the order. An administrator will review your case and contact both parties.</p>
 
         <form method="POST" action="{% url 'raise_dispute' order.id %}">
             {% csrf_token %}
-            <div class="mb-8">
-                <label class="block font-black text-sm uppercase tracking-widest text-gray-500 mb-3">Reason for Dispute</label>
-                <textarea name="reason" rows="4" required placeholder="Please describe the issue in detail..." class="w-full border-[3px] border-black rounded-2xl p-4 font-bold focus:outline-none focus:ring-4 focus:ring-[#ff6b6b]/50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"></textarea>
+            <div class="mb-6">
+                <textarea name="reason" rows="4" required placeholder="Please describe the issue..." class="w-full border-[2px] border-black rounded-2xl p-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-red-500 bg-white resize-none transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"></textarea>
             </div>
             
-            <div class="flex gap-4">
-                <button type="submit" class="flex-1 bg-[#ff6b6b] text-white border-[4px] border-black px-6 py-4 rounded-2xl font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all text-center">
-                    Submit
-                </button>
-                <button type="button" onclick="closeDisputeModal()" class="bg-gray-100 text-black border-[4px] border-black px-6 py-4 rounded-2xl font-black uppercase tracking-widest shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all">
+            <div class="flex gap-3">
+                <button type="button" onclick="closeDisputeModal()" class="flex-1 bg-white border-[2px] border-black text-black px-4 py-3 rounded-2xl text-sm font-bold transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none">
                     Cancel
+                </button>
+                <button type="submit" class="flex-1 bg-red-500 border-[2px] border-black text-white px-4 py-3 rounded-2xl text-sm font-bold transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none">
+                    Submit Dispute
                 </button>
             </div>
         </form>
@@ -412,7 +377,7 @@
         setTimeout(() => {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
-        }, 200);
+        }, 300);
       }
   }
 

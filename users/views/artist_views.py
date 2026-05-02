@@ -243,3 +243,32 @@ def add_portfolio_item(request):
     tags = Tag.objects.all()
     return render(request, 'artist/create_portfolio.html', {'tags': tags})
 
+
+@login_required
+@role_required('artist')
+def artist_raise_dispute(request, order_id):
+    if request.method == "POST":
+        order = get_object_or_404(Order, id=order_id, artist__user=request.user)
+        
+        if order.status in ['completed', 'cancelled', 'disputed']:
+            messages.error(request, f"Cannot raise dispute for an order that is {order.status}.")
+            return redirect("individual_work", order.id)
+            
+        reason = request.POST.get('reason')
+        if not reason:
+            messages.error(request, "Reason is required to raise a dispute.")
+            return redirect("individual_work", order.id)
+            
+        with transaction.atomic():
+            Dispute.objects.create(
+                order=order,
+                raised_by=request.user,
+                reason=reason,
+                status=Dispute.Status.OPEN
+            )
+            order.status = Order.Status.DISPUTED
+            order.save()
+            
+        messages.success(request, "Dispute raised successfully. An admin will review it.")
+        return redirect("individual_work", order.id)
+    return redirect("individual_work", order.id)

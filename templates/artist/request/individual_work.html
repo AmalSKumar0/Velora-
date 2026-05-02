@@ -16,13 +16,24 @@
       </div>
     </div>
     
-    <button onclick="openOrderModal()" class="hidden md:flex bg-black text-white border-[3px] border-black px-6 py-2.5 rounded-xl font-bold text-sm lg:text-base hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] items-center gap-2 shrink-0">
-      <i data-lucide="file-text" class="w-4 h-4"></i> View Brief & Details
-    </button>
-    
-    <button onclick="openOrderModal()" class="md:hidden bg-black text-white border-[3px] border-black w-10 h-10 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_#ffc86b] shrink-0">
-      <i data-lucide="file-text" class="w-4 h-4"></i>
-    </button>
+    <div class="flex items-center gap-2">
+      <button onclick="openOrderModal()" class="hidden md:flex bg-black text-white border-[3px] border-black px-6 py-2.5 rounded-xl font-bold text-sm lg:text-base hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] items-center gap-2 shrink-0">
+        <i data-lucide="file-text" class="w-4 h-4"></i> View Brief & Details
+      </button>
+      
+      <button onclick="openOrderModal()" class="md:hidden bg-black text-white border-[3px] border-black w-10 h-10 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_#ffc86b] shrink-0">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+      </button>
+
+      {% if order.status != 'completed' and order.status != 'cancelled' and order.status != 'disputed' %}
+      <button type="button" onclick="openDisputeModal()" class="hidden md:flex bg-white text-[#ff6b6b] border-[3px] border-black px-6 py-2.5 rounded-xl font-bold text-sm lg:text-base hover:bg-red-50 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] items-center gap-2 shrink-0">
+        <i data-lucide="flag" class="w-4 h-4"></i> Dispute
+      </button>
+      <button type="button" onclick="openDisputeModal()" class="md:hidden bg-white text-[#ff6b6b] border-[3px] border-black w-10 h-10 rounded-xl flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] shrink-0">
+        <i data-lucide="flag" class="w-4 h-4"></i>
+      </button>
+      {% endif %}
+    </div>
   </div>
 </div>
 
@@ -35,7 +46,7 @@
       </div>
       <div>
         <p class="text-xs font-black uppercase tracking-widest text-gray-500 mb-1">Current Status</p>
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg font-black text-sm uppercase tracking-wider border-[2px] border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg font-black text-sm uppercase tracking-wider border-[2px] border-black {% if order.status == 'disputed' %}bg-red-500 text-white{% else %}bg-[#ffc86b]{% endif %} shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
           {{ order.get_status_display }}
         </div>
       </div>
@@ -57,7 +68,7 @@
     </div>
   </div>
 
-  <div class="bg-[#ffc86b] border-[4px] border-black rounded-[2.5rem] p-8 lg:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+  <div class="bg-[#ffc86b] border-[4px] border-black rounded-[2.5rem] p-8 lg:p-10 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden transition-opacity duration-300 {% if order.status == 'disputed' %}opacity-60 pointer-events-none grayscale{% endif %}">
     <h2 class="text-3xl font-black mb-2 relative z-10">Upload Submission</h2>
     <p class="text-black font-bold mb-6 relative z-10 text-sm">Send your latest draft or final piece to the client. Allowed formats: JPG, PNG (Max 10MB).</p>
 
@@ -258,5 +269,55 @@
     content.classList.remove('scale-100');
     content.classList.add('scale-95');
   }
+
+  function openDisputeModal() {
+      const modal = document.getElementById('disputeModal');
+      const content = document.getElementById('disputeModalContent');
+      if (modal && content) {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }
+  }
+
+  function closeDisputeModal() {
+      const modal = document.getElementById('disputeModal');
+      const content = document.getElementById('disputeModalContent');
+      if (modal && content) {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+      }
+  }
 </script>
+
+<div id="disputeModal" class="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="relative w-full max-w-md bg-white border-[4px] border-black rounded-[2rem] p-8 transform scale-95 transition-transform duration-300 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" id="disputeModalContent">
+        
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-white border-[4px] border-black rounded-full flex items-center justify-center mx-auto mb-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <i data-lucide="flag" class="w-8 h-8 text-[#ff6b6b]"></i>
+            </div>
+            <h2 class="text-2xl font-black mb-2">Raise a Dispute</h2>
+            <p class="text-gray-600 font-bold text-sm px-4">This action freezes the order. An administrator will review your case and mediate the situation.</p>
+        </div>
+
+        <form method="POST" action="{% url 'artist_raise_dispute' order.id %}">
+            {% csrf_token %}
+            <div class="mb-6">
+                <textarea name="reason" rows="4" required placeholder="Please describe the issue..." class="w-full border-[3px] border-black rounded-xl p-4 text-sm font-bold focus:outline-none focus:ring-0 bg-[#f9f6f0] resize-none shadow-[inset_4px_4px_0px_0px_rgba(0,0,0,0.05)]"></textarea>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-3">
+                <button type="button" onclick="closeDisputeModal()" class="flex-1 bg-white border-[3px] border-black text-black px-4 py-3 rounded-xl font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-1 bg-[#ff6b6b] border-[3px] border-black text-white px-4 py-3 rounded-xl font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] transition-all">
+                    Submit Dispute
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock %}

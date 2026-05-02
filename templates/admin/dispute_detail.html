@@ -1,0 +1,150 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="p-6 lg:p-12 max-w-7xl mx-auto space-y-10">
+
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="flex items-center gap-4 lg:gap-6">
+      <a href="{% url 'admin_disputes' %}" class="w-10 h-10 lg:w-12 lg:h-12 bg-white border-[3px] border-black rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px] shrink-0">
+        <i data-lucide="arrow-left" class="w-5 h-5 lg:w-6 lg:h-6"></i>
+      </a>
+      <div>
+        <h1 class="text-3xl font-black tracking-tight flex items-center gap-3">
+          Dispute <span class="text-gray-400">#{{ dispute.id|truncatechars:10 }}</span>
+        </h1>
+        <p class="text-gray-600 font-bold text-sm">Order: {{ order.request.title }}</p>
+      </div>
+    </div>
+
+    {% if dispute.status == 'open' %}
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-black text-sm uppercase tracking-wider border-[3px] border-black bg-red-500 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="alert-circle" class="w-5 h-5"></i> ACTION REQUIRED
+      </div>
+    {% else %}
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-black text-sm uppercase tracking-wider border-[3px] border-black bg-gray-200 text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="check-circle" class="w-5 h-5"></i> {{ dispute.get_status_display }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left Column: Dispute Reason & Actions -->
+    <div class="lg:col-span-2 space-y-8">
+      
+      <div class="bg-[#fffdf8] border-[4px] border-black rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div class="flex items-center gap-3 mb-6 pb-6 border-b-[3px] border-black border-dashed">
+          <div class="w-12 h-12 bg-red-100 border-[3px] border-black rounded-full flex items-center justify-center">
+            <i data-lucide="flag" class="w-6 h-6 text-red-500"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black">Dispute Reason</h2>
+            <p class="text-sm font-bold text-gray-500">Raised by {{ dispute.raised_by.username }} ({{ dispute.raised_by.role }}) on {{ dispute.created_at|date:"M d, Y" }}</p>
+          </div>
+        </div>
+        <p class="text-gray-800 font-medium text-lg leading-relaxed whitespace-pre-wrap">{{ dispute.reason }}</p>
+      </div>
+
+      {% if dispute.status == 'open' %}
+      <div class="bg-[#ffc86b] border-[4px] border-black rounded-[2rem] p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h2 class="text-2xl font-black mb-6 flex items-center gap-2">
+          <i data-lucide="gavel" class="w-6 h-6"></i> Administrative Resolution
+        </h2>
+        <p class="font-bold text-gray-800 mb-6">Choose an action to resolve this dispute. This action cannot be undone.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          
+          <form method="POST" onsubmit="return confirm('Are you sure you want to refund the client? This cancels the order.');" class="w-full">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="favor_client">
+            <button type="submit" class="w-full bg-white text-black border-[3px] border-black px-4 py-4 rounded-xl font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex flex-col items-center justify-center gap-2">
+              <i data-lucide="corner-down-left" class="w-6 h-6 text-blue-500"></i>
+              Refund Client
+            </button>
+          </form>
+
+          <form method="POST" onsubmit="return confirm('Are you sure you want to release funds to the artist? This marks the order as completed.');" class="w-full">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="favor_artist">
+            <button type="submit" class="w-full bg-white text-black border-[3px] border-black px-4 py-4 rounded-xl font-black hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex flex-col items-center justify-center gap-2">
+              <i data-lucide="check-circle-2" class="w-6 h-6 text-green-500"></i>
+              Release to Artist
+            </button>
+          </form>
+
+          <form method="POST" onsubmit="return confirm('Are you sure you want to dismiss this dispute? The order will resume normally.');" class="w-full">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="dismiss">
+            <button type="submit" class="w-full bg-black text-white border-[3px] border-black px-4 py-4 rounded-xl font-black hover:bg-gray-800 transition-all shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px] flex flex-col items-center justify-center gap-2">
+              <i data-lucide="play" class="w-6 h-6 text-yellow-400"></i>
+              Dismiss & Resume
+            </button>
+          </form>
+
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    <!-- Right Column: Order Details -->
+    <div class="space-y-6">
+      
+      <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h3 class="font-black text-xl mb-4 border-b-[3px] border-black pb-2">Order Info</h3>
+        
+        <div class="space-y-4">
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Client</p>
+            <p class="font-bold text-lg flex items-center gap-2"><i data-lucide="user" class="w-4 h-4 text-blue-500"></i> {{ order.client.username }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Artist</p>
+            <p class="font-bold text-lg flex items-center gap-2"><i data-lucide="pen-tool" class="w-4 h-4 text-green-500"></i> {{ order.artist.user.username }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Escrow Amount</p>
+            <p class="font-black text-2xl text-green-600">₹{{ order.amount }}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">Current Status</p>
+            <p class="font-bold">{{ order.get_status_display }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Submissions Timeline (Optional context for Admin) -->
+  {% if submissions %}
+  <div class="mt-12">
+    <h2 class="font-display text-4xl mb-8 flex items-center gap-3">
+      <i data-lucide="history" class="w-8 h-8 text-[#ffc86b] stroke-[3px]"></i> Submissions History
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for sub in submissions %}
+      <div class="bg-white border-[4px] border-black rounded-2xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <div class="bg-gray-100 border-b-[4px] border-black p-4 flex justify-center">
+          <a href="{{ sub.preview_file.url }}" target="_blank">
+            <img src="{{ sub.preview_file.url }}" alt="V{{ sub.version }}" class="max-h-48 object-contain rounded-lg border-[2px] border-black">
+          </a>
+        </div>
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-black text-lg">Version {{ sub.version }}</span>
+            <span class="text-xs font-bold text-gray-500">{{ sub.created_at|date:"M d" }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

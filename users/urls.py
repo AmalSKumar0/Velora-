@@ -23,6 +23,8 @@ urlpatterns = [
     path('admin/delete-request/<uuid:id>/', delete_request_view, name="delete_request"),
     path('admin/delete-order/<uuid:id>/', delete_order_view, name="delete_order"),
     path('admin/delete-payment/<uuid:id>/', delete_payment_view, name="delete_payment"),
+    path('admin/disputes/', admin_disputes, name='admin_disputes'),
+    path('admin/dispute/<uuid:id>/', admin_dispute_detail, name='admin_dispute_detail'),
 
 
 
@@ -33,8 +35,8 @@ urlpatterns = [
     path('artist/individual-work/<uuid:order_id>',individual_work,name="individual_work"),
     path("artist/profile/",artist_profile_view,name="artist_profile"),
     path('artist/delete_portfolio/<uuid:id>',delete_portfolio_item,name="delete_portfolio_item"),
+    path('artist/order/<uuid:order_id>/dispute/', artist_raise_dispute, name="artist_raise_dispute"),
 
-  
 
     # client
     path('client/individual-work/<uuid:order_id>',clinet_view_individual_work,name="clinet_view_individual_work"),

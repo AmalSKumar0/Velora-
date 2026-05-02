@@ -17,7 +17,7 @@ from django.utils import timezone
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from weasyprint import HTML
-
+from payments.services.payment_service import PaymentService
 
 def download_admin_report(request):
     # 1. Gather Data from Database
@@ -240,3 +240,67 @@ def delete_payment_view(request, id):
     payment.delete()
     messages.success(request, "Payment deleted successfully.")
     return redirect('admin_payments')
+
+
+@login_required
+@role_required('admin')
+def admin_disputes(request):
+    disputes_list = Dispute.objects.select_related('order', 'raised_by').order_by('-created_at')
+    
+    paginator = Paginator(disputes_list, 10)
+    page_number = request.GET.get('page')
+    disputes = paginator.get_page(page_number)
+    
+    return render(request, 'admin/disputes.html', {'disputes': disputes})
+
+@login_required
+@role_required('admin')
+def admin_dispute_detail(request, id):
+    dispute = get_object_or_404(Dispute, id=id)
+    order = dispute.order
+    
+    if request.method == "POST":
+        action = request.POST.get('action')
+        payment_service = PaymentService()
+        
+        try:
+            if action == 'favor_client':
+                # Refund client
+                payment_service.refund_payment(order)
+                dispute.status = Dispute.Status.RESOLVED
+                dispute.save()
+                messages.success(request, f"Dispute resolved in favor of the client. Order cancelled and ₹{order.amount} refunded.")
+                
+            elif action == 'favor_artist':
+                # Release funds to artist
+                payment_service.release_payment(order)
+                order.status = Order.Status.COMPLETED
+                order.save()
+                dispute.status = Dispute.Status.RESOLVED
+                dispute.save()
+                messages.success(request, f"Dispute resolved in favor of the artist. Order completed and ₹{order.amount} released.")
+                
+            elif action == 'dismiss':
+                # Resume workflow
+                if order.submissions.exists():
+                    order.status = Order.Status.SUBMITTED
+                else:
+                    order.status = Order.Status.IN_PROGRESS
+                order.save()
+                
+                dispute.status = Dispute.Status.REJECTED
+                dispute.save()
+                messages.success(request, "Dispute dismissed. Order workflow resumed.")
+                
+        except Exception as e:
+            messages.error(request, f"Error resolving dispute: {str(e)}")
+            
+        return redirect('admin_disputes')
+        
+    submissions = order.submissions.all()
+    
+    return render(request, 'admin/dispute_detail.html', {
+        'dispute': dispute,
+        'order': order,
+        'submissions': submissions
+    })

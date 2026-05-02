@@ -113,6 +113,23 @@
      {% endif %}">
     <i data-lucide="tags" class="w-6 h-6 lg:w-5 lg:h-5"></i> Manage Tags
   </a>
+
+  <a href="{% url 'admin_disputes' %}" 
+     class="group px-5 py-4 rounded-2xl font-bold text-lg lg:text-base border-[3px] transition-all duration-75 flex items-center justify-between gap-3 
+     {% if request.resolver_match.url_name == 'admin_disputes' or request.resolver_match.url_name == 'admin_dispute_detail' %}
+        border-black bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-[#ff6b6b]
+     {% else %}
+        border-transparent hover:border-black/20 hover:bg-white/50 active:translate-x-[4px] active:translate-y-[4px] active:shadow-none
+     {% endif %}">
+    <div class="flex items-center gap-3">
+        <i data-lucide="alert-triangle" class="w-6 h-6 lg:w-5 lg:h-5"></i> Manage Disputes
+    </div>
+    {% if open_disputes_count and open_disputes_count > 0 %}
+    <span class="flex items-center justify-center min-w-[24px] h-6 bg-[#ff6b6b] text-white text-[11px] font-black px-1.5 rounded-full border-[2px] border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform group-hover:scale-110 transition-transform">
+        {{ open_disputes_count }}
+    </span>
+    {% endif %}
+  </a>
 </nav>
 
       <div class="mt-auto flex items-center justify-between bg-black text-white border-[3px] border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] w-full">

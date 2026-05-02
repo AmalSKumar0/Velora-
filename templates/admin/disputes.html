@@ -1,0 +1,83 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="p-6 lg:p-12 max-w-7xl mx-auto space-y-10">
+
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="font-display text-5xl mb-2 flex items-center gap-3">
+        <i data-lucide="alert-triangle" class="w-10 h-10 text-[#ff6b6b]"></i> Disputes
+      </h1>
+      <p class="text-gray-600 font-bold text-lg">Manage and resolve order conflicts.</p>
+    </div>
+  </div>
+
+  <div class="bg-white border-[4px] border-black rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-[#ffc86b] border-b-[4px] border-black text-black">
+            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Date</th>
+            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Order ID</th>
+            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Raised By</th>
+            <th class="p-5 font-black uppercase tracking-wider text-sm border-r-[4px] border-black">Status</th>
+            <th class="p-5 font-black uppercase tracking-wider text-sm">Action</th>
+          </tr>
+        </thead>
+        <tbody class="font-medium text-gray-800 divide-y-[4px] divide-black">
+          {% for dispute in disputes %}
+            <tr class="hover:bg-[#fffdf8] transition-colors">
+              <td class="p-5 border-r-[4px] border-black font-bold">{{ dispute.created_at|date:"M d, Y" }}</td>
+              <td class="p-5 border-r-[4px] border-black font-bold">#{{ dispute.order.id|truncatechars:10 }}</td>
+              <td class="p-5 border-r-[4px] border-black font-bold">
+                  {{ dispute.raised_by.username }}
+                  <span class="text-xs text-gray-500 uppercase tracking-widest block">{{ dispute.raised_by.role }}</span>
+              </td>
+              <td class="p-5 border-r-[4px] border-black font-bold">
+                {% if dispute.status == 'open' %}
+                  <span class="bg-red-500 text-white border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Open</span>
+                {% elif dispute.status == 'resolved' %}
+                  <span class="bg-green-400 text-black border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Resolved</span>
+                {% else %}
+                  <span class="bg-gray-300 text-black border-[2px] border-black px-3 py-1 rounded-lg text-xs uppercase tracking-wider">Rejected</span>
+                {% endif %}
+              </td>
+              <td class="p-5">
+                <a href="{% url 'admin_dispute_detail' dispute.id %}" class="inline-flex items-center gap-2 bg-black text-white border-[3px] border-black px-4 py-2 rounded-xl font-bold text-sm hover:bg-gray-800 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+                  <i data-lucide="eye" class="w-4 h-4"></i> Review Case
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="p-12 text-center text-gray-500 font-bold text-lg">No disputes found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% if disputes.has_other_pages %}
+    <div class="bg-gray-50 border-t-[4px] border-black p-5 flex items-center justify-between">
+      <span class="font-bold text-gray-600">
+        Page {{ disputes.number }} of {{ disputes.paginator.num_pages }}
+      </span>
+      <div class="flex gap-2">
+        {% if disputes.has_previous %}
+          <a href="?page={{ disputes.previous_page_number }}" class="w-10 h-10 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+          </a>
+        {% endif %}
+        {% if disputes.has_next %}
+          <a href="?page={{ disputes.next_page_number }}" class="w-10 h-10 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]">
+            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
