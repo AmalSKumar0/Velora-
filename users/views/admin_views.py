@@ -213,3 +213,30 @@ def admin_payments(request):
         'total_released': total_released,
     }
     return render(request, 'admin/payments.html', context)
+
+@login_required
+@role_required('admin')
+@require_POST
+def delete_request_view(request, id):
+    req = get_object_or_404(Request, id=id)
+    req.delete()
+    messages.success(request, "Request deleted successfully.")
+    return redirect('admin_requests')
+
+@login_required
+@role_required('admin')
+@require_POST
+def delete_order_view(request, id):
+    order = get_object_or_404(Order, id=id)
+    order.delete()
+    messages.success(request, "Order deleted successfully.")
+    return redirect('admin_orders')
+
+@login_required
+@role_required('admin')
+@require_POST
+def delete_payment_view(request, id):
+    payment = get_object_or_404(Payment, id=id)
+    payment.delete()
+    messages.success(request, "Payment deleted successfully.")
+    return redirect('admin_payments')

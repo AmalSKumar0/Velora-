@@ -257,3 +257,33 @@ def public_artist_profile(request, username):
         'total_completed': total_completed,
         'avg_rating': round(avg_rating, 1)
     })
+
+@login_required
+@role_required('client')
+def raise_dispute(request, order_id):
+    if request.method == "POST":
+        order = get_object_or_404(Order, id=order_id, client=request.user)
+        
+        if order.status in ['completed', 'cancelled', 'disputed']:
+            messages.error(request, f"Cannot raise dispute for an order that is {order.status}.")
+            return redirect("clinet_view_individual_work", order.id)
+            
+        reason = request.POST.get('reason')
+        if not reason:
+            messages.error(request, "Reason is required to raise a dispute.")
+            return redirect("clinet_view_individual_work", order.id)
+            
+        with transaction.atomic():
+            Dispute.objects.create(
+                order=order,
+                raised_by=request.user,
+                reason=reason,
+                status=Dispute.Status.OPEN
+            )
+            order.status = Order.Status.DISPUTED
+            order.save()
+            
+        messages.success(request, "Dispute raised successfully. An admin will review it shortly.")
+        return redirect("clinet_view_individual_work", order.id)
+        
+    return redirect("client_profile")

@@ -20,6 +20,9 @@ urlpatterns = [
     path('admin/requests/', admin_requests, name='admin_requests'),
     path('admin/orders/', admin_orders, name='admin_orders'),
     path('admin/payments/',admin_payments,name="admin_payments"),
+    path('admin/delete-request/<uuid:id>/', delete_request_view, name="delete_request"),
+    path('admin/delete-order/<uuid:id>/', delete_order_view, name="delete_order"),
+    path('admin/delete-payment/<uuid:id>/', delete_payment_view, name="delete_payment"),
 
 
 
@@ -43,5 +46,5 @@ urlpatterns = [
     path("client/profile/",client_profile,name="client_profile"),
     path("client/profileupdate/", update_profile, name='update_profile'),
     path('artist/profile/<str:username>/', public_artist_profile, name='public_artist_profile'),
-
+    path('client/order/<uuid:order_id>/dispute/', raise_dispute, name="raise_dispute"),
 ]

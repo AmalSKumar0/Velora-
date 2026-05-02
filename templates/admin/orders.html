@@ -68,8 +68,14 @@
             </div>
         </div>
 
-        <div class="lg:ml-auto">
-            <a href="#" class="w-full lg:w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center hover:bg-[#7ae582] hover:text-black border-[3px] border-transparent hover:border-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none">
+        <div class="lg:ml-auto flex gap-2">
+            <form method="POST" action="{% url 'delete_order' order.id %}" onsubmit="return confirm('Delete this order permanently?');">
+                {% csrf_token %}
+                <button type="submit" class="w-full lg:w-14 h-14 bg-white text-[#ff6b6b] rounded-xl flex items-center justify-center hover:bg-[#ff6b6b] hover:text-white border-[3px] border-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
+                    <i data-lucide="trash-2" class="w-6 h-6"></i>
+                </button>
+            </form>
+            <a href="#" class="w-full lg:w-14 h-14 bg-black text-white rounded-xl flex items-center justify-center hover:bg-[#7ae582] hover:text-black border-[3px] border-black transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
                 <i data-lucide="external-link" class="w-6 h-6"></i>
             </a>
         </div>
