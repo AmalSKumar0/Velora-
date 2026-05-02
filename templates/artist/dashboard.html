@@ -98,6 +98,26 @@
       </div>
     {% endfor %}
   </div>
+
+  {% if requests.has_other_pages %}
+  <div class="mt-12 flex justify-center items-center gap-4">
+    {% if requests.has_previous %}
+      <a href="?page={{ requests.previous_page_number }}" class="w-12 h-12 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </a>
+    {% endif %}
+    
+    <div class="bg-black text-white px-6 py-3 rounded-xl font-black border-[3px] border-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+      Page {{ requests.number }} of {{ requests.paginator.num_pages }}
+    </div>
+
+    {% if requests.has_next %}
+      <a href="?page={{ requests.next_page_number }}" class="w-12 h-12 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </a>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
 
 <div id="proposalModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">

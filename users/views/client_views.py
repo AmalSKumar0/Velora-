@@ -12,6 +12,7 @@ from django.http import FileResponse, Http404
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from payments.services.payment_service import PaymentService
+from django.core.paginator import Paginator
 
 
 @login_required
@@ -69,12 +70,17 @@ def client_dash(request):
     else:
         artworks = PortfolioItem.objects.all().select_related('artist', 'artist__user')
     
+    paginator = Paginator(artworks, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     print(f"Total artworks found: {artworks.count()}")
     return render(request, 'client/dashboard.html', {
         'active_tab': 'discover',
-        'artworks': artworks,
+        'artworks': page_obj,
         'tags': Tag.objects.all(),
-        'total_artists': artworks.count() # This feeds the sidebar number we made earlier
+        'total_artists': artworks.count(),
+        'query': query
     })
 
 

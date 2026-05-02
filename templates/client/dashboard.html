@@ -56,6 +56,26 @@
       {% endfor %}
 
     </div>
+
+    {% if artworks.has_other_pages %}
+    <div class="mt-12 mb-8 flex justify-center items-center gap-4">
+      {% if artworks.has_previous %}
+        <a href="?page={{ artworks.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="w-12 h-12 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+          <i data-lucide="chevron-left" class="w-6 h-6"></i>
+        </a>
+      {% endif %}
+      
+      <div class="bg-black text-white px-6 py-3 rounded-xl font-black border-[3px] border-black text-lg shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+        Page {{ artworks.number }} of {{ artworks.paginator.num_pages }}
+      </div>
+
+      {% if artworks.has_next %}
+        <a href="?page={{ artworks.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="w-12 h-12 bg-white border-[3px] border-black rounded-xl flex items-center justify-center hover:bg-gray-100 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+          <i data-lucide="chevron-right" class="w-6 h-6"></i>
+        </a>
+      {% endif %}
+    </div>
+    {% endif %}
   {% else %}
     <div class="w-full py-24 text-center bg-white border-[4px] border-dashed border-black rounded-[3rem]">
         <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-[#f9f6f0] border-4 border-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">

@@ -11,6 +11,7 @@ from users.decorators import role_required
 from core.services.watermark import generate_preview
 from payments.models import Payment
 from django.db.models import Max, Sum
+from django.core.paginator import Paginator
 
 @login_required
 @role_required('artist')
@@ -28,7 +29,11 @@ def artist_dash(request):
         status='open'
     ).distinct().prefetch_related('tags', 'images')
 
-    for req in requests:
+    paginator = Paginator(requests, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    for req in page_obj:
         if Proposal.objects.filter(artist=artist_profile,request=req):
             req.has_proposed = True
         else:
@@ -46,7 +51,7 @@ def artist_dash(request):
     ).aggregate(total=Sum('amount'))['total'] or 0
 
     return render(request, 'artist/dashboard.html', {
-        'requests': requests,
+        'requests': page_obj,
         'artist_tags': tags,
         'total_earned': total_earned,
         'total_escrow': total_escrow
@@ -132,8 +137,12 @@ def view_my_work(request):
         "proposal"
     ).order_by("-created_at")
 
+    paginator = Paginator(orders, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'artist/request/my_work.html', {
-        'orders': orders
+        'orders': page_obj
     })
 
 @login_required

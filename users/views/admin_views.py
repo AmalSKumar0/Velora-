@@ -145,8 +145,12 @@ def users_view(request):
     if role_filter:
         users = users.filter(role=role_filter)
 
+    paginator = Paginator(users, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     return render(request, 'admin/users/view_users.html', {
-        'users': users,
+        'users': page_obj,
         'selected_role': role_filter
     })
 
