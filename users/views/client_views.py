@@ -8,8 +8,10 @@ from commissions.models import *
 from core.models import Tag
 from payments.models import Payment
 from users.decorators import role_required
-from django.http import FileResponse
+from django.http import FileResponse, Http404
 from django.db.models import Q
+from django.views.decorators.http import require_POST
+from payments.services.payment_service import PaymentService
 
 
 @login_required
@@ -209,6 +211,7 @@ def download_final(request, submission_id):
 
 @login_required
 @role_required('client')
+@require_POST
 def complete_order(request, order_id):
 
     order = get_object_or_404(Order, id=order_id, client=request.user)
@@ -216,22 +219,22 @@ def complete_order(request, order_id):
         messages.error(request, "Order is not approved yet")
         return redirect("clinet_view_individual_work", order.id)
 
-    req = order.request
-    payment = Payment.objects.filter(order=order).first()
+    payment_service = PaymentService()
 
-    with transaction.atomic():
+    try:
+        payment_service.release_payment(order)
+        
+        with transaction.atomic():
+            req = order.request
+            order.status = 'completed'
+            order.save()
 
-        order.status = 'completed'
-        order.save()
-
-        req.status = 'completed'
-        req.save()
-
-        if payment:
-            payment.status = 'released'
-            payment.save()
-
-    messages.success(request, "Order completed and payment released to the artist")
+            req.status = 'completed'
+            req.save()
+            
+        messages.success(request, "Order completed and payment released to the artist")
+    except Exception as e:
+        messages.error(request, f"Failed to release payment: {str(e)}")
 
     return redirect("clinet_view_individual_work", order.id)
 

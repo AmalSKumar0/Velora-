@@ -195,7 +195,8 @@
               <h3 class="text-2xl font-black mb-3">Submission Approved</h3>
               <p class="text-sm font-bold text-gray-600 mb-8 max-w-sm mx-auto">Please finalize the order to release funds to the artist and unlock your high-resolution download.</p>
               
-              <form method="get" action="{% url 'complete_order' order.id %}">
+              <form method="post" action="{% url 'complete_order' order.id %}">
+                {% csrf_token %}
                 <button type="submit" onclick="return confirm('Complete order and release funds?')" class="bg-black text-[#ffc86b] border-[2px] border-black px-8 py-3.5 rounded-2xl text-sm font-bold transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none inline-flex items-center gap-2">
                   Complete Order
                 </button>
