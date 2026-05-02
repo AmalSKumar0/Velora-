@@ -142,8 +142,8 @@
     {% block content %}{% endblock %}
   </main>
 
-  <div id="postModal" class="modal-overlay fixed inset-0 z-50 items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-    <div class="modal-content w-full max-w-5xl bg-white border-[4px] border-black rounded-[2.5rem] p-6 md:p-10 shadow-[12px_12px_0px_0px_#ffc86b] relative my-4">
+  <div id="postModal" class="modal-overlay fixed inset-0 z-50 items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+    <div class="modal-content w-full h-full md:h-auto max-w-5xl bg-white border-0 md:border-[4px] border-black rounded-none md:rounded-[2.5rem] p-6 md:p-10 shadow-none md:shadow-[12px_12px_0px_0px_#ffc86b] relative my-0 md:my-4 overflow-y-auto">
       <button onclick="closeModal()" class="absolute top-6 right-6 w-10 h-10 bg-[#f9f6f0] border-[3px] border-black rounded-full flex items-center justify-center hover:bg-[#ffc86b] transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
         <i data-lucide="x" class="w-5 h-5"></i>
       </button>
