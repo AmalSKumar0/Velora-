@@ -43,7 +43,7 @@
             <p class="text-sm font-bold text-gray-500">Raised by {{ dispute.raised_by.username }} ({{ dispute.raised_by.role }}) on {{ dispute.created_at|date:"M d, Y" }}</p>
           </div>
         </div>
-        <p class="text-gray-800 font-medium text-lg leading-relaxed whitespace-pre-wrap">{{ dispute.reason }}</p>
+        <p class="text-gray-800 font-medium text-lg leading-relaxed whitespace-pre-wrap break-words break-all">{{ dispute.reason }}</p>
       </div>
 
       {% if dispute.status == 'open' %}

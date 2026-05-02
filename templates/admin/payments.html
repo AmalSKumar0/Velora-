@@ -14,57 +14,59 @@
         </div>
     </div>
 
-    <div class="bg-white border-[4px] border-black rounded-[2.5rem] overflow-hidden shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
-        <div class="p-8 border-b-[4px] border-black bg-[#f9f6f0] flex justify-between items-center">
-            <h3 class="font-black text-2xl uppercase tracking-tight">Transaction History</h3>
-            <i data-lucide="refresh-cw" class="w-6 h-6 cursor-pointer hover:rotate-180 transition-transform duration-500"></i>
-        </div>
-
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b-[3px] border-black bg-white">
-                        <th class="px-6 py-4 font-black uppercase text-xs">Date</th>
-                        <th class="px-6 py-4 font-black uppercase text-xs">Client/Order</th>
-                        <th class="px-6 py-4 font-black uppercase text-xs">Amount</th>
-                        <th class="px-6 py-4 font-black uppercase text-xs">Status</th>
-                        <th class="px-6 py-4 font-black uppercase text-xs">Gateway ID</th>
-                        <th class="px-6 py-4 font-black uppercase text-xs text-right">Action</th>
-                    </tr>
-                </thead>
-                <tbody class="font-bold text-sm">
-                    {% for p in payments %}
-                    <tr class="border-b-[2px] border-black/10 hover:bg-gray-50 transition-colors">
-                        <td class="px-6 py-5">{{ p.created_at|date:"d M Y" }}</td>
-                        <td class="px-6 py-5">
-                            <span class="block">@{{ p.order.client.username }}</span>
-                            <span class="text-[10px] text-gray-400 font-mono">ORD-{{ p.order.id|stringformat:".6s" }}</span>
-                        </td>
-                        <td class="px-6 py-5 text-lg">₹{{ p.amount }}</td>
-                        <td class="px-6 py-5">
-                            {% if p.status == 'held' %}
-                                <span class="bg-[#ffc86b] border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Held</span>
-                            {% elif p.status == 'released' %}
-                                <span class="bg-[#7ae582] border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Released</span>
-                            {% elif p.status == 'refunded' %}
-                                <span class="bg-black text-white border-2 border-black px-2 py-1 rounded-md text-[10px] uppercase">Refunded</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-5 font-mono text-xs text-gray-500">{{ p.provider_payment_id|default:"N/A" }}</td>
-                        <td class="px-6 py-5 text-right">
-                            <form method="POST" action="{% url 'delete_payment' p.id %}" onsubmit="return confirm('Delete this payment record permanently?');">
-                                {% csrf_token %}
-                                <button type="submit" class="w-10 h-10 inline-flex items-center justify-center bg-white text-[#ff6b6b] border-[2px] border-black rounded-lg hover:bg-[#ff6b6b] hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]">
-                                    <i data-lucide="trash-2" class="w-4 h-4 stroke-[3px]"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+    <div class="flex items-center justify-between mb-8 mt-12 bg-white border-[4px] border-black p-6 rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h3 class="font-black text-2xl uppercase tracking-tight">Transaction History</h3>
+        <i data-lucide="refresh-cw" class="w-6 h-6 cursor-pointer hover:rotate-180 transition-transform duration-500"></i>
     </div>
+
+    {% if payments %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for p in payments %}
+        <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col justify-between hover:-translate-y-1 transition-transform">
+            
+            <div class="space-y-5">
+                <div class="flex justify-between items-start">
+                    <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">{{ p.created_at|date:"d M Y" }}</p>
+                    {% if p.status == 'held' %}
+                        <span class="bg-[#ffc86b] border-[2px] border-black px-3 py-1 rounded-lg text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Held</span>
+                    {% elif p.status == 'released' %}
+                        <span class="bg-[#7ae582] border-[2px] border-black px-3 py-1 rounded-lg text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Released</span>
+                    {% elif p.status == 'refunded' %}
+                        <span class="bg-black text-white border-[2px] border-black px-3 py-1 rounded-lg text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">Refunded</span>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <h4 class="font-display text-5xl mb-1">₹{{ p.amount }}</h4>
+                    <p class="font-mono text-xs text-gray-500 font-bold">ID: {{ p.provider_payment_id|default:"N/A" }}</p>
+                </div>
+
+                <div class="bg-[#f9f6f0] border-[3px] border-black rounded-xl p-4">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-2">Client / Order</p>
+                    <p class="font-bold text-lg leading-none">@{{ p.order.client.username }}</p>
+                    <p class="text-[10px] text-gray-600 font-mono font-bold mt-1">ORD-{{ p.order.id|stringformat:".6s" }}</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t-[3px] border-black border-dashed flex justify-end">
+                <form method="POST" action="{% url 'delete_payment' p.id %}" onsubmit="return confirm('Delete this payment record permanently?');" class="w-full">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 bg-white text-[#ff6b6b] border-[3px] border-black px-4 py-3 rounded-xl font-bold hover:bg-[#ff6b6b] hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">
+                        <i data-lucide="trash-2" class="w-5 h-5 stroke-[3px]"></i> Delete Record
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white border-[4px] border-black rounded-[2rem] p-16 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <i data-lucide="inbox" class="w-16 h-16 mx-auto text-gray-300 mb-4"></i>
+        <h2 class="text-3xl font-black mb-2">No Transactions</h2>
+        <p class="text-gray-500 font-bold text-lg">There is no payment history available yet.</p>
+    </div>
+    {% endif %}
 
     <div class="flex justify-center gap-4">
         {% if payments.has_previous %}
