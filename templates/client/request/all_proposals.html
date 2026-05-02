@@ -28,11 +28,21 @@
             <tr class="border-b-[3px] border-black last:border-b-0 hover:bg-[#fffdf8] transition-colors group">
               
               <td class="px-5 py-4 border-r-[3px] border-black align-middle whitespace-nowrap">
-                <div class="flex items-center gap-2 font-bold text-base">
-                  <div class="w-8 h-8 rounded-full border-[2px] border-black bg-[#f9f6f0] flex items-center justify-center shrink-0">
+                <a href="{% url 'public_artist_profile' proposal.artist.user.username %}" class="flex items-center gap-2 font-bold text-base hover:text-[#ffc86b] transition-colors group/link">
+                  <div class="w-8 h-8 rounded-full border-[2px] border-black bg-[#f9f6f0] flex items-center justify-center shrink-0 group-hover/link:bg-black group-hover/link:text-[#ffc86b] transition-colors">
                     <i data-lucide="user" class="w-4 h-4"></i>
                   </div>
                   {{ proposal.artist.user.username|default:proposal.artist }}
+                </a>
+                <div class="flex items-center gap-2 mt-3">
+                  <div class="flex items-center gap-1 bg-[#fffdf8] border-[2px] border-black px-2 py-1 rounded text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="star" class="w-3 h-3 text-[#ffc86b] fill-current"></i> {{ proposal.avg_rating }}
+                  </div>
+                  {% if proposal.total_completed > 0 %}
+                    <span class="text-[10px] font-black uppercase tracking-widest text-green-600 bg-green-100 px-2 py-1 border-[2px] border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">{{ proposal.total_completed }} Done</span>
+                  {% else %}
+                    <span class="text-[10px] font-black uppercase tracking-widest text-gray-500 bg-gray-100 px-2 py-1 border-[2px] border-black rounded shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">No Work Yet</span>
+                  {% endif %}
                 </div>
               </td>
 

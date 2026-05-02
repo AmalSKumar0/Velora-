@@ -7,7 +7,7 @@ from payments.models import Payment
 from django.db import transaction
 from django.db.models import Count
 from users.decorators import role_required
-from django.db.models import Count, Exists, OuterRef
+from django.db.models import Count, Exists, OuterRef, Avg
 
 @login_required
 @role_required('client')
@@ -126,6 +126,13 @@ def view_all_proposal(request, id):
     proposals = Proposal.objects.filter(
         request=req,
     )
+    
+    for proposal in proposals:
+        artist_profile = proposal.artist
+        proposal.total_completed = Order.objects.filter(artist=artist_profile, status='completed').count()
+        avg_rating = Review.objects.filter(order__artist=artist_profile).aggregate(rating=Avg('rating'))['rating'] or 0
+        proposal.avg_rating = round(avg_rating, 1)
+
     return render(request, "client/request/all_proposals.html", {
         'proposals': proposals,
         'tags':Tag.objects.all()

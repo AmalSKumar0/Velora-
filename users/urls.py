@@ -42,5 +42,6 @@ urlpatterns = [
     path("review/edit/<uuid:id>/",edit_review,name="edit_review"),
     path("client/profile/",client_profile,name="client_profile"),
     path("client/profileupdate/", update_profile, name='update_profile'),
+    path('artist/profile/<str:username>/', public_artist_profile, name='public_artist_profile'),
 
 ]

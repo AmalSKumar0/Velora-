@@ -234,3 +234,26 @@ def complete_order(request, order_id):
     messages.success(request, "Order completed and payment released to the artist")
 
     return redirect("clinet_view_individual_work", order.id)
+
+@login_required
+@role_required('client')
+def public_artist_profile(request, username):
+    artist_user = get_object_or_404(User, username=username, role='artist')
+    artist_profile = get_object_or_404(ArtistProfile, user=artist_user)
+    
+    portfolio_items = PortfolioItem.objects.filter(artist=artist_profile).order_by('-created_at')
+    
+    reviews = Review.objects.filter(artist=artist_profile).select_related('client', 'order').order_by('-created_at')
+    
+    total_completed = Order.objects.filter(artist=artist_profile, status='completed').count()
+    from django.db.models import Avg
+    avg_rating = reviews.aggregate(rating=Avg('rating'))['rating'] or 0
+
+    return render(request, 'client/artist_public_profile.html', {
+        'artist': artist_profile,
+        'artist_user': artist_user,
+        'portfolio_items': portfolio_items,
+        'reviews': reviews,
+        'total_completed': total_completed,
+        'avg_rating': round(avg_rating, 1)
+    })

@@ -1,0 +1,213 @@
+{% extends "client/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-[1100px] mx-auto px-4 sm:px-6 py-8 md:py-12 pb-24">
+
+  <!-- Header Section -->
+  <div class="flex items-center justify-between mb-10">
+    <h1 class="font-display text-5xl md:text-7xl uppercase tracking-tight">
+      Artist <span class="relative inline-block"><span class="relative z-10">Profile</span><span class="absolute bottom-2 left-0 w-full h-3 md:h-4 bg-[#ffc86b] -rotate-2 z-0"></span></span>
+    </h1>
+    <a href="javascript:history.back()" class="bg-black text-white border-[3px] border-black px-6 py-3 rounded-xl font-black shadow-[4px_4px_0px_0px_#ffc86b] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none hover:-translate-y-1 transition-all flex items-center gap-2">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Back
+    </a>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="relative bg-white border-[4px] border-black rounded-[2.5rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden mb-16">
+    <!-- Banner Area -->
+    <div class="h-48 md:h-64 bg-[#ffc86b] w-full border-b-[4px] border-black relative overflow-hidden">
+        <i data-lucide="sparkles" class="absolute -bottom-12 -right-12 w-64 h-64 text-black opacity-10 rotate-12 pointer-events-none"></i>
+        <!-- Decor pattern -->
+        <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#000 2px, transparent 2px); background-size: 20px 20px;"></div>
+    </div>
+    
+    <!-- Profile Info -->
+    <div class="px-8 md:px-12 pb-12 relative z-10">
+        <!-- Avatar overlapping banner -->
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start md:items-end -mt-20 md:-mt-24 mb-6">
+            <div class="w-40 h-40 md:w-48 md:h-48 rounded-full border-[4px] border-black bg-white overflow-hidden shrink-0 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative z-20">
+                {% if artist_user.profile_image %}
+                    <img src="{{ artist_user.profile_image.url }}" alt="Profile" class="w-full h-full object-cover" />
+                {% else %}
+                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ artist_user.username }}" alt="Profile" class="w-full h-full object-cover" />
+                {% endif %}
+            </div>
+            
+            <div class="flex-1 w-full pb-2">
+                <div class="flex flex-wrap items-center gap-4 mb-2">
+                    <h2 class="text-4xl md:text-5xl font-black uppercase tracking-tight">{{ artist.display_name|default:artist_user.username }}</h2>
+                    {% if artist.is_available %}
+                        <span class="bg-[#4ade80] border-[3px] border-black px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] animate-pulse">Available</span>
+                    {% else %}
+                        <span class="bg-gray-100 border-[3px] border-black px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-gray-500">Booked</span>
+                    {% endif %}
+                </div>
+                <div class="bg-black text-white px-3 py-1.5 rounded-lg font-bold text-sm inline-flex items-center gap-1 shadow-[2px_2px_0px_0px_#ffc86b] w-fit">
+                    <i data-lucide="at-sign" class="w-4 h-4"></i>{{ artist_user.username }}
+                </div>
+            </div>
+            
+            <!-- Quick Stats in Header -->
+            <div class="flex gap-4 self-start md:self-end mt-4 md:mt-0 pb-2">
+                <div class="bg-[#fffdf8] border-[3px] border-black rounded-xl px-5 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center w-28">
+                    <div class="font-display text-3xl flex items-center justify-center gap-1 text-[#ffc86b]">
+                        <i data-lucide="star" class="w-6 h-6 fill-current"></i> {{ avg_rating }}
+                    </div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">Rating</p>
+                </div>
+                <div class="bg-[#fffdf8] border-[3px] border-black rounded-xl px-5 py-3 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center w-28">
+                    <div class="font-display text-3xl">{{ total_completed }}</div>
+                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-1">Orders</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="bg-[#f9f6f0] border-[3px] border-black rounded-[1.5rem] p-6 relative h-full">
+                    <i data-lucide="quote" class="absolute -top-4 -left-4 w-10 h-10 text-black fill-[#ffc86b]"></i>
+                    <h3 class="font-black text-sm uppercase tracking-widest text-gray-400 mb-3 ml-4">Artist Biography</h3>
+                    <p class="text-lg font-medium leading-relaxed text-gray-800 ml-4">
+                        {% if artist.bio %}
+                            {{ artist.bio }}
+                        {% else %}
+                            <span class="italic text-gray-400">This artist has not added a bio yet.</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="lg:col-span-1">
+                {% if artist.portfolioURL %}
+                <a href="{{ artist.portfolioURL }}" target="_blank" class="flex flex-col items-center justify-center gap-3 p-6 bg-white border-[3px] border-black rounded-[1.5rem] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#ffc86b] transition-all group/link h-full">
+                    <div class="w-12 h-12 rounded-full bg-black text-white border-[2px] border-black flex items-center justify-center group-hover/link:bg-[#ffc86b] group-hover/link:text-black transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <i data-lucide="external-link" class="w-5 h-5"></i> 
+                    </div>
+                    <div class="text-center">
+                        <p class="font-black uppercase tracking-widest text-sm mb-1">External Portfolio</p>
+                        <p class="text-gray-500 font-bold text-sm truncate max-w-[200px] group-hover/link:text-black transition-colors">{{ artist.portfolioURL }}</p>
+                    </div>
+                </a>
+                {% else %}
+                <div class="flex flex-col items-center justify-center gap-3 p-6 bg-gray-50 border-[3px] border-dashed border-gray-300 rounded-[1.5rem] h-full">
+                    <i data-lucide="link-2-off" class="w-8 h-8 text-gray-400"></i>
+                    <p class="font-bold text-gray-400 text-sm text-center">No external portfolio link provided.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+  <!-- Portfolio Section -->
+  <div class="mt-20 pt-10 border-t-[4px] border-dashed border-gray-300">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
+      <h2 class="font-display text-4xl md:text-5xl uppercase tracking-tight flex items-center gap-3">
+          <i data-lucide="images" class="w-10 h-10 text-[#ffc86b] fill-black stroke-[1.5]"></i> Portfolio
+      </h2>
+    </div>
+
+    {% if portfolio_items %}
+    <div class="columns-1 sm:columns-2 lg:columns-3 gap-6 w-full">
+        {% for item in portfolio_items %}
+        <div class="break-inside-avoid mb-6 relative group bg-white rounded-[2rem] overflow-hidden border-[4px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_#ffc86b] hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+            
+            {% if item.image %}
+                <img 
+                    src="{{ item.image.url }}" 
+                    alt="{{ item.title }}" 
+                    class="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700" 
+                    loading="lazy"
+                />
+            {% else %}
+                <div class="w-full h-64 flex items-center justify-center bg-[#f9f6f0]">
+                   <i data-lucide="image" class="w-12 h-12 text-gray-300"></i>
+                </div>
+            {% endif %}
+
+            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+                <div class="translate-y-[10px] group-hover:translate-y-0 transition-transform duration-300">
+                    <h3 class="text-white font-display text-3xl uppercase leading-none mb-3">{{ item.title }}</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in item.tags.all|slice:":3" %}
+                            <span class="bg-black/80 text-[#ffc86b] border border-[#ffc86b] px-2 py-1 rounded-md font-black text-[10px] uppercase tracking-widest">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="w-full py-16 text-center bg-white border-[4px] border-dashed border-black rounded-[3rem] relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#f9f6f0] border-[4px] border-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="folder-open" class="w-8 h-8 text-black"></i>
+                </div>
+                <h2 class="text-3xl font-display uppercase tracking-tight">Empty Portfolio</h2>
+                <p class="text-gray-500 font-bold mt-2 text-lg">This artist has not uploaded any works yet.</p>
+            </div>
+        </div>
+    {% endif %}
+  </div>
+
+  <!-- Reviews Section -->
+  <div class="mt-20 pt-10 border-t-[4px] border-dashed border-gray-300">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
+      <h2 class="font-display text-4xl md:text-5xl uppercase tracking-tight flex items-center gap-3">
+          <i data-lucide="message-square" class="w-10 h-10 text-green-400 fill-black stroke-[1.5]"></i> Client Reviews
+      </h2>
+    </div>
+
+    {% if reviews %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for review in reviews %}
+        <div class="bg-white border-[4px] border-black rounded-[2rem] p-6 md:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] relative hover:-translate-y-1 transition-transform">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full border-[2px] border-black bg-[#f9f6f0] overflow-hidden shrink-0">
+                  {% if review.client.profile_image %}
+                    <img src="{{ review.client.profile_image.url }}" alt="Client" class="w-full h-full object-cover" />
+                  {% else %}
+                    <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ review.client.username }}" alt="Client" class="w-full h-full object-cover" />
+                  {% endif %}
+                </div>
+                <div>
+                  <h4 class="font-black text-lg uppercase">{{ review.client.username }}</h4>
+                  <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ review.created_at|date:"M d, Y" }}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 bg-[#fffdf8] border-[2px] border-black px-3 py-1.5 rounded-lg text-lg font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <i data-lucide="star" class="w-5 h-5 text-[#ffc86b] fill-current"></i> {{ review.rating }}
+              </div>
+            </div>
+            
+            <div class="bg-gray-50 border-[2px] border-dashed border-gray-300 rounded-xl p-4">
+              <p class="text-gray-800 font-medium italic">"{{ review.comment|default:'No comment provided.' }}"</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="w-full py-16 text-center bg-white border-[4px] border-dashed border-black rounded-[3rem] relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#f9f6f0] border-[4px] border-black mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <i data-lucide="star-off" class="w-8 h-8 text-black"></i>
+                </div>
+                <h2 class="text-3xl font-display uppercase tracking-tight">No Reviews Yet</h2>
+                <p class="text-gray-500 font-bold mt-2 text-lg">This artist hasn't received any reviews yet.</p>
+            </div>
+        </div>
+    {% endif %}
+  </div>
+
+</div>
+<script>
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+</script>
+{% endblock %}
