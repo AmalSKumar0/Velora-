@@ -13,7 +13,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Caveat+Brush&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+
+  <link rel="icon" type="image/x-icon" href="{% static 'images/icons/favicon.ico' %}">
+ 
   <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
 
   <script>
@@ -28,8 +30,9 @@
       }
     }
   </script>
-<style>\n    html { font-size: 13px; }\n
-   .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; }
+<style>
+    html { font-size: 13px; }
+    .tab-content { display: none; opacity: 0; transform: translateY(10px); transition: all 0.2s ease-out; }
     .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
     
     .modal-overlay { display: none; opacity: 0; transition: opacity 0.2s ease-out; }
@@ -43,100 +46,103 @@
 <body class="min-h-screen bg-[#fffdf8] font-sans text-gray-900 selection:bg-[#ffc86b] selection:text-black flex flex-col lg:flex-row relative">
   
   {% include 'includes/message.html' %}
-
-<header class="bg-[#ffc86b] flex lg:flex-col items-center lg:items-start justify-between py-4 lg:py-8 px-6 lg:px-5 w-full lg:w-64 lg:h-screen border-b-[3px] lg:border-b-0 lg:border-r-[3px] border-black sticky top-0 z-40 shrink-0">
-    <div class="flex lg:flex-col items-center lg:items-start gap-8 lg:gap-8 lg:w-full">
-      <a href="{% url 'home' %}" class="group flex items-center gap-2.5 font-display text-3xl tracking-tighter lg:px-1 transition-transform hover:-rotate-1">
-        <div class="w-8 h-8 rounded-lg border-[2.5px] border-black flex items-center justify-center bg-white shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[1px] group-hover:translate-y-[1px] transition-all">
-           <i data-lucide="brush" class="w-4 h-4"></i>
-        </div>
-        <span class="drop-shadow-[1px_1px_0px_#fff]">VELORA</span>
-      </a>
+<header class="bg-white flex flex-col lg:flex-col lg:w-[280px] lg:h-screen lg:border-r-[3px] border-black sticky top-0 z-40 shrink-0">
       
-      <nav class="hidden md:flex lg:flex-col items-center lg:items-stretch gap-3.5 lg:w-full mt-2">
-        <a href="{% url 'clientDashboard' %}" 
-           class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] transition-all border-black 
-           {% if active_tab == 'discover' %}
-             bg-black text-white shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
-           {% else %}
-             bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]
-           {% endif %}">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="compass" class="w-4 h-4"></i>
-            <span>Discover</span>
-          </div>
-         
-        </a>
-
-        <a href="{% url 'all_request' %}" 
-           class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] transition-all border-black
-           {% if active_tab == 'requests' %}
-             bg-black text-white shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
-           {% else %}
-             bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px]
-           {% endif %}">
-          <div class="flex items-center gap-2.5">
-            <i data-lucide="layers" class="w-4 h-4"></i>
-            <span>My Requests</span>
-          </div>
-          {% if requests_count %}
-          <span class="text-[9px] px-1.5 py-0.5 rounded border-2 border-black font-black bg-[#ffc86b] text-black">
-            {{ requests_count }}
-          </span>
-          {% endif %}
-        </a>
-
-        <button onclick="openModal()" 
-          class="group flex items-center justify-between px-4 py-3 rounded-xl font-black text-sm border-[2.5px] border-black transition-all bg-white text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] mt-2">
-          <div class="flex items-center gap-2.5">
-            <div class="bg-[#ffc86b] text-black rounded p-0.5 group-hover:rotate-6 transition-transform border-[1.5px] border-black">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+    <div class="flex items-center justify-between w-full lg:flex-col lg:items-start lg:gap-10 py-3 px-5 lg:py-8 border-b-[2px] lg:border-b-0 border-black bg-white z-50 relative">
+        <a href="{% url 'home' %}" class="group flex items-center gap-2 lg:gap-2.5 font-display text-3xl lg:text-4xl tracking-tighter transition-transform hover:-rotate-2">
+            <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl border-[2px] lg:border-[3px] border-black flex items-center justify-center bg-brand-yellow shrink-0 lg:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[3px] group-hover:translate-y-[3px] transition-all">
+                <i data-lucide="brush" class="w-4 h-4 lg:w-5 lg:h-5 text-black"></i>
             </div>
-            <span>Post Request</span>
-          </div>
+            <span>VELORA</span>
+        </a>
+
+        <button id="mobile-menu-btn" class="lg:hidden p-1 text-black transition-opacity hover:opacity-70 active:scale-95">
+            <i data-lucide="menu" id="menu-icon" class="w-7 h-7"></i>
         </button>
-      </nav>
     </div>
 
-    <div class="flex lg:flex-col items-center lg:items-stretch gap-4 lg:w-full lg:mt-auto pt-4">
-    <div class="flex items-center justify-between lg:border-[2.5px] lg:border-black lg:rounded-2xl lg:p-2.5 transition-all
-        {% if active_tab == 'profile' %}
-            lg:bg-black lg:shadow-[4px_4px_0px_0px_#fff] -translate-y-0.5
-        {% else %}
-            lg:bg-white lg:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-        {% endif %}">
+    <nav id="nav-links" class="hidden lg:flex flex-1 flex-col items-stretch w-full absolute lg:relative top-[58px] lg:top-0 left-0 bg-white lg:bg-transparent lg:p-5 lg:pt-0 border-b-[2px] lg:border-b-0 border-black shadow-2xl lg:shadow-none z-40">
         
-        <a href="{% url 'client_profile' %}" class="flex items-center gap-2 group">
-            <div class="w-9 h-9 rounded-xl border-[2px] overflow-hidden shrink-0 shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none transition-all
-                {% if active_tab == 'profile' %}border-white bg-gray-800{% else %}border-black bg-[#f9f6f0]{% endif %}">
-                <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ request.user.username|default:'John' }}" alt="Profile" class="w-full h-full object-cover" />
-            </div>
+        <div class="hidden lg:flex flex-col gap-3">
+            {% url 'clientDashboard' as discover_url %}
+            <a href="{{ discover_url }}" 
+               class="group flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all duration-200
+               {% if request.path == discover_url %}
+                  bg-brand-yellow font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black
+               {% else %}
+                  font-bold text-gray-500 border-[3px] border-transparent hover:border-black hover:text-black hover:bg-gray-50
+               {% endif %}">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span>Discover</span>
+            </a>
 
-            <div class="hidden lg:block">
-                <div class="font-black text-[11px] truncate max-w-[70px] uppercase tracking-tight 
-                    {% if active_tab == 'profile' %}text-white{% else %}text-black{% endif %}">
-                    {{ request.user.username|default:'User' }}
-                </div>
-                <div class="text-[9px] font-bold flex items-center gap-1 uppercase
-                    {% if active_tab == 'profile' %}text-gray-400{% else %}text-gray-500{% endif %}">
-                    <span class="w-1 h-1 rounded-full bg-green-500 animate-pulse"></span> Client
-                </div>
+            {% url 'all_request' as requests_url %}
+            <a href="{{ requests_url }}" 
+               class="group flex items-center gap-3 px-4 py-3 rounded-xl text-base transition-all duration-200
+               {% if request.path == requests_url %}
+                  bg-brand-yellow font-black border-[3px] border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black
+               {% else %}
+                  font-bold text-gray-500 border-[3px] border-transparent hover:border-black hover:text-black hover:bg-gray-50
+               {% endif %}">
+                <i data-lucide="layers" class="w-5 h-5"></i>
+                <span>My Requests</span>
+            </a>
+
+            <button onclick="openModal()" 
+              class="group w-full flex items-center justify-center gap-2.5 px-4 py-3.5 rounded-xl font-black text-base border-[3px] border-black transition-all bg-black text-white shadow-[4px_4px_0px_0px_#ffc86b] hover:shadow-[2px_2px_0px_0px_#ffc86b] hover:translate-x-[2px] hover:translate-y-[2px] mt-4">
+              <i data-lucide="plus" class="w-5 h-5"></i>
+              <span class="uppercase tracking-widest">Post Request</span>
+            </button>
+        </div>
+
+        <div class="hidden lg:flex flex-col items-stretch w-full mt-auto pt-5 border-t-[3px] border-black/5">
+            <div class="flex items-center justify-between border-[3px] border-black rounded-xl p-2 bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-transform hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group">
+                <a href="{% url 'client_profile' %}" class="flex items-center gap-3 overflow-hidden w-full">
+                    <div class="w-9 h-9 rounded-lg border-[2px] border-black overflow-hidden bg-brand-yellow shrink-0">
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ request.user.username }}" class="w-full h-full object-cover" />
+                    </div>
+                    <span class="font-black text-sm uppercase text-black truncate pr-1">{{ request.user.username }}</span>
+                </a>
+                <a href="{% url 'logout' %}" title="Logout" class="w-10 self-stretch flex items-center justify-center border-l-[3px] border-black hover:bg-red-500 hover:text-white transition-colors shrink-0 -my-2 -mr-2 rounded-r-lg">
+                    <i data-lucide="log-out" class="w-4 h-4 stroke-[3px]"></i>
+                </a>
             </div>
-        </a>
-        
-        <a href="{% url 'logout' %}" 
-           class="rounded-lg w-8 h-8 flex items-center justify-center transition-all shrink-0 border-[2px]
-           {% if active_tab == 'profile' %}
-                bg-white text-black border-white shadow-[2px_2px_0px_0px_#ffc86b] hover:bg-red-400 hover:text-white
-           {% else %}
-                bg-red-50 text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-500 hover:text-white
-           {% endif %}
-           hover:shadow-none hover:translate-x-[1px] hover:translate-y-[1px]" 
-           title="Logout">
-            <i data-lucide="power" class="w-4 h-4"></i>
-        </a>
-    </div>
-</div>
+        </div>
+
+        <div class="flex lg:hidden flex-col w-full">
+            
+            {% url 'clientDashboard' as discover_url %}
+            <a href="{{ discover_url }}" class="flex items-center gap-4 px-6 py-4 border-b border-gray-100 font-bold text-base transition-colors
+                {% if request.path == discover_url %}text-black bg-brand-yellow/10{% else %}text-gray-600 active:bg-gray-50{% endif %}">
+                <i data-lucide="compass" class="w-5 h-5 {% if request.path == discover_url %}text-brand-yellow{% endif %}"></i> 
+                Discover
+            </a>
+            
+            {% url 'all_request' as requests_url %}
+            <a href="{{ requests_url }}" class="flex items-center gap-4 px-6 py-4 border-b border-gray-100 font-bold text-base transition-colors
+                {% if request.path == requests_url %}text-black bg-brand-yellow/10{% else %}text-gray-600 active:bg-gray-50{% endif %}">
+                <i data-lucide="layers" class="w-5 h-5 {% if request.path == requests_url %}text-brand-yellow{% endif %}"></i> 
+                My Requests
+            </a>
+
+            <a href="{% url 'client_profile' %}" class="flex items-center gap-4 px-6 py-4 border-b border-gray-100 font-bold text-base text-gray-600 active:bg-gray-50 transition-colors">
+                <i data-lucide="user" class="w-5 h-5"></i> 
+                My Profile
+            </a>
+
+            <a href="{% url 'logout' %}" class="flex items-center gap-4 px-6 py-4 font-bold text-base text-red-500 active:bg-red-50 transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i> 
+                Logout
+            </a>
+
+            <div class="p-5 bg-gray-50/50 mt-2">
+                <button onclick="openModal()" class="w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl font-black text-sm tracking-widest uppercase bg-black text-white active:scale-[0.98] transition-transform">
+                    <i data-lucide="plus" class="w-5 h-5"></i> Post Request
+                </button>
+            </div>
+        </div>
+
+    </nav>
 </header>
   <main class="flex-1 p-6 lg:p-10 max-w-[90rem] mx-auto w-full">
     {% block content %}{% endblock %}
@@ -220,6 +226,24 @@
   <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
   <script>
     lucide.createIcons();
+    
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const navLinks = document.getElementById('nav-links');
+
+    mobileMenuBtn.addEventListener('click', () => {
+        const isHidden = navLinks.classList.contains('hidden');
+        if (isHidden) {
+            navLinks.classList.remove('hidden');
+            navLinks.classList.add('flex');
+            mobileMenuBtn.innerHTML = '<i data-lucide="x" class="w-6 h-6"></i>';
+        } else {
+            navLinks.classList.add('hidden');
+            navLinks.classList.remove('flex');
+            mobileMenuBtn.innerHTML = '<i data-lucide="menu" class="w-4 h-4"></i>';    
+        }
+        lucide.createIcons();
+    });
 
     // TomSelect Initialization
     var settings = {
@@ -236,32 +260,6 @@
         }
     };
     new TomSelect("#tag-picker", settings);
-
-    // Filter Logic
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const requestCards = document.querySelectorAll('.request-card');
-    
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const filterVal = btn.getAttribute('data-filter');
-        
-        filterBtns.forEach(b => {
-          if (b.getAttribute('data-filter') === filterVal) {
-            b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-black bg-[#ffc86b] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-black';
-          } else {
-            b.className = 'filter-btn px-4 py-2 rounded-full font-bold text-sm border-[3px] transition-all border-transparent bg-gray-200 hover:bg-gray-300 text-gray-700';
-          }
-        });
-
-        requestCards.forEach(card => {
-          if (filterVal === 'All' || card.getAttribute('data-status') === filterVal) {
-            card.style.display = 'flex';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
 
     // Modal Logic
     function openModal() {
